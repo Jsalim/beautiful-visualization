@@ -17,6 +17,9 @@ import de.fhpotsdam.unfolding.geo.Location;
 import de.fhpotsdam.unfolding.providers.Google;
 import de.fhpotsdam.unfolding.utils.MapUtils;
 
+/*
+ * With Unfolding 0.8.0
+ */
 public class WithGoogleMap extends PApplet {
 	/**
 	 * automatically generated serialVersionUID

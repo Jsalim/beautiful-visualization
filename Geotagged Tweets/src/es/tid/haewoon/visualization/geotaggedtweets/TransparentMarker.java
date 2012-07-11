@@ -6,6 +6,9 @@ import twitter4j.Status;
 import de.fhpotsdam.unfolding.Map;
 import de.fhpotsdam.unfolding.geo.Location;
 
+/*
+ * With Unfolding 0.8.0
+ */
 public class TransparentMarker {
 	protected Location location;
 	private Status status;
