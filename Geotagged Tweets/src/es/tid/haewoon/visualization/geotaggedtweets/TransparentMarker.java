@@ -31,7 +31,7 @@ public class TransparentMarker {
 		float xy[] = map.getScreenPositionFromLocation(this.location);
 		screenX = xy[0];
 		screenY = xy[1];
-		
+
 		pg = map.mapDisplay.getPG();
 	}
 
@@ -44,19 +44,19 @@ public class TransparentMarker {
 	}
 
 	public void draw(int opacity) {
-        pg.fill(222, 81, 36, opacity);
-        pg.ellipse(this.screenX, this.screenY, 20, 20);
+		pg.fill(222, 81, 36, opacity);
+		pg.ellipse(this.screenX, this.screenY, 20, 20);
 		pg.noStroke();
-		
+
 		if (this.hovered) {
 			pg.fill(0, 200);
-            pg.noStroke();
-            pg.rect(this.screenX + 1, this.screenY - 15, pg.textWidth(this.getText()) + 2, 12);
-            pg.fill(-256, 200);
-            pg.text(this.getText(), this.screenX + 2, this.screenY - 5);
+			pg.noStroke();
+			pg.rect(this.screenX + 1, this.screenY - 15, pg.textWidth(this.getText()) + 2, 12);
+			pg.fill(-256, 200);
+			pg.text(this.getText(), this.screenX + 2, this.screenY - 5);
 		}
 	}
-	
+
 	public String getText() {
 		return status.getText();
 	}
