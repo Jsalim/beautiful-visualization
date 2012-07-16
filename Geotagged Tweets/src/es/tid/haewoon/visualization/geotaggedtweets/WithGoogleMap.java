@@ -26,7 +26,7 @@ public class WithGoogleMap extends PApplet {
      */
     private static final long serialVersionUID = 1L;
     Map map;
-    private static final int MAX_TWEETS = 1000;
+    private static final int MAX_TWEETS = 3000;
     private static final int INTERVAL = 100; // msec
     private ArrayList<Status> statuses;
     private ArrayList<TransparentMarker> markers;
@@ -55,7 +55,7 @@ public class WithGoogleMap extends PApplet {
 
         try {
             readJson("/workspace/twitter/UK1");
-        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
@@ -113,7 +113,7 @@ public class WithGoogleMap extends PApplet {
     }
 
 
-    private void readJson(String filename) throws FileNotFoundException {
+    private void readJson(String filename) throws IOException {
         statuses = new ArrayList<Status>();
         markers = new ArrayList<TransparentMarker>();
 
@@ -141,6 +141,8 @@ public class WithGoogleMap extends PApplet {
         } catch (TwitterException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
+        } finally {
+            br.close();
         }
     }
 
