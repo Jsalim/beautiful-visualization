@@ -18,21 +18,17 @@ public class TransparentMarker {
     protected boolean hovered = false;
     private PGraphics pg;
     private int opacity = 0;
+    private Map map;
     float screenX = 0.0f;
     float screenY = 0.0f;
+    
 
 
-    public TransparentMarker(Status s, GeoLocation gl, Map map) {
+    public TransparentMarker(Status s, GeoLocation gl) {
         this.status = s;
         float longitude = (float) gl.getLongitude();
         float latitude = (float) gl.getLatitude();
         this.location = new Location((float)latitude, (float)longitude);
-
-        float xy[] = map.getScreenPositionFromLocation(this.location);
-        screenX = xy[0];
-        screenY = xy[1];
-
-        pg = map.mapDisplay.getPG();
     }
 
     public void setOpacity(int opacity) {
@@ -42,20 +38,7 @@ public class TransparentMarker {
     public int getOpacity() {
         return this.opacity;
     }
-
-    public void draw(int opacity) {
-        pg.fill(222, 81, 36, opacity);
-        pg.ellipse(this.screenX, this.screenY, 20, 20);
-        pg.noStroke();
-
-        if (this.hovered) {
-            pg.fill(0, 200);
-            pg.noStroke();
-            pg.rect(this.screenX + 1, this.screenY - 15, pg.textWidth(this.getText()) + 2, 12);
-            pg.fill(-256, 200);
-            pg.text(this.getText(), this.screenX + 2, this.screenY - 5);
-        }
-    }
+    
 
     public String getText() {
         return status.getText();

@@ -68,7 +68,9 @@ public class WithGoogleMap extends PApplet {
             int passedTime = millis() - savedTime;
 
             opacity = (int) map(min(iteratorIndex - i, MAX_NUMBER_OF_MARKERS), 0, MAX_NUMBER_OF_MARKERS , 150, 0);
+            
             TransparentMarker tm = markers.get(i);
+            
             drawTweet(tm, opacity);
 
             if (passedTime > INTERVAL) {
@@ -85,7 +87,11 @@ public class WithGoogleMap extends PApplet {
 
     public void drawTweet(TransparentMarker tm, int opacity) {
         fill(222, 81, 36, opacity);
-        ellipse(tm.screenX, tm.screenY, 20, 20);
+        float xy[] = this.map.getScreenPositionFromLocation(tm.location);
+        float screenX = xy[0];
+        float screenY = xy[1];
+        
+        ellipse(screenX, screenY, 20, 20);
         noStroke();
         //        ellipse(x, y, 30, 30);
         //        fill(200, 200, 0, 100);
@@ -131,7 +137,7 @@ public class WithGoogleMap extends PApplet {
                 statuses.add(s);
                 GeoLocation gl = s.getGeoLocation();
                 if (gl != null) {
-                    markers.add(new TransparentMarker(s, gl, map));
+                    markers.add(new TransparentMarker(s, gl));
                     count++;
                 }
             }
