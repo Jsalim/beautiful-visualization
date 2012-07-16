@@ -7,6 +7,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import processing.core.PApplet;
+import toxi.geom.Polygon2D;
+import toxi.geom.Vec2D;
+import toxi.geom.mesh2d.Voronoi;
+import toxi.processing.ToxiclibsSupport;
 import twitter4j.GeoLocation;
 import twitter4j.Status;
 import twitter4j.TwitterException;
@@ -36,6 +40,9 @@ public class WithGoogleMap extends PApplet {
     private static final int MAX_NUMBER_OF_MARKERS = 150;
     private static final int MARKER_SIZE = 20;
 
+    ToxiclibsSupport gfx;
+    Voronoi voronoi;
+    
     private int iteratorIndex;
     private int savedTime = 0;
     private int opacity = 0;
@@ -43,6 +50,8 @@ public class WithGoogleMap extends PApplet {
         size((int)WIDTH, (int)HEIGHT, GLConstants.GLGRAPHICS);
         smooth();
         createFont("Arial", 10);
+        
+        gfx = new ToxiclibsSupport( this );
 
         map = new Map(this, new Google.GoogleMapProvider());
         //         map = new Map(this, new Microsoft.RoadProvider());
@@ -63,6 +72,7 @@ public class WithGoogleMap extends PApplet {
 
     public void draw() {
         map.draw();
+        voronoi = new Voronoi();
 
         for (int i = 0; i < markers.size(); i++) {
             int passedTime = millis() - savedTime;
@@ -82,7 +92,23 @@ public class WithGoogleMap extends PApplet {
                 // sophisticated process needed
                 break;
             }
+            
+            float xy[] = this.map.getScreenPositionFromLocation(tm.location);
+            float screenX = xy[0];
+            float screenY = xy[1];
+         
+            if (tm.isVisible()) {
+                voronoi.addPoint(new Vec2D(screenX, screenY));
+            }
         }
+        
+        noFill();
+        stroke(0);
+        
+        for ( Polygon2D polygon : voronoi.getRegions() ) {
+            gfx.polygon2D( polygon );
+        }
+        
     }
 
     public void drawTweet(TransparentMarker tm, int opacity) {
@@ -90,6 +116,12 @@ public class WithGoogleMap extends PApplet {
         float xy[] = this.map.getScreenPositionFromLocation(tm.location);
         float screenX = xy[0];
         float screenY = xy[1];
+        
+        if (opacity == 0) {
+            tm.setVisible(false);
+        } else {
+            tm.setVisible(true);
+        }
         
         ellipse(screenX, screenY, 20, 20);
         noStroke();
