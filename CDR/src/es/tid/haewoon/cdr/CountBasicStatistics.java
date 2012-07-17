@@ -26,7 +26,7 @@ public class CountBasicStatistics {
         Map cell2Count = new HashMap();
         Map duration2Count = new HashMap();
         Map number2Count = new HashMap();
-
+        
         List<File> files = cc.loadFiles("/workspace/CDR_data");
 
         String line;
