@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import codeanticode.glgraphics.GLConstants;
 import de.fhpotsdam.unfolding.Map;
 import de.fhpotsdam.unfolding.geo.Location;
@@ -30,6 +32,7 @@ public class VisualizeCells extends PApplet {
     ToxiclibsSupport gfx;
     HashMap<Cell,Integer> cell2Count = new HashMap<Cell, Integer>();
     int max_count = -1;
+    private static Logger logger = Logger.getLogger(CountBasicStatistics.class); 
     
     public void setup() {
         size(WIDTH, HEIGHT, GLConstants.GLGRAPHICS);
@@ -46,15 +49,15 @@ public class VisualizeCells extends PApplet {
 
         MapUtils.createDefaultEventDispatcher(this, map);
         
-        String line;
+        String line="";
         
-        List<File> files = loadFiles("/workspace/CDR_data/result/count basic statistics/");
+        List<File> files = loadFiles("/workspace/CDR_data/result/count_basic_statistics/");
         for (File file: files) {
             System.out.println("processing " + file);
             try {
                 BufferedReader br = new BufferedReader(new FileReader(file));
                 while((line = br.readLine()) != null) {
-                    String[] cellAndCount = line.split("\\|");
+                    String[] cellAndCount = line.split("\\t");
                     
                     Cell cell = CDRUtil.getInstance().getCell(cellAndCount[0]);
                     if (max_count < Integer.valueOf(cellAndCount[1])) {
@@ -71,8 +74,11 @@ public class VisualizeCells extends PApplet {
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+                logger.debug(line);
             }
-            System.out.println(max_count);
+            logger.debug(max_count);
             break;
         }
     }
