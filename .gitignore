@@ -1,5 +1,5 @@
-*/lib/*
 */bin/*
+*/lib/*
 .classpath
 .project
 *.prefs

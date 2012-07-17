@@ -19,7 +19,8 @@ public class WeekdayFilter implements CDRFilter {
         
         int day_of_week = calendar.get(DAY_OF_WEEK);
         
-        return (day_of_week == SUNDAY || day_of_week == MONDAY || day_of_week == TUESDAY || day_of_week == WEDNESDAY || 
+        // monday to friday
+        return (day_of_week == MONDAY || day_of_week == TUESDAY || day_of_week == WEDNESDAY || 
                 day_of_week == THURSDAY || day_of_week == FRIDAY); 
     }
 
