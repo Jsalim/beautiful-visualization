@@ -10,8 +10,8 @@ public class CDR {
     String destNum;
     Date datetime;
     int duration;
-    String origOpr;
-    String destOpr;
+    Operator origOpr;
+    Operator destOpr;
     String initCellID;
     String finCellID;
     String[] errCode;
@@ -19,6 +19,7 @@ public class CDR {
     
     public CDR(String line) throws ParseException {
         String[] tokens = line.split("\\|");
+        
         origNum = tokens[0];
         destNum = tokens[1];
         
@@ -27,8 +28,19 @@ public class CDR {
         
         
         duration = Integer.valueOf(tokens[3]);
-        origOpr = tokens[4];
-        destOpr = tokens[5];
+        
+        if (tokens[4].equals("158") || tokens[4].equals("240") || tokens[4].equals("241") || tokens[4].equals("272")) {
+            origOpr = Operator.MOVISTAR;
+        } else {
+            origOpr = Operator.OTHERS;
+        }
+        
+        if (tokens[5].equals("10") || tokens[5].equals("251") || tokens[5].equals("252") || tokens[5].equals("322")) {
+            destOpr = Operator.MOVISTAR;
+        } else {
+            destOpr = Operator.OTHERS;
+        }
+        
         initCellID = tokens[6];
         finCellID = tokens[7];
         
@@ -54,11 +66,11 @@ public class CDR {
         return duration;
     }
 
-    public String getOrigOpr() {
+    public Operator getOrigOpr() {
         return origOpr;
     }
 
-    public String getDestOpr() {
+    public Operator getDestOpr() {
         return destOpr;
     }
 
