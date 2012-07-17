@@ -14,7 +14,7 @@ public class TransparentMarker {
     private Status status;
 
     protected boolean selected = false;
-    protected boolean visible = true;
+    protected boolean visible = false;
     protected boolean hovered = false;
     private PGraphics pg;
     private int opacity = 0;
