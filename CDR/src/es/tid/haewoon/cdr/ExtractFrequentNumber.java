@@ -3,7 +3,6 @@ package es.tid.haewoon.cdr;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -17,9 +16,10 @@ import org.apache.log4j.Logger;
 
 public class ExtractFrequentNumber {
     TelephoneNumberFilter tnFilter;
-    private final String allnb2c = "/workspace/CDR_data/result/count_basic_statistics/all.nb2c";
+    private final String allnb2c = Constants.RESULT_PATH + "/count_basic_statistics/all.nb2c";
     private static Logger logger = Logger.getLogger(ExtractFrequentNumber.class);
-    private final int TOP_K = 100;
+    private final int TOP_K = 300;
+    private final String targetDirectory;
 
     public ExtractFrequentNumber() {
         // read all.nb2c: the statistics sorted by the number of calls in descending order
@@ -48,35 +48,47 @@ public class ExtractFrequentNumber {
         logger.info(s.size());
         
         tnFilter = new TelephoneNumberFilter(s);
+        
+        targetDirectory = Constants.RESULT_PATH + "/most_frequent_" + TOP_K + "_numbers";
+        boolean success = (new File(targetDirectory)).mkdir();
+        if (success) {
+            logger.debug("[" + targetDirectory + "] directory created");
+        }
     }
     
     public void run() throws IOException {
-        List<File> files = loadFiles("/workspace/CDR_data/", "opr");
+        List<File> files = loadFiles(Constants.BASE_PATH, "opr");
         
         for (File file: files) {
             logger.debug("processing " + file);
             String line = "";
             BufferedReader br = new BufferedReader(new FileReader(file));
-            BufferedWriter bw = new BufferedWriter(new FileWriter("/workspace/CDR_data/result/most_frequent_100_numbers/" + file.getName()));
-
+            
             while((line = br.readLine()) != null) {
                 CDR cdr;
                 try {
                     cdr = new CDR(line);
                     if (tnFilter.filter(cdr)) {
+                        BufferedWriter bw = new BufferedWriter(new FileWriter(targetDirectory + File.separator + cdr.getMovistarNum(), true));
                         bw.write(line.trim());
                         bw.newLine();
+                        bw.close();
                     } else {
                         // filter infrequent numbers
                     }
                 } catch (ParseException pe) {
                     // TODO Auto-generated catch block
                     logger.error("wrong-format CDR", pe);
+                } catch (Exception e) {
+                    // TODO Auto-generated catch block
+                    logger.debug(line);
+                    logger.fatal("something wrong / all CDRs here must have at least one Movistar number", e);
+                    System.exit(0);
                 }
             }
             
             br.close();
-            bw.close();
+            
         }
     }
     
