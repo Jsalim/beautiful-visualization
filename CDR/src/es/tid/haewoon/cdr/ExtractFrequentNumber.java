@@ -8,8 +8,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -20,6 +22,7 @@ public class ExtractFrequentNumber {
     private static Logger logger = Logger.getLogger(ExtractFrequentNumber.class);
     private final int TOP_K = 300;
     private final String targetDirectory;
+    private Map<String, Integer> rank2Num = new HashMap<String, Integer>();
 
     public ExtractFrequentNumber() {
         // read all.nb2c: the statistics sorted by the number of calls in descending order
@@ -37,8 +40,10 @@ public class ExtractFrequentNumber {
                     break;
                 }
 
-                s.add(line.split("\\t")[0].trim());
+                String number = line.split("\\t")[0].trim();
+                s.add(number);
                 i++;
+                rank2Num.put(number, i);
             }        
         } catch (Exception e) {
             logger.debug(line);
@@ -69,7 +74,9 @@ public class ExtractFrequentNumber {
                 try {
                     cdr = new CDR(line);
                     if (tnFilter.filter(cdr)) {
-                        BufferedWriter bw = new BufferedWriter(new FileWriter(targetDirectory + File.separator + cdr.getMovistarNum(), true));
+                        String movistarNum = cdr.getMovistarNum();
+                        BufferedWriter bw = new BufferedWriter(new FileWriter(
+                                targetDirectory + File.separator + rank2Num.get(movistarNum) + "-" + cdr.getMovistarNum(), true));
                         bw.write(line.trim());
                         bw.newLine();
                         bw.close();
