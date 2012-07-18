@@ -85,4 +85,14 @@ public class CDR {
     public String[] getErrCode() {
         return errCode;
     }
+    
+    public String getMovistarNum() throws Exception {
+        if (origOpr == Operator.MOVISTAR) {
+            return origNum;
+        } else if (destOpr == Operator.MOVISTAR) {
+            return destNum;
+        } else {
+            throw new Exception();
+        }
+    }
 }
