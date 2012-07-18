@@ -1,6 +1,7 @@
 package es.tid.haewoon.cdr;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -15,7 +16,7 @@ public class CDRUtil {
         BufferedReader br;
         String line;
         try {
-            br = new BufferedReader(new FileReader("/workspace/CDR_data/GASSET_CELULA_900913.TXT"));
+            br = new BufferedReader(new FileReader(Constants.BASE_PATH + File.separator + Constants.CELL_INFO_FILE_NAME));
             while((line = br.readLine()) != null) {
                 // do something with line.
                 String[] tokens = line.split("\\|");

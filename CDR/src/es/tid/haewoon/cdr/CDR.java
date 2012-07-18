@@ -86,13 +86,13 @@ public class CDR {
         return errCode;
     }
     
-    public String getMovistarNum() throws Exception {
+    public String getMovistarNum(){
         if (origOpr == Operator.MOVISTAR) {
             return origNum;
         } else if (destOpr == Operator.MOVISTAR) {
             return destNum;
         } else {
-            throw new Exception();
+            throw new AssertionError();
         }
     }
 }

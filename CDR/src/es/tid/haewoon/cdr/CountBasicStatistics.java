@@ -27,7 +27,7 @@ public class CountBasicStatistics {
         Map duration2Count = new HashMap();
         Map number2Count = new HashMap();
         
-        List<File> files = cc.loadFiles("/workspace/CDR_data");
+        List<File> files = cc.loadFiles(Constants.BASE_PATH);
 
         String line;
 
@@ -69,7 +69,7 @@ public class CountBasicStatistics {
        
             
 
-            String basePath = file.getParent() + File.separator + "result/count_basic_statistics/" + file.getName();
+            String basePath = Constants.RESULT_PATH + "/count_basic_statistics/" + file.getName();
             cc.printMap(basePath + ".on2c", origin2Count);
             cc.printMap(basePath + ".dn2c", dest2Count);
             cc.printMap(basePath + ".cl2c", cell2Count);
