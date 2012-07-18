@@ -25,7 +25,7 @@ public class Cell {
         double rightBottomLong = boundingBox[1][0];
         double rightBottomLat = boundingBox[1][1];
         
-        // FIXME: Not considering 180 to -180, but no problem in Spain 
+        // FIXME: we are not considering 180 to -180, but (at least) no problem with Spain data 
         return (longitude > leftTopLong) && (longitude < rightBottomLong) && (latitude < leftTopLat) && (latitude > rightBottomLat);
     }
     

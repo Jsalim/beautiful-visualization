@@ -14,7 +14,7 @@ public class ExtractTelefonicaToOtherOP {
     public static void main(String[] args) throws IOException {
         CDRFilter opFilter = new OtherOperatorFilter();
         ExtractTelefonicaToOtherOP etOther = new ExtractTelefonicaToOtherOP();
-        List<File> files = etOther.loadFiles("/workspace/CDR_data/");
+        List<File> files = etOther.loadFiles(Constants.BASE_PATH);
         
         String line;
         for (File file: files) {

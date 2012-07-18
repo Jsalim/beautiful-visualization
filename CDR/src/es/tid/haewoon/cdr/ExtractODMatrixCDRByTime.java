@@ -21,7 +21,7 @@ public class ExtractODMatrixCDRByTime {
         CDRFilter weekdayFilter = new WeekdayFilter();
         
         ExtractODMatrixCDRByTime eodm = new ExtractODMatrixCDRByTime();
-        List<File> files = eodm.loadFiles("/workspace/CDR_data/");
+        List<File> files = eodm.loadFiles(Constants.BASE_PATH);
         String line;
         
         for (File file: files) {

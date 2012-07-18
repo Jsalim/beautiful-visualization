@@ -26,7 +26,7 @@ public class ExtractBarcelonaCDR {
         CDRFilter barcelonaFilter = new LocationFilter(barcelonaBox);
         
         ExtractBarcelonaCDR ebCDR = new ExtractBarcelonaCDR();
-        List<File> archives = ebCDR.loadFiles("/workspace/CDR_data/");
+        List<File> archives = ebCDR.loadFiles(Constants.BASE_PATH);
         String line;
         
         for (File archive: archives) {

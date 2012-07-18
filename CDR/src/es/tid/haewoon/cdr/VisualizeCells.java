@@ -51,7 +51,7 @@ public class VisualizeCells extends PApplet {
         
         String line="";
         
-        List<File> files = loadFiles("/workspace/CDR_data/result/count_basic_statistics/");
+        List<File> files = loadFiles(Constants.RESULT_PATH + "/count_basic_statistics/");
         for (File file: files) {
             System.out.println("processing " + file);
             try {

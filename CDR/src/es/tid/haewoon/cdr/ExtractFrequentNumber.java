@@ -79,7 +79,7 @@ public class ExtractFrequentNumber {
                 } catch (ParseException pe) {
                     // TODO Auto-generated catch block
                     logger.error("wrong-format CDR", pe);
-                } catch (Exception e) {
+                } catch (AssertionError e) {
                     // TODO Auto-generated catch block
                     logger.debug(line);
                     logger.fatal("something wrong / all CDRs here must have at least one Movistar number", e);

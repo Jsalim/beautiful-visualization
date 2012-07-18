@@ -24,8 +24,8 @@ public class StatisticsAggregator {
         String[] extensions = {"cl2c", "dn2c", "nb2c", "du2c", "on2c"}; 
         for (String extension: extensions) {
             logger.debug("processing all [." + extension + "]");
-            Map<String, Integer> result = sa.run("/workspace/CDR_data/result/count_basic_statistics/", extension);
-            sa.printTransposeMap("/workspace/CDR_data/result/count_basic_statistics/all." + extension, result);
+            Map<String, Integer> result = sa.run(Constants.RESULT_PATH + "/count_basic_statistics/", extension);
+            sa.printTransposeMap(Constants.RESULT_PATH + "/count_basic_statistics/all." + extension, result);
         }
     }
     
