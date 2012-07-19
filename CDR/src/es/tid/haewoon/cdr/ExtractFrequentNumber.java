@@ -62,7 +62,7 @@ public class ExtractFrequentNumber {
     }
     
     public void run() throws IOException {
-        List<File> files = loadFiles(Constants.BASE_PATH, "opr");
+        List<File> files = CDRUtil.loadRefinedCDRFiles();
         
         for (File file: files) {
             logger.debug("processing " + file);
@@ -102,21 +102,5 @@ public class ExtractFrequentNumber {
     public static void main(String[] args) throws IOException {
         ExtractFrequentNumber efn = new ExtractFrequentNumber();
         efn.run();
-    }
-    
-    private List<File> loadFiles(String string, String extension) {
-        // TODO Auto-generated method stub
-        List<File> filtered = new ArrayList<File>();
-        File targetPath = new File(string);
-        if (targetPath.isDirectory()) {
-            File[] files = targetPath.listFiles();
-            for (File file : files) {
-                String filename = file.getName();
-                if (filename.matches("^.*\\." + extension + "$")) {
-                    filtered.add(file);
-                }
-            }
-        }
-        return filtered;
     }
 }
