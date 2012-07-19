@@ -32,7 +32,7 @@ public class VisualizeCellsOfFrequentNumbers extends PApplet {
     ToxiclibsSupport gfx;
     HashMap<Cell,Integer> cell2Count = new HashMap<Cell, Integer>();
     int max_count = -1;
-    private static Logger logger = Logger.getLogger(CountBasicStatistics.class); 
+    private static Logger logger = Logger.getLogger(VisualizeCellsOfFrequentNumbers.class); 
 
     public void setup() {
         size(WIDTH, HEIGHT, GLConstants.GLGRAPHICS);

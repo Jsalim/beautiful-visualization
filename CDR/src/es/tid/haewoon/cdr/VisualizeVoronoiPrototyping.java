@@ -24,7 +24,7 @@ import toxi.geom.Vec2D;
 import toxi.geom.mesh2d.Voronoi;
 import toxi.processing.ToxiclibsSupport;
 
-public class VisualizeCells extends PApplet {
+public class VisualizeVoronoiPrototyping extends PApplet {
     private int WIDTH = 1000;
     private int HEIGHT = 1000;
     Map map;
@@ -32,7 +32,7 @@ public class VisualizeCells extends PApplet {
     ToxiclibsSupport gfx;
     HashMap<Cell,Integer> cell2Count = new HashMap<Cell, Integer>();
     int max_count = -1;
-    private static Logger logger = Logger.getLogger(CountBasicStatistics.class); 
+    private static Logger logger = Logger.getLogger(VisualizeVoronoiPrototyping.class); 
     
     public void setup() {
         size(WIDTH, HEIGHT, GLConstants.GLGRAPHICS);
