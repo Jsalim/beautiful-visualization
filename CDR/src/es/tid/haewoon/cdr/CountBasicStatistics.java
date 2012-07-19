@@ -48,18 +48,18 @@ public class CountBasicStatistics {
                     // count mobile phones serviced by movistar only
                     // we already filtered movistar-movistar; thus if-else if.
                     if (cdr.getOrigOpr() == Operator.MOVISTAR) {
-                        origin2Count = cc.countItem(origin2Count, cdr.getOrigNum());
-                        number2Count = cc.countItem(number2Count, cdr.getOrigNum());
+                        origin2Count = CDRUtil.countItem(origin2Count, cdr.getOrigNum());
+                        number2Count = CDRUtil.countItem(number2Count, cdr.getOrigNum());
                     } else if (cdr.getDestOpr() == Operator.MOVISTAR) {
-                        dest2Count = cc.countItem(dest2Count, cdr.getDestNum());
-                        number2Count = cc.countItem(number2Count, cdr.getDestNum());
+                        dest2Count = CDRUtil.countItem(dest2Count, cdr.getDestNum());
+                        number2Count = CDRUtil.countItem(number2Count, cdr.getDestNum());
                     }
                     
-                    cell2Count = cc.countItem(cell2Count, cdr.getInitCellID());
+                    cell2Count = CDRUtil.countItem(cell2Count, cdr.getInitCellID());
                     if (cdr.getInitCellID() != cdr.getFinCellID()) {
-                        cell2Count = cc.countItem(cell2Count, cdr.getFinCellID());
+                        cell2Count = CDRUtil.countItem(cell2Count, cdr.getFinCellID());
                     }
-                    duration2Count = cc.countItem(duration2Count, cdr.getDuration());
+                    duration2Count = CDRUtil.countItem(duration2Count, cdr.getDuration());
 
                 } catch (ParseException e) {
                     // TODO Auto-generated catch block
@@ -68,42 +68,13 @@ public class CountBasicStatistics {
             }
        
             String basePath = Constants.RESULT_PATH + "/count_basic_statistics/" + file.getName();
-            cc.printMap(basePath + ".on2c", origin2Count);
-            cc.printMap(basePath + ".dn2c", dest2Count);
-            cc.printMap(basePath + ".cl2c", cell2Count);
-            cc.printMap(basePath + ".du2c", duration2Count);
-            cc.printMap(basePath + ".nb2c", number2Count);
+            CDRUtil.printMap(basePath + ".on2c", origin2Count);
+            CDRUtil.printMap(basePath + ".dn2c", dest2Count);
+            CDRUtil.printMap(basePath + ".cl2c", cell2Count);
+            CDRUtil.printMap(basePath + ".du2c", duration2Count);
+            CDRUtil.printMap(basePath + ".nb2c", number2Count);
         }
     }
     
-    private void printMap(String path, Map map) {
-        try {
-            BufferedWriter bw = new BufferedWriter(new FileWriter(path));
 
-            List keys = new ArrayList(map.keySet());
-            Collections.sort(keys);
-            
-            for (Object key: keys) {
-                bw.write(key + "\t" + map.get(key));
-                bw.newLine();
-            }
-            bw.close();
-            
-        } catch (IOException e) {
-            // never happened
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } 
-    }
-
-    private Map countItem(Map map, Object item) {
-        Integer i = (Integer) map.get(item);
-        if (i != null) {
-            map.put(item, i+1);
-        } else {
-            map.put(item, 1);   // initialization
-        }
-
-        return map;
-    }
 }

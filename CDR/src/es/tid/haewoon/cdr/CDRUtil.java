@@ -1,23 +1,28 @@
 package es.tid.haewoon.cdr;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 
 public class CDRUtil {
-    private static CDRUtil cdrUtil = new CDRUtil();
     private static HashMap<String, Cell> cellid2Cell;
     private CDRUtil() { throw new AssertionError(); }
     
     @Deprecated
     public static CDRUtil getInstance() {
-        return cdrUtil;
+        return null;
     }
     
     public static Cell getCell(String cellID) {
@@ -80,5 +85,87 @@ public class CDRUtil {
             }
         }
         return filtered;
+    }
+    
+    public static void printMap(String path, Map map) {
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(path));
+
+            List keys = new ArrayList(map.keySet());
+            Collections.sort(keys);
+            
+            for (Object key: keys) {
+                if (map.get(key) instanceof Collection) {
+                    bw.write(key + "\t" + ((Set) map.get(key)).size() + "\t" + map.get(key));
+                } else {
+                    bw.write(key + "\t" + map.get(key));
+                }
+                bw.newLine();
+            }
+            bw.close();
+            
+        } catch (IOException e) {
+            // never happened
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } 
+    }
+
+    public static Map countItem(Map map, Object item) {
+        return countItem(map, item, 1);
+    }
+    
+    public static Map countItem(Map map, Object item, int value) {
+        Integer i = (Integer) map.get(item);
+        if (i != null) {
+            map.put(item, i+value);
+        } else {
+            map.put(item, value);   // initialization
+        }
+
+        return map;
+    }
+    
+    public static Map<Integer, List<String>> transpose(Map<String, Integer> old) {
+        Map<Integer, List<String>> transpose = new HashMap<Integer, List<String>>();
+        
+        for (String key: old.keySet()) {
+            Integer value = old.get(key);
+            List<String> correspondingKeys = transpose.get(value);
+            if (correspondingKeys == null) {
+                correspondingKeys = new ArrayList<String>();
+            } 
+            correspondingKeys.add(key);
+            transpose.put(value, correspondingKeys);
+        }
+        
+        return transpose;
+    }
+    
+    // sort by value
+    public static void printMapSortedByValue(String outputPath, Map<String, Integer> map) {
+        Map<Integer, List<String>> tp = transpose(map);
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(outputPath));
+
+            List<Integer> keys = new ArrayList<Integer>(tp.keySet());
+            
+            // descending order
+            Collections.sort(keys);
+            Collections.reverse(keys);
+            
+            for (Integer key: keys) {
+                for (String value: tp.get(key)) {
+                    bw.write(value + "\t" + key);
+                    bw.newLine();
+                }
+            }
+            bw.close();
+            
+        } catch (IOException e) {
+            // never happened
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }         
     }
 }
