@@ -24,9 +24,10 @@ public class ExtractActiveWalkers {
     TelephoneNumberFilter tnFilter;
     private final String active_walker_path = Constants.RESULT_PATH + "/3_count_telnum_2_cells/all";
     private static Logger logger = Logger.getLogger(ExtractActiveWalkers.class);
-    private final int TOP_K = 300;
+    private final int TOP_K = 3000;
     private final String targetDirectory;
-    private Map<String, Integer> rank2Num = new HashMap<String, Integer>();
+    private Map<String, Integer> num2Rank = new HashMap<String, Integer>();
+    private Map<String, String> num2Cell = new HashMap<String, String>();
     
     public ExtractActiveWalkers() {
         String line = "";
@@ -46,7 +47,8 @@ public class ExtractActiveWalkers {
                 String number = line.split("\\t")[0].trim();
                 s.add(number);
                 i++;
-                rank2Num.put(number, i);
+                num2Rank.put(number, i);
+                num2Cell.put(number, line.split("\\t")[1].trim());
             }        
         } catch (Exception e) {
             logger.debug(line);
@@ -78,7 +80,8 @@ public class ExtractActiveWalkers {
                     if (tnFilter.filter(cdr)) {
                         String movistarNum = cdr.getMovistarNum();
                         BufferedWriter bw = new BufferedWriter(new FileWriter(
-                                targetDirectory + File.separator + rank2Num.get(movistarNum) + "-" + cdr.getMovistarNum(), true));
+                                targetDirectory + File.separator + num2Rank.get(movistarNum) + "-" + cdr.getMovistarNum() + 
+                                "-" + num2Cell.get(movistarNum), true));
                         bw.write(line.trim());
                         bw.newLine();
                         bw.close();
