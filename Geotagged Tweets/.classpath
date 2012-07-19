@@ -45,8 +45,8 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/user/twitter4j-core-2.2.5.jar"/>
 	<classpathentry kind="lib" path="lib/user/Unfolding/Unfolding.jar"/>
-	<classpathentry kind="lib" path="lib/user/toxiclibs-complete-0020/toxiclibscore/library/toxiclibscore.jar"/>
-	<classpathentry kind="lib" path="lib/user/toxiclibs-complete-0020/toxiclibs_p5/library/toxiclibs_p5.jar"/>
+	<classpathentry kind="lib" path="lib/user/toxiclibs-complete-0020/toxiclibs_p5.jar"/>
+	<classpathentry kind="lib" path="lib/user/toxiclibs-complete-0020/toxiclibscore.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

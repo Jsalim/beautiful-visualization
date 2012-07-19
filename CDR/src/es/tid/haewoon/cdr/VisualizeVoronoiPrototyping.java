@@ -59,7 +59,7 @@ public class VisualizeVoronoiPrototyping extends PApplet {
                 while((line = br.readLine()) != null) {
                     String[] cellAndCount = line.split("\\t");
                     
-                    Cell cell = CDRUtil.getInstance().getCell(cellAndCount[0]);
+                    Cell cell = CDRUtil.getCell(cellAndCount[0]);
                     if (max_count < Integer.valueOf(cellAndCount[1])) {
                         max_count = Integer.valueOf(cellAndCount[1]);
                     }

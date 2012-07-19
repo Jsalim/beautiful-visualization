@@ -10,8 +10,8 @@ public class LocationFilter implements CDRFilter {
     @Override
     // return true when cdr is in the box
     public boolean filter(CDR cdr) {
-        Cell initCell = CDRUtil.getInstance().getCell(cdr.getInitCellID());
-        Cell finCell = CDRUtil.getInstance().getCell(cdr.getFinCellID());
+        Cell initCell = CDRUtil.getCell(cdr.getInitCellID());
+        Cell finCell = CDRUtil.getCell(cdr.getFinCellID());
         
         return (initCell.isIn(boundingBox) && finCell.isIn(boundingBox));
     }

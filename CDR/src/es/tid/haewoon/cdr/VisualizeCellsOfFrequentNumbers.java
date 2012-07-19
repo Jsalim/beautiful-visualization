@@ -56,7 +56,7 @@ public class VisualizeCellsOfFrequentNumbers extends PApplet {
             while((line = br.readLine()) != null) {
                 CDR cdr = new CDR(line);
 
-                Cell cell = CDRUtil.getInstance().getCell(cdr.getInitCellID());
+                Cell cell = CDRUtil.getCell(cdr.getInitCellID());
 
                 Integer i = (Integer) cell2Count.get(cell);
                 if (i != null) {
@@ -66,7 +66,7 @@ public class VisualizeCellsOfFrequentNumbers extends PApplet {
                 }
 
                 if (cdr.getInitCellID() != cdr.getFinCellID()) {
-                    cell = CDRUtil.getInstance().getCell(cdr.getFinCellID());
+                    cell = CDRUtil.getCell(cdr.getFinCellID());
 
                     i = (Integer) cell2Count.get(cell);
                     if (i != null) {

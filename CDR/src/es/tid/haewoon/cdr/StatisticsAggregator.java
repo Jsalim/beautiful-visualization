@@ -30,7 +30,7 @@ public class StatisticsAggregator {
     }
     
     public Map run(String basePath, String extension) throws FileNotFoundException {
-        List<File> files = loadFiles(basePath, extension);
+        List<File> files = CDRUtil.loadFiles(basePath, "^.*" + extension + "$");
         
         Map<String, Integer> agg = new HashMap<String, Integer>();
         for (File file: files) {
@@ -116,6 +116,7 @@ public class StatisticsAggregator {
             e.printStackTrace();
         } 
     }
+    
     private Map<String, Integer> countItem(Map<String, Integer> map, String[] keyValue) {
         Integer i = map.get(keyValue[0]);
         if (i != null) {
@@ -125,21 +126,5 @@ public class StatisticsAggregator {
         }
 
         return map;
-    }
-    
-    private List<File> loadFiles(String string, String extension) {
-        // TODO Auto-generated method stub
-        List<File> filtered = new ArrayList<File>();
-        File targetPath = new File(string);
-        if (targetPath.isDirectory()) {
-            File[] files = targetPath.listFiles();
-            for (File file : files) {
-                String filename = file.getName();
-                if (filename.matches("^.*\\." + extension + "$")) {
-                    filtered.add(file);
-                }
-            }
-        }
-        return filtered;
     }
 }

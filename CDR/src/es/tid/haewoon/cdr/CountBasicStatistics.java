@@ -27,8 +27,8 @@ public class CountBasicStatistics {
         Map duration2Count = new HashMap();
         Map number2Count = new HashMap();
         
-        List<File> files = cc.loadFiles(Constants.BASE_PATH);
-
+        List<File> files = CDRUtil.loadRefinedCDRFiles();
+        
         String line;
 
         for (File file: files) {
@@ -67,8 +67,6 @@ public class CountBasicStatistics {
                 } 
             }
        
-            
-
             String basePath = Constants.RESULT_PATH + "/count_basic_statistics/" + file.getName();
             cc.printMap(basePath + ".on2c", origin2Count);
             cc.printMap(basePath + ".dn2c", dest2Count);
@@ -107,21 +105,5 @@ public class CountBasicStatistics {
         }
 
         return map;
-    }
-
-    private List<File> loadFiles(String string) {
-        // TODO Auto-generated method stub
-        List<File> filtered = new ArrayList<File>();
-        File targetPath = new File(string);
-        if (targetPath.isDirectory()) {
-            File[] files = targetPath.listFiles();
-            for (File file : files) {
-                String filename = file.getName();
-                if (filename.matches("^.*bcn\\.\\d{1,2}-\\d{1,2}\\.opr$")) {
-                    filtered.add(file);
-                }
-            }
-        }
-        return filtered;
     }
 }

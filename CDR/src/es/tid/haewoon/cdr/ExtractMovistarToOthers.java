@@ -3,24 +3,33 @@ package es.tid.haewoon.cdr;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ExtractTelefonicaToOtherOP {
+import org.apache.log4j.Logger;
+
+public class ExtractMovistarToOthers {
+    private static final Logger logger = Logger.getLogger(ExtractMovistarToOthers.class);
+    
     public static void main(String[] args) throws IOException {
         CDRFilter opFilter = new OtherOperatorFilter();
-        ExtractTelefonicaToOtherOP etOther = new ExtractTelefonicaToOtherOP();
-        List<File> files = etOther.loadFiles(Constants.BASE_PATH);
+        ExtractMovistarToOthers etOther = new ExtractMovistarToOthers();
+        List<File> files = etOther.loadFiles(Constants.FILTERED_PATH + File.separator + "1_barcelona");
+        
+        String targetDirectory = Constants.FILTERED_PATH + File.separator + "2_movistar_to_others";
+        boolean success = (new File(targetDirectory)).mkdir();
+        if (success) {
+            logger.debug("A directory [" + targetDirectory + "] is created");
+        }
         
         String line;
         for (File file: files) {
             System.out.println("processing " + file);
             BufferedReader br = new BufferedReader(new FileReader(file));
-            BufferedWriter bw = new BufferedWriter(new FileWriter(file.getPath() + ".opr"));
+            BufferedWriter bw = new BufferedWriter(new FileWriter(targetDirectory + File.separator + file.getName()));
             
             while((line = br.readLine()) != null) {
                 try {
@@ -32,16 +41,13 @@ public class ExtractTelefonicaToOtherOP {
                         // we skip calls between movistar - movistar, because of duplicate entities
                     }
                 } catch (Exception e) {
-                    System.out.println(line);
-                    e.printStackTrace();    // something wrong
+                    logger.error("wrong-formatted CDR", e);    // many times
                 }
             }
             br.close();
             bw.close();
         }
     }
-    
-    
     
     private List<File> loadFiles(String string) {
         // TODO Auto-generated method stub
@@ -51,7 +57,7 @@ public class ExtractTelefonicaToOtherOP {
             File[] files = targetPath.listFiles();
             for (File file : files) {
                 String filename = file.getName();
-                if (filename.matches("^.*\\.bcn\\.\\d{1,2}-\\d{1,2}$")) {
+                if (filename.matches("^F1_GASSET_VOZ_\\d{1,2}092009$")) {
                     filtered.add(file);
                 }
             }
