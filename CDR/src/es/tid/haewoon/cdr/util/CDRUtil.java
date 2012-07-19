@@ -1,4 +1,4 @@
-package es.tid.haewoon.cdr;
+package es.tid.haewoon.cdr.util;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

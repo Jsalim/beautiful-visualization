@@ -1,4 +1,4 @@
-package es.tid.haewoon.cdr;
+package es.tid.haewoon.cdr.visualization;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -18,6 +18,10 @@ import de.fhpotsdam.unfolding.Map;
 import de.fhpotsdam.unfolding.geo.Location;
 import de.fhpotsdam.unfolding.providers.Google;
 import de.fhpotsdam.unfolding.utils.MapUtils;
+import es.tid.haewoon.cdr.util.CDR;
+import es.tid.haewoon.cdr.util.CDRUtil;
+import es.tid.haewoon.cdr.util.Cell;
+import es.tid.haewoon.cdr.util.Constants;
 import processing.core.PApplet;
 import toxi.geom.Polygon2D;
 import toxi.geom.Vec2D;

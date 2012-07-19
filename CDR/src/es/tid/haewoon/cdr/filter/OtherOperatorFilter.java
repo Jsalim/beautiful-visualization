@@ -1,4 +1,7 @@
-package es.tid.haewoon.cdr;
+package es.tid.haewoon.cdr.filter;
+
+import es.tid.haewoon.cdr.util.CDR;
+import es.tid.haewoon.cdr.util.Operator;
 
 public class OtherOperatorFilter implements CDRFilter {
 

@@ -1,4 +1,4 @@
-package es.tid.haewoon.cdr;
+package es.tid.haewoon.cdr.statistics;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -14,6 +14,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+
+import es.tid.haewoon.cdr.util.CDR;
+import es.tid.haewoon.cdr.util.CDRUtil;
+import es.tid.haewoon.cdr.util.Constants;
+import es.tid.haewoon.cdr.util.Operator;
 
 public class CountBasicStatistics {
     private static Logger logger = Logger.getLogger(CountBasicStatistics.class); 

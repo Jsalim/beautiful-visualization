@@ -1,4 +1,4 @@
-package es.tid.haewoon.cdr;
+package es.tid.haewoon.cdr.filter;
 
 import static java.util.Calendar.DAY_OF_WEEK;
 import static java.util.Calendar.FRIDAY;
@@ -9,6 +9,8 @@ import static java.util.Calendar.TUESDAY;
 import static java.util.Calendar.WEDNESDAY;
 
 import java.util.Calendar;
+
+import es.tid.haewoon.cdr.util.CDR;
 
 public class WeekdayFilter implements CDRFilter {
 

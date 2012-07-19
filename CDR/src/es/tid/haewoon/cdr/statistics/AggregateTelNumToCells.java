@@ -1,10 +1,13 @@
-package es.tid.haewoon.cdr;
+package es.tid.haewoon.cdr.statistics;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+
+import es.tid.haewoon.cdr.util.CDRUtil;
+import es.tid.haewoon.cdr.util.Constants;
 
 public class AggregateTelNumToCells {
     private static final Logger logger = Logger.getLogger(AggregateTelNumToCells.class);

@@ -1,4 +1,4 @@
-package es.tid.haewoon.cdr;
+package es.tid.haewoon.cdr.filter;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+
+import es.tid.haewoon.cdr.util.CDR;
+import es.tid.haewoon.cdr.util.Constants;
 
 public class ExtractMovistarToOthers {
     private static final Logger logger = Logger.getLogger(ExtractMovistarToOthers.class);
