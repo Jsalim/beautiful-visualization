@@ -6,6 +6,8 @@ public class Constants {
     // no constructor
     private Constants() { throw new AssertionError(); }
     
+    public static final String RAW_FILE_PATTERN = "^F1_GASSET_VOZ_\\d{1,2}092009$";
+    
     public static final String BASE_PATH = "/workspace/CDR_data";
     public static final String RESULT_PATH = BASE_PATH + File.separator + "result";
     public static final String FILTERED_PATH = BASE_PATH + File.separator + "filtered_data";
