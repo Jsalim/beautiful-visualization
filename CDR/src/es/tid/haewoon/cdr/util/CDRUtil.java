@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,6 +68,25 @@ public class CDRUtil {
     public static List<File> loadRefinedCDRFiles() {
         List<File> files = CDRUtil.loadFiles(Constants.COMMUTING_HOURS_PATH + File.separator + "7-10", "^F1_GASSET_VOZ_\\d{1,2}092009$");
         files.addAll(CDRUtil.loadFiles(Constants.COMMUTING_HOURS_PATH + File.separator + "17-20", "^F1_GASSET_VOZ_\\d{1,2}092009$"));
+        
+        Comparator mosaic = new Comparator() {
+            @Override
+            public int compare(Object arg0, Object arg1) {
+                File f1 = (File) arg0;
+                File f2 = (File) arg1;
+                
+                String f1_dir = f1.getParentFile().getName();
+                String f2_dir = f2.getParentFile().getName();
+               
+                if (f1.getName().equals(f2.getName())) {
+                    return Integer.valueOf(f1_dir.split("-")[0]).compareTo(Integer.valueOf(f2_dir.split("-")[0]));
+                } else {
+                    return f1.getName().compareTo(f2.getName());
+                }
+            }
+        };
+        
+        Collections.sort(files, mosaic);
         
         return files;
     }
