@@ -1,4 +1,4 @@
-package es.tid.haewoon.cdr;
+package es.tid.haewoon.cdr.filter;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -14,6 +14,9 @@ import java.util.List;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.log4j.Logger;
+
+import es.tid.haewoon.cdr.util.CDR;
+import es.tid.haewoon.cdr.util.Constants;
 
 /*
  * This reads *.tar.gz and extract CDRs in Barcelona.

@@ -1,8 +1,10 @@
-package es.tid.haewoon.cdr;
+package es.tid.haewoon.cdr.filter;
 
 import static java.util.Calendar.HOUR_OF_DAY;
 
 import java.util.Calendar;
+
+import es.tid.haewoon.cdr.util.CDR;
 
 public class HourFilter implements CDRFilter {
     private final int startHour;
