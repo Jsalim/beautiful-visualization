@@ -14,13 +14,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 
-public class ExtractODMatrixCDRByTime {
+public class ExtractCommutingHours {
     public static void main(String[] args) throws FileNotFoundException, IOException, ParseException {
         CDRFilter hToWFilter = new HourFilter(7, 10);   // from 7 to 10 o'clock
         CDRFilter wToHFilter = new HourFilter(17, 20);     // from 17 to 20 o'clock
         CDRFilter weekdayFilter = new WeekdayFilter();
         
-        ExtractODMatrixCDRByTime eodm = new ExtractODMatrixCDRByTime();
+        ExtractCommutingHours eodm = new ExtractCommutingHours();
         List<File> files = eodm.loadFiles(Constants.BASE_PATH);
         String line;
         
