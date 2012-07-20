@@ -80,4 +80,11 @@ public class Cell {
             return false;
         }
     }
+    
+    /*
+     * two cells are served by the same BTS?
+     */
+    public boolean IsSiblingOf(Cell other) {
+        return this.btsID.equals(other.getBTSID());
+    }
 }
