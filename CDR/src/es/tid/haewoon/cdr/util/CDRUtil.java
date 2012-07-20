@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -16,9 +17,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 
 public class CDRUtil {
     private static HashMap<String, Cell> cellid2Cell;
+    private static final Logger logger = Logger.getLogger(CDRUtil.class);
     private CDRUtil() { throw new AssertionError(); }
     
     @Deprecated
@@ -35,26 +39,16 @@ public class CDRUtil {
                 br = new BufferedReader(new FileReader(Constants.BASE_PATH + File.separator + Constants.CELL_INFO_FILE_NAME));
                 while((line = br.readLine()) != null) {
                     // do something with line.
-                    String[] tokens = line.split("\\|");
-                    if (tokens[0].equals("cell")) {
-                        // skip this line
-                        continue;
-                    }
-                    String cell = tokens[0];
-                    double longitude = Double.valueOf(tokens[6]);
-                    double latitude = Double.valueOf(tokens[7]);
-                    
-                    cellid2Cell.put(cell, new Cell(longitude, latitude));
+                    if (line.startsWith("cell")) continue;
+                    Cell cell = new Cell(line);
+                    cellid2Cell.put(cell.getID(), cell);
                 }
-            } catch (FileNotFoundException e) {
+            } catch (ParseException e) {
                 // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (NumberFormatException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                logger.debug("wrong-formatted cell", e);
             } catch (IOException e) {
                 // TODO Auto-generated catch block
-                e.printStackTrace();
+                logger.debug("No file?", e);
             }
         }
         
@@ -66,15 +60,12 @@ public class CDRUtil {
     }
     
     public static List<File> loadRefinedCDRFiles() {
-        List<File> files = CDRUtil.loadFiles(Constants.COMMUTING_HOURS_PATH + File.separator + "7-10", "^F1_GASSET_VOZ_\\d{1,2}092009$");
-        files.addAll(CDRUtil.loadFiles(Constants.COMMUTING_HOURS_PATH + File.separator + "17-20", "^F1_GASSET_VOZ_\\d{1,2}092009$"));
+        List<File> files = CDRUtil.loadFiles(Constants.COMMUTING_HOURS_PATH + File.separator + "7-10", Constants.RAW_DATA_FILE_PATTERN);
+        files.addAll(CDRUtil.loadFiles(Constants.COMMUTING_HOURS_PATH + File.separator + "17-20", Constants.RAW_DATA_FILE_PATTERN));
         
-        Comparator mosaic = new Comparator() {
+        Comparator<File> mosaic = new Comparator<File>() {
             @Override
-            public int compare(Object arg0, Object arg1) {
-                File f1 = (File) arg0;
-                File f2 = (File) arg1;
-                
+            public int compare(File f1, File f2) {
                 String f1_dir = f1.getParentFile().getName();
                 String f2_dir = f2.getParentFile().getName();
                

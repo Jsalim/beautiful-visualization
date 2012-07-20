@@ -24,15 +24,15 @@ import es.tid.haewoon.cdr.util.Constants;
 public class ExtractBarcelonaCDR {
     private static final Logger logger = Logger.getLogger(ExtractBarcelonaCDR.class);
     public static void main(String[] args) throws FileNotFoundException, IOException, ParseException {
-        double[][] barcelonaBox = new double[2][2];
-        
-        barcelonaBox[0][0] = 2.05513;        // left-top longitude
-        barcelonaBox[0][1] = 41.452505;      // left-top latitude 
-        
-        barcelonaBox[1][0] = 2.261124;       // right-bottom longitude
-        barcelonaBox[1][1] = 41.336607;      // right-bottom latitude
-        
-        CDRFilter barcelonaFilter = new LocationFilter(barcelonaBox);
+//        double[][] barcelonaBox = new double[2][2];
+//        
+//        barcelonaBox[0][0] = 2.05513;        // left-top longitude
+//        barcelonaBox[0][1] = 41.452505;      // left-top latitude 
+//        
+//        barcelonaBox[1][0] = 2.261124;       // right-bottom longitude
+//        barcelonaBox[1][1] = 41.336607;      // right-bottom latitude
+//        
+        CDRFilter barcelonaFilter = new LocationFilter(Constants.BARCELONA_BOX);
         
         ExtractBarcelonaCDR ebCDR = new ExtractBarcelonaCDR();
         List<File> archives = ebCDR.loadFiles(Constants.BASE_PATH);
