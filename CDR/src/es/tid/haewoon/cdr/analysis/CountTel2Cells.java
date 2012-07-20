@@ -1,4 +1,4 @@
-package es.tid.haewoon.cdr.statistics;
+package es.tid.haewoon.cdr.analysis;
 
 import java.io.BufferedReader;
 import java.io.File;
