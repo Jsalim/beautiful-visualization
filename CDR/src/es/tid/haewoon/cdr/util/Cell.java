@@ -1,19 +1,28 @@
 package es.tid.haewoon.cdr.util;
 
+import java.text.ParseException;
+
 public class Cell {
     double longitude;
     double latitude;
     String cellID;
+    String btsID;
     
     float x;
     float y;
     
-    public Cell(double longitude, double latitude) {
-        this("", longitude, latitude);
+    public Cell(String line) throws ParseException {
+        String[] tokens = line.split("\\|");
+        this.cellID = tokens[0];
+        this.btsID = tokens[1];
+        this.longitude = Double.valueOf(tokens[6]);
+        this.latitude = Double.valueOf(tokens[7]);
     }
     
-    public Cell(String cellID, double longitude, double latitude) {
+    @Deprecated
+    public Cell(String cellID, String btsID, double longitude, double latitude) {
         this.cellID = cellID;
+        this.btsID = btsID;
         this.longitude = longitude;
         this.latitude = latitude;
     }
@@ -33,6 +42,10 @@ public class Cell {
         return cellID;
     }
     
+    public String getBTSID() {
+        return btsID;
+    }
+    
     public double getLongitude() {
         return longitude;
     }
@@ -41,6 +54,7 @@ public class Cell {
         return latitude;
     }
 
+    @Deprecated
     public void setScreenPosition(float x, float y) {
         this.x = x;
         this.y = y;

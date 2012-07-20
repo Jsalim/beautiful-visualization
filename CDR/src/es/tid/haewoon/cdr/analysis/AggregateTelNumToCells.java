@@ -19,7 +19,7 @@ public class AggregateTelNumToCells {
     public static void main(String[] args) throws FileNotFoundException {
         // TODO Auto-generated method stub
         String targetPath = Constants.RESULT_PATH + File.separator + "3_count_telnum_2_cells";
-        Map agg = StatisticsAggregator.run(targetPath, Constants.RAW_FILE_PATTERN);
+        Map agg = StatisticsAggregator.run(targetPath, Constants.RAW_DATA_FILE_PATTERN);
         CDRUtil.printMapSortedByValue(targetPath + File.separator + "all", agg);
     }
 
