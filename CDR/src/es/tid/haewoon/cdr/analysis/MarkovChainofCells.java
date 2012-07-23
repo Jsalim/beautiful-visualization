@@ -25,7 +25,9 @@ public class MarkovChainofCells {
      */
     private Map<String, State> markovChain = new HashMap<String, State>();
     
+    
     public class State {
+        private static final int THRESHOLD = 1;
         Map<String, Double> transitions; 
         
         public State() {
@@ -52,7 +54,7 @@ public class MarkovChainofCells {
         public void addNext(String next) {
             Double curWt = transitions.get(next);
             if (curWt == null) {
-                curWt = 1.0;
+                curWt = 0.0;
             }
             curWt++;
             transitions.put(next, curWt);
@@ -60,6 +62,19 @@ public class MarkovChainofCells {
         
         public Map<String, Double> getTransitions() {
             return transitions;
+        }
+
+        // remove transitions of weight equal or less than threshold
+        public void pruning() {
+            Map<String, Double> pruned = new HashMap<String, Double>();
+            for (String next: transitions.keySet()) {
+                double weight = transitions.get(next);
+                if (weight > THRESHOLD) {
+                   pruned.put(next, weight);
+                }
+            }
+            transitions.clear();    // (care memory?)
+            transitions = pruned;
         }
     }
     
@@ -71,7 +86,8 @@ public class MarkovChainofCells {
     public void run() throws IOException {
         
         // TODO Auto-generated method stub
-        List<File> files = CDRUtil.loadFiles(Constants.RESULT_PATH + File.separator + "5_sequences_threshold_60_min", "^.*-.*$");
+        List<File> files = CDRUtil.loadFiles(Constants.RESULT_PATH + File.separator + "5_sequences_threshold_" + FindSequences.THRESHOLD_MIN 
+                                            + "_min", "^.*-.*$");
         Comparator<File> rankC = new Comparator<File>() {
             @Override
             public int compare(File o1, File o2) {
@@ -82,13 +98,19 @@ public class MarkovChainofCells {
         Collections.sort(files, rankC);
         logger.debug(files.size() + " files loaded...");
 
-        String targetPath = Constants.RESULT_PATH + File.separator + "6_markov_chain_of_cells";
+        String targetPath = Constants.RESULT_PATH + File.separator + "6_1_markov_chain_of_cells";
         boolean success = (new File(targetPath)).mkdir();
         if (success) {
             logger.debug("A directory [" + targetPath + "] is created");
         }
         
-        String targetNPath = Constants.RESULT_PATH + File.separator + "6_normalized_markov_chain_of_cells";
+        String targetPPath = Constants.RESULT_PATH + File.separator + "6_2_pruned_markov_chain_of_cells";
+        success = (new File(targetPPath)).mkdir();
+        if (success) {
+            logger.debug("A directory [" + targetPPath + "] is created");
+        }
+        
+        String targetNPath = Constants.RESULT_PATH + File.separator + "6_3_normalized_markov_chain_of_cells";
         success = (new File(targetNPath)).mkdir();
         if (success) {
             logger.debug("A directory [" + targetNPath + "] is created");
@@ -132,6 +154,7 @@ public class MarkovChainofCells {
             Collections.sort(cells, strInt);
             
             BufferedWriter bw = new BufferedWriter(new FileWriter(targetPath + File.separator + file.getName()));
+            BufferedWriter pbw = new BufferedWriter(new FileWriter(targetPPath + File.separator + file.getName()));
             BufferedWriter nbw = new BufferedWriter(new FileWriter(targetNPath + File.separator + file.getName()));
             
             for (String cell: cells) {
@@ -144,13 +167,26 @@ public class MarkovChainofCells {
                     bw.newLine();
                 }   
                 
+                s.pruning();
+                states = new ArrayList<String>(s.getTransitions().keySet());
+                Collections.sort(states, strInt);
+                
+                for (String next: states) {
+                    pbw.write(cell + "\t" + next + "\t" + s.getTransitions().get(next));
+                    pbw.newLine();
+                }   
+                
                 s.normalize();
+                states = new ArrayList<String>(s.getTransitions().keySet());
+                Collections.sort(states, strInt);
+                
                 for (String next: states) {
                     nbw.write(cell + "\t" + next + "\t" + s.getTransitions().get(next));
                     nbw.newLine();
                 }
             }
             bw.close();
+            pbw.close();
             nbw.close();
         }
     }

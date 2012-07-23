@@ -20,14 +20,12 @@ import es.tid.haewoon.cdr.util.CDR;
 import es.tid.haewoon.cdr.util.CDRUtil;
 import es.tid.haewoon.cdr.util.Constants;
 
-/*
- * after running this class, we *MUST* sort the result
- */
+
 public class ExtractActiveWalkers {
     TelephoneNumberFilter tnFilter;
     private final String active_walker_path = Constants.RESULT_PATH + "/3_count_telnum_2_cells/all";
     private static Logger logger = Logger.getLogger(ExtractActiveWalkers.class);
-    private final int TOP_K = 10000;
+    public static final int TOP_K = 10000;
     private final String targetDirectory;
     private Map<String, Integer> num2Rank = new HashMap<String, Integer>();
     private Map<String, String> num2Cell = new HashMap<String, String>();
