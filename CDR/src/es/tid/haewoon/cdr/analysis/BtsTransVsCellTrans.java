@@ -19,6 +19,7 @@ import org.apache.log4j.Logger;
 import es.tid.haewoon.cdr.util.CDRUtil;
 import es.tid.haewoon.cdr.util.Cell;
 import es.tid.haewoon.cdr.util.Constants;
+import es.tid.haewoon.cdr.util.MarkovChainState;
 import es.tid.haewoon.cdr.util.NumericComparator;
 import es.tid.haewoon.cdr.util.RankComparator;
 
@@ -41,62 +42,12 @@ public class BtsTransVsCellTrans {
             // TODO Auto-generated method stub
             Transition t1 = (Transition) obj;
             
-            return t1.cur.equals(this.cur) && t1.next.equals(this.next);
+            return this.cur.equals(t1.cur) && this.next.equals(t1.next);
         }
 
         @Override
         public int hashCode() {
             return (cur + next).hashCode();
-        }
-        
-    }
-    
-    public class BTSTr {
-        public int threshold = 1;
-        Transition btsT;
-        
-        Map<CellTr, Double> cellTrs = new HashMap<CellTr, Double>(); 
-        
-        public BTSTr(Transition btsT) {
-            this.btsT = btsT;
-        }
-        
-        public void addCellTr(CellTr ct) {
-            double newWt = (cellTrs.get(ct) == null) ?1 :cellTrs.get(ct)+1;
-            cellTrs.put(ct, newWt);
-        }
-        
-        public Map<CellTr, Double> getCellTrs() {
-            return cellTrs;
-        }
-        
-        public Transition getTr() {
-            return btsT;
-        }
-        
-        // remove transitions of weight equal or less than threshold
-        public void pruning() {
-            Map<CellTr, Double> pruned = new HashMap<CellTr, Double>();
-            for (CellTr next: cellTrs.keySet()) {
-                double weight = cellTrs.get(next);
-                if (weight > threshold) {
-                    pruned.put(next, weight);
-                }
-            }
-            cellTrs = pruned;
-        }
-        
-        public void normalize() {
-            double sum = 0.0;
-            for (CellTr next: cellTrs.keySet()) {
-                sum += cellTrs.get(next);
-            }
-            Map<CellTr, Double> nzTrans = new HashMap<CellTr, Double>();
-            for (CellTr next: cellTrs.keySet()) {
-                nzTrans.put(next, cellTrs.get(next)/sum);
-            }
-
-            this.cellTrs = nzTrans;
         }
     }
     
@@ -113,18 +64,9 @@ public class BtsTransVsCellTrans {
         }
     }
     
-    public class CellTr extends Transition {
-
-        public CellTr(String cur, String next) {
-            super(cur, next);
-        }
-        
-    }
-    
-    
     private Map<String, String> cell2bts = new HashMap<String, String>();
     Logger logger = Logger.getLogger(BtsTransVsCellTrans.class);
-    private Map<Transition, BTSTr> btsbts2Trs;
+    private Map<Transition, MarkovChainState<Transition>> btsbts2Trs;
     private TransitionComparator tc = new TransitionComparator();
     
     public static void main(String[] args) throws IOException, ParseException {
@@ -139,7 +81,7 @@ public class BtsTransVsCellTrans {
     
     public void run(String inputPath, String pattern, 
                     String targetPath, String targetPPath, String targetNPath) throws IOException, ParseException {
-        btsbts2Trs = new HashMap<Transition, BTSTr>();
+        btsbts2Trs = new HashMap<Transition, MarkovChainState<Transition>>();
         String line = "";
         BufferedReader br = new BufferedReader(new FileReader(Constants.BARCELONA_CELL_INFO_PATH));
         while((line = br.readLine()) != null) {
@@ -188,8 +130,9 @@ public class BtsTransVsCellTrans {
                     Transition tr = new Transition(cBTS, nBTS);
                     
                     if (!cBTS.equals(nBTS)) {
-                        BTSTr btsT = (btsbts2Trs.get(tr) == null) ? new BTSTr(tr) :btsbts2Trs.get(tr);
-                        btsT.addCellTr(new CellTr(tokens[i], tokens[i+1]));
+                        MarkovChainState<Transition> btsT = 
+                                (btsbts2Trs.get(tr) == null) ? new MarkovChainState<Transition>() :btsbts2Trs.get(tr);
+                        btsT.addNext(new Transition(tokens[i], tokens[i+1]));
                         btsbts2Trs.put(tr, btsT);
                     }
                 }
@@ -203,32 +146,31 @@ public class BtsTransVsCellTrans {
             BufferedWriter nbw = new BufferedWriter(new FileWriter(targetNPath + File.separator + file.getName()));
             
             for (Transition t: transitions) {
-                BTSTr btsTr = btsbts2Trs.get(t);
-                Map<CellTr, Double> celltr2Weight = btsTr.getCellTrs();
+                MarkovChainState<Transition> btsTr = btsbts2Trs.get(t);
                 
-                List<CellTr> celltrs = new ArrayList<CellTr>(celltr2Weight.keySet());
+                List<Transition> celltrs = new ArrayList<Transition>(btsTr.getTransitions().keySet());
                 Collections.sort(celltrs, tc);
                 
-                for (CellTr celltr: celltrs) {
-                    bw.write(btsTr.getTr() + "\t" + celltr + "\t" + celltr2Weight.get(celltr));
+                for (Transition celltr: celltrs) {
+                    bw.write(t + "\t" + celltr + "\t" + btsTr.getTransitions().get(celltr));
                     bw.newLine();
                 }
                 
                 btsTr.pruning();
-                celltrs = new ArrayList<CellTr>(btsTr.getCellTrs().keySet());
+                celltrs = new ArrayList<Transition>(btsTr.getTransitions().keySet());
                 Collections.sort(celltrs, tc);
                 
-                for (CellTr celltr: celltrs) {
-                    pbw.write(btsTr.getTr() + "\t" + celltr + "\t" + btsTr.getCellTrs().get(celltr));
+                for (Transition celltr: celltrs) {
+                    pbw.write(t + "\t" + celltr + "\t" + btsTr.getTransitions().get(celltr));
                     pbw.newLine();
                 } 
                 
                 btsTr.normalize();
-                celltrs = new ArrayList<CellTr>(btsTr.getCellTrs().keySet());
+                celltrs = new ArrayList<Transition>(btsTr.getTransitions().keySet());
                 Collections.sort(celltrs, tc);
                 
-                for (CellTr celltr: celltrs) {
-                    nbw.write(btsTr.getTr() + "\t" + celltr + "\t" + btsTr.getCellTrs().get(celltr));
+                for (Transition celltr: celltrs) {
+                    nbw.write(t + "\t" + celltr + "\t" + btsTr.getTransitions().get(celltr));
                     nbw.newLine();
                 } 
             }
