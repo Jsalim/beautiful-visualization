@@ -1,5 +1,7 @@
 package es.tid.haewoon.cdr.analysis;
 
+import static es.tid.haewoon.cdr.util.Constants.RESULT_PATH;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -9,7 +11,6 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,50 +21,12 @@ import es.tid.haewoon.cdr.util.CDRUtil;
 import es.tid.haewoon.cdr.util.Cell;
 import es.tid.haewoon.cdr.util.Constants;
 import es.tid.haewoon.cdr.util.MarkovChainState;
-import es.tid.haewoon.cdr.util.NumericComparator;
 import es.tid.haewoon.cdr.util.RankComparator;
+import es.tid.haewoon.cdr.util.Transition;
+import es.tid.haewoon.cdr.util.TransitionComparator;
 
 public class BtsTransVsCellTrans {
-    public class Transition {
-        public String cur;
-        public String next;
-        
-        public Transition(String cur, String next) {
-            this.cur = cur;
-            this.next = next;
-        }
-        
-        public String toString() {
-            return cur + "\t" + next;
-        }
 
-        @Override
-        public boolean equals(Object obj) {
-            // TODO Auto-generated method stub
-            Transition t1 = (Transition) obj;
-            
-            return this.cur.equals(t1.cur) && this.next.equals(t1.next);
-        }
-
-        @Override
-        public int hashCode() {
-            return (cur + next).hashCode();
-        }
-    }
-    
-    public class TransitionComparator implements Comparator<Transition> {
-        NumericComparator nc = new NumericComparator();
-        @Override
-        public int compare(Transition arg0, Transition arg1) {
-            // TODO Auto-generated method stub
-            arg0 = (Transition) arg0;
-            arg1 = (Transition) arg1;
-            
-            int result = (nc.compare(arg0.cur, arg1.cur) == 0) ? nc.compare(arg0.next, arg1.next) : nc.compare(arg0.cur, arg1.cur);
-            return result;
-        }
-    }
-    
     private Map<String, String> cell2bts = new HashMap<String, String>();
     Logger logger = Logger.getLogger(BtsTransVsCellTrans.class);
     private Map<Transition, MarkovChainState<Transition>> btsbts2Trs;
@@ -71,7 +34,7 @@ public class BtsTransVsCellTrans {
     
     public static void main(String[] args) throws IOException, ParseException {
         BtsTransVsCellTrans bvc = new BtsTransVsCellTrans();
-        bvc.run(Constants.RESULT_PATH + File.separator + "5_sequences_threshold_" + FindSequences.THRESHOLD_MIN + "_min", 
+        bvc.run(RESULT_PATH + File.separator + "5_sequences_threshold_" + FindSequences.THRESHOLD_MIN + "_min", 
                 "^.*-.*$", 
                 Constants.RESULT_PATH + File.separator + "11_1_BTS_trans_Cell_trans", 
                 Constants.RESULT_PATH + File.separator + "11_2_pruned_BTS_trans_cell_trans", 
