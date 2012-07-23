@@ -16,65 +16,15 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import es.tid.haewoon.cdr.analysis.MarkovChainofCells.State;
 import es.tid.haewoon.cdr.util.CDRUtil;
 import es.tid.haewoon.cdr.util.Constants;
+import es.tid.haewoon.cdr.util.MarkovChainState;
+import es.tid.haewoon.cdr.util.NumericComparator;
 
 public class AggregateMarkovChains {
     private static Logger logger = Logger.getLogger(AggregateMarkovChains.class);
-    private Map<String, State> bigChains = new HashMap<String, State>();
+    private Map<String, MarkovChainState> bigChains = new HashMap<String, MarkovChainState>();
     
-    public class State {
-        private static final int THRESHOLD = 2; // here we set 2, because 2 means one person
-        Map<String, Double> transitions; 
-        
-        public State() {
-            transitions = new HashMap<String, Double>(); 
-        }
-        
-        public void clear() {
-            transitions.clear();
-        }
-        
-        public void normalize() {
-            double sum = 0.0;
-            for (String next: transitions.keySet()) {
-                sum += transitions.get(next);
-            }
-            Map<String, Double> nzTrans = new HashMap<String, Double>();
-            for (String next: transitions.keySet()) {
-                nzTrans.put(next, transitions.get(next)/sum);
-            }
-            
-            this.transitions = nzTrans;
-        }
-        
-        public void addNext(String next, double value) {
-            Double curWt = transitions.get(next);
-            if (curWt == null) {
-                curWt = 0.0;
-            }
-            curWt += value;
-            transitions.put(next, curWt);
-        }
-        
-        public Map<String, Double> getTransitions() {
-            return transitions;
-        }
-        
-        // remove transitions of weight equal or less than threshold
-        public void pruning() {
-            Map<String, Double> pruned = new HashMap<String, Double>();
-            for (String next: transitions.keySet()) {
-                double weight = transitions.get(next);
-                if (weight > THRESHOLD) {
-                   pruned.put(next, weight);
-                }
-            }
-            transitions.clear();    // (care memory?)
-            transitions = pruned;
-        }
-    }
     
     /**
      * @param args
@@ -82,18 +32,24 @@ public class AggregateMarkovChains {
      */
     public static void main(String[] args) throws IOException {
         AggregateMarkovChains amc = new AggregateMarkovChains();
-        amc.run();
+//        amc.run(Constants.RESULT_PATH + File.separator + "6_2_pruned_markov_chain_of_cells", 
+//                "^.*-.*$", 
+//                Constants.RESULT_PATH + File.separator + "7_one_big_markov_chain_of_cells");
+        
+        amc.run(Constants.RESULT_PATH + File.separator + "9_2_pruned_markov_chain_of_BTS", 
+                "^.*-.*$", 
+                Constants.RESULT_PATH + File.separator + "10_one_big_markov_chain_of_BTS");
+        
     }
     
-    public void run() throws NumberFormatException, IOException {
-        String targetPath = Constants.RESULT_PATH + File.separator + "7_one_big_markov_chain";
+    public void run(String inputPath, String pattern, String targetPath) throws NumberFormatException, IOException {
         boolean success = (new File(targetPath)).mkdir();
         if (success) {
             logger.debug("A directory [" + targetPath + "] is created");
         }
         
         // TODO Auto-generated method stub
-        List<File> files = CDRUtil.loadFiles(Constants.RESULT_PATH + File.separator + "6_2_pruned_markov_chain_of_cells", "^.*-.*$");
+        List<File> files = CDRUtil.loadFiles(inputPath, pattern);
         for (File file: files) {
             logger.debug("processing " + file);
             String line = "";
@@ -104,9 +60,9 @@ public class AggregateMarkovChains {
                 String next = tokens[1];
                 double wt = Double.valueOf(tokens[2]);
                 
-                State s = bigChains.get(cur);
+                MarkovChainState s = bigChains.get(cur);
                 if (s == null) {
-                    s = new State();
+                    s = new MarkovChainState();
                 }
                 s.addNext(next, wt);
                 bigChains.put(cur, s);
@@ -114,14 +70,7 @@ public class AggregateMarkovChains {
         }
         
         List<String> cells = new ArrayList<String>(bigChains.keySet());
-        Comparator<String> strInt = new Comparator<String>() {
-
-            @Override
-            public int compare(String o1, String o2) {
-                return Integer.valueOf(o1).compareTo(Integer.valueOf(o2));
-            }
-            
-        };
+        Comparator<String> strInt = new NumericComparator();
         Collections.sort(cells, strInt);
         
         BufferedWriter bw = new BufferedWriter(new FileWriter(targetPath + File.separator + "1_big_chain"));
@@ -129,7 +78,7 @@ public class AggregateMarkovChains {
         BufferedWriter nbw = new BufferedWriter(new FileWriter(targetPath + File.separator + "3_normalized_big_chain"));
         
         for (String cell: cells) {
-            State s = bigChains.get(cell);
+            MarkovChainState s = bigChains.get(cell);
             List<String> states = new ArrayList<String>(s.getTransitions().keySet());
             Collections.sort(states, strInt);
             
@@ -138,6 +87,7 @@ public class AggregateMarkovChains {
                 bw.newLine();
             } 
             
+            s.setThreshold(2);  // 2 means one person
             s.pruning();
             states = new ArrayList<String>(s.getTransitions().keySet());
             Collections.sort(states, strInt);

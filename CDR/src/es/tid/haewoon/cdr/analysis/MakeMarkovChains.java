@@ -17,100 +17,51 @@ import org.apache.log4j.Logger;
 
 import es.tid.haewoon.cdr.util.CDRUtil;
 import es.tid.haewoon.cdr.util.Constants;
+import es.tid.haewoon.cdr.util.MarkovChainState;
+import es.tid.haewoon.cdr.util.NumericComparator;
+import es.tid.haewoon.cdr.util.RankComparator;
 
-public class MarkovChainofCells {
-    private static final Logger logger = Logger.getLogger(MarkovChainofCells.class);
+public class MakeMarkovChains {
+    private static final Logger logger = Logger.getLogger(MakeMarkovChains.class);
     /**
      * @param args
      */
-    private Map<String, State> markovChain = new HashMap<String, State>();
-    
-    
-    public class State {
-        private static final int THRESHOLD = 1;
-        Map<String, Double> transitions; 
-        
-        public State() {
-            transitions = new HashMap<String, Double>(); 
-        }
-        
-        public void clear() {
-            transitions.clear();
-        }
-        
-        public void normalize() {
-            double sum = 0.0;
-            for (String next: transitions.keySet()) {
-                sum += transitions.get(next);
-            }
-            Map<String, Double> nzTrans = new HashMap<String, Double>();
-            for (String next: transitions.keySet()) {
-                nzTrans.put(next, transitions.get(next)/sum);
-            }
-            
-            this.transitions = nzTrans;
-        }
-        
-        public void addNext(String next) {
-            Double curWt = transitions.get(next);
-            if (curWt == null) {
-                curWt = 0.0;
-            }
-            curWt++;
-            transitions.put(next, curWt);
-        }
-        
-        public Map<String, Double> getTransitions() {
-            return transitions;
-        }
+    private Map<String, MarkovChainState> markovChain = new HashMap<String, MarkovChainState>();
 
-        // remove transitions of weight equal or less than threshold
-        public void pruning() {
-            Map<String, Double> pruned = new HashMap<String, Double>();
-            for (String next: transitions.keySet()) {
-                double weight = transitions.get(next);
-                if (weight > THRESHOLD) {
-                   pruned.put(next, weight);
-                }
-            }
-            transitions.clear();    // (care memory?)
-            transitions = pruned;
-        }
-    }
-    
     public static void main(String[] args) throws IOException {
-        MarkovChainofCells mcc = new MarkovChainofCells();
-        mcc.run();
+        MakeMarkovChains mcc = new MakeMarkovChains();
+//        mcc.run(Constants.RESULT_PATH + File.separator + "5_sequences_threshold_" + FindSequences.THRESHOLD_MIN + "_min", 
+//                "^.*-.*$", 
+//                Constants.RESULT_PATH + File.separator + "6_1_markov_chain_of_cells", 
+//                Constants.RESULT_PATH + File.separator + "6_2_pruned_markov_chain_of_cells", 
+//                Constants.RESULT_PATH + File.separator + "6_3_normalized_markov_chain_of_cells");
+        
+        mcc.run(Constants.RESULT_PATH + File.separator + "8_sequences_of_BTS_threshold_" + FindSequences.THRESHOLD_MIN + "_min", 
+                "^.*-.*$", 
+                Constants.RESULT_PATH + File.separator + "9_1_markov_chain_of_BTS", 
+                Constants.RESULT_PATH + File.separator + "9_2_pruned_markov_chain_of_BTS", 
+                Constants.RESULT_PATH + File.separator + "9_3_normalized_markov_chain_of_BTS");
+        
     }
     
-    public void run() throws IOException {
+    public void run(String inputPath, String pattern, String targetPath, String targetPPath, String targetNPath) throws IOException {
         
         // TODO Auto-generated method stub
-        List<File> files = CDRUtil.loadFiles(Constants.RESULT_PATH + File.separator + "5_sequences_threshold_" + FindSequences.THRESHOLD_MIN 
-                                            + "_min", "^.*-.*$");
-        Comparator<File> rankC = new Comparator<File>() {
-            @Override
-            public int compare(File o1, File o2) {
-                // TODO Auto-generated method stub
-                return Integer.valueOf(o1.getName().split("-")[0]).compareTo(Integer.valueOf(o2.getName().split("-")[0]));
-            }
-        };
-        Collections.sort(files, rankC);
+        List<File> files = CDRUtil.loadFiles(inputPath, pattern);
+        Collections.sort(files, new RankComparator());
+        
         logger.debug(files.size() + " files loaded...");
 
-        String targetPath = Constants.RESULT_PATH + File.separator + "6_1_markov_chain_of_cells";
         boolean success = (new File(targetPath)).mkdir();
         if (success) {
             logger.debug("A directory [" + targetPath + "] is created");
         }
         
-        String targetPPath = Constants.RESULT_PATH + File.separator + "6_2_pruned_markov_chain_of_cells";
         success = (new File(targetPPath)).mkdir();
         if (success) {
             logger.debug("A directory [" + targetPPath + "] is created");
         }
         
-        String targetNPath = Constants.RESULT_PATH + File.separator + "6_3_normalized_markov_chain_of_cells";
         success = (new File(targetNPath)).mkdir();
         if (success) {
             logger.debug("A directory [" + targetNPath + "] is created");
@@ -131,9 +82,9 @@ public class MarkovChainofCells {
                     String state = tokens[i];
                     String next = tokens[i+1];
                     
-                    State s = markovChain.get(state);
+                    MarkovChainState s = markovChain.get(state);
                     if (s == null) {
-                        s = new State();
+                        s = new MarkovChainState();
                     }
                     
                     s.addNext(next);
@@ -143,14 +94,7 @@ public class MarkovChainofCells {
             
             
             List<String> cells = new ArrayList<String>(markovChain.keySet());
-            Comparator<String> strInt = new Comparator<String>() {
-
-                @Override
-                public int compare(String o1, String o2) {
-                    return Integer.valueOf(o1).compareTo(Integer.valueOf(o2));
-                }
-                
-            };
+            Comparator<String> strInt = new NumericComparator();
             Collections.sort(cells, strInt);
             
             BufferedWriter bw = new BufferedWriter(new FileWriter(targetPath + File.separator + file.getName()));
@@ -158,7 +102,7 @@ public class MarkovChainofCells {
             BufferedWriter nbw = new BufferedWriter(new FileWriter(targetNPath + File.separator + file.getName()));
             
             for (String cell: cells) {
-                State s = markovChain.get(cell);
+                MarkovChainState s = markovChain.get(cell);
                 List<String> states = new ArrayList<String>(s.getTransitions().keySet());
                 Collections.sort(states, strInt);
                 
