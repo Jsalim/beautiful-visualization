@@ -16,25 +16,27 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import es.tid.haewoon.cdr.filter.ExtractActiveWalkers;
 import es.tid.haewoon.cdr.util.CDR;
 import es.tid.haewoon.cdr.util.CDRUtil;
 import es.tid.haewoon.cdr.util.Constants;
 
-/*
- * before running this class, we *MUST* sort files first.
- */
+
 public class FindSequences {
     private static final Logger logger = Logger.getLogger(FindSequences.class);
     
-    private static final int THRESHOLD = 60 * 60 * 1000;    // 60 minutes -> milliseconds
+    public static final int THRESHOLD_MIN = 60;
+    private static final int THRESHOLD = THRESHOLD_MIN * 60 * 1000;    // 60 minutes -> milliseconds
     private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd hh:mm:ss");
+    
     /**
      * @param args
      * @throws IOException 
      */
     public static void main(String[] args) throws IOException {
         // TODO Auto-generated method stub
-        List<File> files = CDRUtil.loadFiles(Constants.RESULT_PATH + File.separator + "4_most_frequent_10000_active_walkers", "^.*-.*$");
+        List<File> files = CDRUtil.loadFiles(Constants.RESULT_PATH + File.separator + "4_most_frequent_" + 
+                                            ExtractActiveWalkers.TOP_K + "_active_walkers", "^.*-.*$");
         Comparator<File> rankC = new Comparator<File>() {
             @Override
             public int compare(File o1, File o2) {
@@ -44,7 +46,7 @@ public class FindSequences {
         };
         Collections.sort(files, rankC);
 
-        String targetPath = Constants.RESULT_PATH + File.separator + "5_sequences_threshold_60_min";
+        String targetPath = Constants.RESULT_PATH + File.separator + "5_sequences_threshold_" + THRESHOLD_MIN + "_min";
         boolean success = (new File(targetPath)).mkdir();
         if (success) {
             logger.debug("A directory [" + targetPath + "] is created");

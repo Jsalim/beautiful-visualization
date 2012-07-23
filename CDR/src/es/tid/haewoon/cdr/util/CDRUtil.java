@@ -60,8 +60,8 @@ public class CDRUtil {
     }
     
     public static List<File> loadRefinedCDRFiles() {
-        List<File> files = CDRUtil.loadFiles(Constants.COMMUTING_HOURS_PATH + File.separator + "7-10", Constants.RAW_DATA_FILE_PATTERN);
-        files.addAll(CDRUtil.loadFiles(Constants.COMMUTING_HOURS_PATH + File.separator + "17-20", Constants.RAW_DATA_FILE_PATTERN));
+        List<File> files = CDRUtil.loadFiles(Constants.SORTED_COMMUTING_HOURS_PATH + File.separator + "7-10", Constants.RAW_DATA_FILE_PATTERN);
+        files.addAll(CDRUtil.loadFiles(Constants.SORTED_COMMUTING_HOURS_PATH + File.separator + "17-20", Constants.RAW_DATA_FILE_PATTERN));
         
         Comparator<File> mosaic = new Comparator<File>() {
             @Override

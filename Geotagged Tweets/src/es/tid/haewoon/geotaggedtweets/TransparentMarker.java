@@ -23,7 +23,7 @@ public class TransparentMarker {
     float screenY = 0.0f;
     
 
-
+    
     public TransparentMarker(Status s, GeoLocation gl) {
         this.status = s;
         float longitude = (float) gl.getLongitude();

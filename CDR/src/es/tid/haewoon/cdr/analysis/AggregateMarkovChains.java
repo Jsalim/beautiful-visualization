@@ -25,6 +25,7 @@ public class AggregateMarkovChains {
     private Map<String, State> bigChains = new HashMap<String, State>();
     
     public class State {
+        private static final int THRESHOLD = 2; // here we set 2, because 2 means one person
         Map<String, Double> transitions; 
         
         public State() {
@@ -60,6 +61,19 @@ public class AggregateMarkovChains {
         public Map<String, Double> getTransitions() {
             return transitions;
         }
+        
+        // remove transitions of weight equal or less than threshold
+        public void pruning() {
+            Map<String, Double> pruned = new HashMap<String, Double>();
+            for (String next: transitions.keySet()) {
+                double weight = transitions.get(next);
+                if (weight > THRESHOLD) {
+                   pruned.put(next, weight);
+                }
+            }
+            transitions.clear();    // (care memory?)
+            transitions = pruned;
+        }
     }
     
     /**
@@ -79,7 +93,7 @@ public class AggregateMarkovChains {
         }
         
         // TODO Auto-generated method stub
-        List<File> files = CDRUtil.loadFiles(Constants.RESULT_PATH + File.separator + "6_markov_chain_of_cells", "^.*-.*$");
+        List<File> files = CDRUtil.loadFiles(Constants.RESULT_PATH + File.separator + "6_2_pruned_markov_chain_of_cells", "^.*-.*$");
         for (File file: files) {
             logger.debug("processing " + file);
             String line = "";
@@ -110,8 +124,9 @@ public class AggregateMarkovChains {
         };
         Collections.sort(cells, strInt);
         
-        BufferedWriter bw = new BufferedWriter(new FileWriter(targetPath + File.separator + "big_chain"));
-        BufferedWriter nbw = new BufferedWriter(new FileWriter(targetPath + File.separator + "normalized_big_chain"));
+        BufferedWriter bw = new BufferedWriter(new FileWriter(targetPath + File.separator + "1_big_chain"));
+        BufferedWriter pbw = new BufferedWriter(new FileWriter(targetPath + File.separator + "2_pruned_big_chain"));
+        BufferedWriter nbw = new BufferedWriter(new FileWriter(targetPath + File.separator + "3_normalized_big_chain"));
         
         for (String cell: cells) {
             State s = bigChains.get(cell);
@@ -121,9 +136,21 @@ public class AggregateMarkovChains {
             for (String next: states) {
                 bw.write(cell + "\t" + next + "\t" + s.getTransitions().get(next));
                 bw.newLine();
-            }   
+            } 
+            
+            s.pruning();
+            states = new ArrayList<String>(s.getTransitions().keySet());
+            Collections.sort(states, strInt);
+            
+            for (String next: states) {
+                pbw.write(cell + "\t" + next + "\t" + s.getTransitions().get(next));
+                pbw.newLine();
+            } 
             
             s.normalize();
+            states = new ArrayList<String>(s.getTransitions().keySet());
+            Collections.sort(states, strInt);
+            
             for (String next: states) {
                 nbw.write(cell + "\t" + next + "\t" + s.getTransitions().get(next));
                 nbw.newLine();
@@ -131,6 +158,7 @@ public class AggregateMarkovChains {
         }
         bw.close();
         nbw.close();
+        pbw.close();
 
     }
 

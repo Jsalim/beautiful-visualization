@@ -15,6 +15,7 @@ public class Constants {
     public static final String BARCELONA_PATH = FILTERED_PATH + File.separator + "1_barcelona";
     public static final String MOVISTAR_TO_OTHERS_PATH = FILTERED_PATH + File.separator + "2_movistar_to_others";
     public static final String COMMUTING_HOURS_PATH = FILTERED_PATH + File.separator + "3_commuting_hours";
+    public static final String SORTED_COMMUTING_HOURS_PATH = FILTERED_PATH + File.separator + "5_sorted_commuting_hours";
     
     public static final String CELL_INFO_FILE_NAME = "GASSET_CELULA_900913.TXT";
     public static final String BARCELONA_CELL_INFO_PATH = FILTERED_PATH + File.separator + 
