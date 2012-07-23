@@ -20,6 +20,7 @@ import es.tid.haewoon.cdr.filter.ExtractActiveWalkers;
 import es.tid.haewoon.cdr.util.CDR;
 import es.tid.haewoon.cdr.util.CDRUtil;
 import es.tid.haewoon.cdr.util.Constants;
+import es.tid.haewoon.cdr.util.RankComparator;
 
 
 public class FindSequences {
@@ -37,14 +38,8 @@ public class FindSequences {
         // TODO Auto-generated method stub
         List<File> files = CDRUtil.loadFiles(Constants.RESULT_PATH + File.separator + "4_most_frequent_" + 
                                             ExtractActiveWalkers.TOP_K + "_active_walkers", "^.*-.*$");
-        Comparator<File> rankC = new Comparator<File>() {
-            @Override
-            public int compare(File o1, File o2) {
-                // TODO Auto-generated method stub
-                return Integer.valueOf(o1.getName().split("-")[0]).compareTo(Integer.valueOf(o2.getName().split("-")[0]));
-            }
-        };
-        Collections.sort(files, rankC);
+        
+        Collections.sort(files, new RankComparator());
 
         String targetPath = Constants.RESULT_PATH + File.separator + "5_sequences_threshold_" + THRESHOLD_MIN + "_min";
         boolean success = (new File(targetPath)).mkdir();
