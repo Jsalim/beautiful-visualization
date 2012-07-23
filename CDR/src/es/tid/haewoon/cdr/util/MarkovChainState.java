@@ -5,10 +5,19 @@ import java.util.Map;
 
 public class MarkovChainState<T> {
     private int threshold = 1;
-    Map<T, Double> transitions; 
+    Map<T, Double> transitions;
+    private T ID;
 
     public MarkovChainState() {
         transitions = new HashMap<T, Double>(); 
+    }
+    
+    public void setID(T ID) {
+        this.ID = ID;
+    }
+    
+    public T getID() {
+        return this.ID;
     }
     
     public void setThreshold(int threshold) {
