@@ -54,7 +54,7 @@ public class VisualizeVoronoiPrototyping extends PApplet {
         
         String line="";
         
-        List<File> files = loadFiles(Constants.RESULT_PATH + "/count_basic_statistics/");
+        List<File> files = CDRUtil.loadFiles(Constants.RESULT_PATH + "/count_basic_statistics/", "^.*\\.cl2c$");
         for (File file: files) {
             System.out.println("processing " + file);
             try {
@@ -119,21 +119,5 @@ public class VisualizeVoronoiPrototyping extends PApplet {
 //        if (tm.isVisible()) {
 //            voronoi.addPoint(new Vec2D(screenX, screenY));
 //        }
-    }
-    
-    private List<File> loadFiles(String string) {
-        // TODO Auto-generated method stub
-        List<File> filtered = new ArrayList<File>();
-        File targetPath = new File(string);
-        if (targetPath.isDirectory()) {
-            File[] files = targetPath.listFiles();
-            for (File file : files) {
-                String filename = file.getName();
-                if (filename.matches("^.*\\.cl2c$")) {
-                    filtered.add(file);
-                }
-            }
-        }
-        return filtered;
     }
 }

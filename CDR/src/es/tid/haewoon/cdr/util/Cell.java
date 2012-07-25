@@ -60,10 +60,12 @@ public class Cell {
         this.y = y;
     }
     
+    @Deprecated
     public float getScreenX() {
         return this.x;
     }
     
+    @Deprecated
     public float getScreenY() {
         return this.y;
     }
@@ -79,6 +81,11 @@ public class Cell {
         } else {
             return false;
         }
+    }
+    
+    @Override
+    public int hashCode() {
+        return (this.longitude + this.latitude + this.cellID + this.btsID).hashCode();
     }
     
     /*
