@@ -50,7 +50,15 @@ public class ElBulliRecipe {
                         ingredient = ingredient + " " + tokens[i+1].trim();
                         i++;
                     }
-                    ingredients.add(ingredient);
+                    if (i+1 < tokens.length && tokens[i+1].trim().equals("tempered")) {
+                        ingredient = ingredient + " tempered";
+                        i++;
+                    }
+                    String refined = IngredientRefiner.refine(ingredient);
+                    if (refined.length() == 0) {
+                        continue;
+                    }
+                    ingredients.add(IngredientRefiner.refine(ingredient));
                 }
             }
         }
@@ -66,7 +74,7 @@ public class ElBulliRecipe {
         String lineDelimeter = "";
         for (String ingredient : ingredients) {
             sb.append(lineDelimeter);
-            sb.append(this.ID + "\t" + ingredient);
+            sb.append(this.ID + "\t" + this.year + "\t" + this.category + "\t" + this.months + "\t" + ingredient);
             lineDelimeter = "\r\n";
         }
         
