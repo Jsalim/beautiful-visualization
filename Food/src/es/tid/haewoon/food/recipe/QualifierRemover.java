@@ -16,9 +16,18 @@ public class QualifierRemover extends Stemmer {
                 replaceAll("pasteurized", "").
                 replaceAll("ground ", "").
                 replaceAll("toasted ", "").
+                replaceAll("peeled", "").
+                replaceAll("shavings", "").
                 replaceAll("blanched", "").
                 replaceAll("drained canned", "").
                 replaceAll("cut into julienne", "").
+                replaceAll("medium-sized", "").
+                replaceAll("for frying", "").
+                replaceAll("thins$", "thin").
+//                replaceAll("peel of", "").
+//                replaceAll("zest of", "").
+//                replaceAll("(leaf|leaves) of", "").
+//                replaceAll("(sprig|sprigs) of", "").
                 replaceAll("freshly", "").
                 replaceAll("fresh", "");  
     }

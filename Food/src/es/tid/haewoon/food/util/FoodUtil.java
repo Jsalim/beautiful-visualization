@@ -42,7 +42,7 @@ public class FoodUtil {
     public static String stemElBulli(String raw) {
         if (stemmer == null) {
             stemmer = new SpecialCharRemover(new QuantifierRemover(new QualifierRemover(new UtensilRemover(
-                    new IrregularRemover(new PluralToSingular(new NeedlessWhiteSpaceRemover(new LowerCaser())))))));
+                    new PluralToSingular(new NeedlessWhiteSpaceRemover(new LowerCaser(new IrregularRemover())))))));
         }
         return stemmer.stem(raw);
     }

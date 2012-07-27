@@ -51,23 +51,24 @@ public class ElBulliRecipe {
             } else if (line.startsWith("&ingredients")) {
                 String mixed = parse(line);
                 String[] tokens;
-                if (mixed.indexOf("<br>") != -1) {
-                    tokens = mixed.split("<br>");
-                } else {
-                    tokens = mixed.split("#  ");
-                }
+                
+                tokens = mixed.split("<br>");
                 for (int i = 0; i < tokens.length; i++) {
                     String ingredient = tokens[i].trim();
-                    if (ingredient.equals("(ready prepared")) {
-                        continue;
-                    }
-                    if (ingredient.indexOf("(") != -1 && ingredient.indexOf(")") == -1) {
-                        try {
-                            ingredient = ingredient + " " + tokens[i+1].trim();
-                        } catch (Exception e) {
-                            ingredient = ingredient + ")";
-                        }
+                    if (i < tokens.length-1 && tokens[i+1].trim().equals("(ready prepared)")) {
+                        ingredient = ingredient + tokens[i+1].trim();
                         i++;
+                    }
+
+                    if (ingredient.indexOf("(") != -1 && ingredient.indexOf(")") == -1) {
+                        int j = i+1;
+                        for (; j < tokens.length; j++) {
+                            ingredient = ingredient + tokens[j].trim();
+                            if (tokens[j].indexOf(")") != -1) {
+                                break;
+                            } 
+                        }
+                        i = j;
                     }
                     if (i+1 < tokens.length && tokens[i+1].trim().equals("tempered")) {
                         ingredient = ingredient + " tempered";

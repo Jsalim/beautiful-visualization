@@ -13,11 +13,16 @@ public class PluralToSingular extends Stemmer {
                 replaceAll("apricots", "apricot").
                 replaceAll("artichokes", "artichoke").
                 replaceAll("asparaguses", "asparagus").
+                replaceAll("avocados", "avocado").
+                replaceAll("barnacles", "barnacle").
                 replaceAll("batons", "baton").
                 replaceAll("beans", "bean").
+                replaceAll("beets", "beet").
+                replaceAll("berries", "berry").
                 replaceAll("bones", "bone").
                 replaceAll("brains", "brain").
                 replaceAll("caps", "cap").
+                replaceAll("caramels", "caramel").
                 replaceAll("carrots", "carrot").
                 replaceAll("ceps", "cep").
                 replaceAll("cherries", "cheery").
@@ -30,7 +35,9 @@ public class PluralToSingular extends Stemmer {
                 replaceAll("eggs", "egg").
                 replaceAll("egg whites", "egg white").
                 replaceAll("filaments", "filament").
+                replaceAll("flowers", "flower").
                 replaceAll("gonads", "gonad").
+                replaceAll("grains", "grain").
                 replaceAll("hazelnuts", "hazelnut").
                 replaceAll("heads", "head").
                 replaceAll("hearts", "heart").
@@ -50,6 +57,8 @@ public class PluralToSingular extends Stemmer {
                 replaceAll("oranges", "orange").
                 replaceAll("oysters", "oyster").
                 replaceAll("peanuts", "peanut").
+                replaceAll("pears", "pear").
+                replaceAll("peas", "pea").
                 replaceAll("peppercorns", "peppercorn").
                 replaceAll("petals", "petal").
                 replaceAll("pistachios", "pistachio").
@@ -57,22 +66,30 @@ public class PluralToSingular extends Stemmer {
                 replaceAll("pods", "pod").
                 replaceAll("pois", "poi").
                 replaceAll("potatoes", "potato").
+                replaceAll("raspberries", "raspberry").
                 replaceAll("redcurrants", "redcurrant").
                 replaceAll("rounds", "").
                 replaceAll("scallops", "scallop").
                 replaceAll("seeds", "seed").
-                replaceAll("sheets", "sheet").          // plural -> singular libraries do not work well... :'(
+                replaceAll("sheets", "sheet").         
+                replaceAll("shoots", "shoot").
                 replaceAll("shells", "shell").
+                replaceAll("shoots", "shoot").
+                replaceAll("snails", "snail").
                 replaceAll("squids", "squid").
                 replaceAll("stamens", "stamen").
+                replaceAll("stems of", "stem of").
                 replaceAll("sticks", "stick").
                 replaceAll("strawberries", "strawberry").
                 replaceAll("tails", "tail").
+                replaceAll("tentacles", "tentacle").
                 replaceAll("tomatoes", "tomato").
                 replaceAll("trotters", "trotter").
+                replaceAll("trunks", "trunk").
                 replaceAll("winglets", "winglet").
                 replaceAll("yogurts", "yogurt").
                 replaceAll("yolks", "yolk").
+                replaceAll("zests", "zest").
                 replaceAll("zucchinis", "zucchini");
     }
 

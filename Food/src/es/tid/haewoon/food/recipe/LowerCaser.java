@@ -5,6 +5,10 @@ public class LowerCaser extends Stemmer {
         super();
     }
     
+    public LowerCaser(Stemmer next) {
+        super(next);
+    }
+    
     @Override
     public String refine(String raw) {
         return raw.toLowerCase();

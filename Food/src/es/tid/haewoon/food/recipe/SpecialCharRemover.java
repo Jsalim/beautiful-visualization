@@ -7,7 +7,8 @@ public class SpecialCharRemover extends Stemmer {
     
     @Override
     public String refine(String raw) {
-        return raw.replaceAll("\\(.*\\)", "").
+        return raw.replaceAll(".*\\(ready prepared\\)", "").
+                replaceAll("\\(.*\\)", "").
                 replaceAll("\\d+", "").     // any number(s)
                 replaceAll("\\.", "").
                 replaceAll("\\?", "").
