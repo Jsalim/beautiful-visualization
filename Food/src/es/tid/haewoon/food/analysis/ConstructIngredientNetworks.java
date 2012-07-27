@@ -24,9 +24,6 @@ public class ConstructIngredientNetworks {
     private static Map<String, Set<String>> when2nodes = new HashMap<String, Set<String>>();
     
     public void flush(String id, String year, String category, String months, Set<String> ingredients) throws IOException {
-        if (months.equals("ALL YEAR")) {
-            months = "1,2,3,4,5,6,7,8,9,10,11,12";
-        }
         List<String> ings = new ArrayList<String>(ingredients);
         for (String month : months.split(",")) {
 
