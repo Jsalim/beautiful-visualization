@@ -2,14 +2,11 @@ package es.tid.haewoon.cdr.visualization;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
@@ -18,11 +15,14 @@ import org.apache.log4j.Logger;
 
 import processing.core.PApplet;
 import processing.core.PFont;
+import processing.core.PGraphics;
+import processing.core.PImage;
 import toxi.geom.Polygon2D;
 import toxi.geom.Vec2D;
 import toxi.geom.mesh2d.Voronoi;
 import toxi.processing.ToxiclibsSupport;
 import codeanticode.glgraphics.GLConstants;
+import codeanticode.glgraphics.GLGraphicsOffScreen;
 import de.fhpotsdam.unfolding.Map;
 import de.fhpotsdam.unfolding.geo.Location;
 import de.fhpotsdam.unfolding.providers.Google;
@@ -31,7 +31,6 @@ import es.tid.haewoon.cdr.analysis.FindSequences;
 import es.tid.haewoon.cdr.util.CDRUtil;
 import es.tid.haewoon.cdr.util.Cell;
 import es.tid.haewoon.cdr.util.Constants;
-import es.tid.haewoon.cdr.util.NumericComparator;
 import es.tid.haewoon.cdr.util.RankComparator;
 import es.tid.haewoon.cdr.util.Transition;
 
@@ -70,7 +69,7 @@ public class VisualizeBTSSequence extends PApplet {
 
         map.zoomAndPanTo(new Location(41.387628f, 2.1698f), 13); // lat-long
         MapUtils.createDefaultEventDispatcher(this, map);
-
+        
         String line = "";
         try {
             BufferedReader br = new BufferedReader(new FileReader(Constants.BARCELONA_CELL_INFO_PATH));
@@ -162,6 +161,7 @@ public class VisualizeBTSSequence extends PApplet {
             // TODO Auto-generated catch block
             logger.error(e);
         }
+        logger.debug("max_weight: " + max_weight);
     }
 
     java.util.Map<Integer, List<String>> color2seq = new HashMap<Integer, List<String>>();
@@ -188,18 +188,22 @@ public class VisualizeBTSSequence extends PApplet {
 
                 pushStyle();
                 noStroke();
-                fill(0xFF1f1adb, 50);
+                fill(0xFF1f1adb, 40);
 
                 ellipse(cxy[0], cxy[1], 30, 30);
                 ellipse(lxy[0], lxy[1], 30, 30);
 
-                int thickness = (int) map((float) weight, 0f, (float) max_weight, 20f, 50f);
-                int alpha = (int) map((float) weight, 0f, (float) max_weight, 100f, 255f);
+                int thickness = (int) map((float) weight, 0f, (float) max_weight, 5f, 100f);
+                int alpha = (int) map((float) weight, 0f, (float) max_weight, 70f, 255f);
                 
                 stroke(edgeColor, alpha);
                 strokeWeight(thickness);
                 
                 line(lxy[0], lxy[1], cxy[0], cxy[1]);
+                
+//                float slope = (cxy[0]-lxy[0])/(cxy[1]-lxy[1]);
+//                text("" + weight, (lxy[0]+cxy[0])/2, (lxy[1]+cxy[1])/2-20);
+                
                 popStyle();
             }
         }
@@ -237,20 +241,24 @@ public class VisualizeBTSSequence extends PApplet {
         text("Press S to save the current screen", 15, 50);
         text("Press Q to toggle the sequence", 15, 70);
         text("Press N to proceed to the next sequence", 15, 90);
+        text("Press P to return to the last sequence", 15, 110);
 
         if (showVoronoi) {
             showVoronoi();
         }
 
         if (saveFile) {
-            saveFrame(targetPath + File.separator + files.get(fileIndex).getName() + ".png");
+            Location center = map.getLocationFromScreenPosition(width/2, height/2);
+            save(targetPath + File.separator + files.get(fileIndex).getName() + "_level" + map.getZoomLevel() + "_" + 
+                            + center.x + "_" + center.y + ".png");
             saveFile = false;
         }
 
         if (showSeq) {
-            text("[" + files.get(fileIndex).getName() + "]", 15, 110);
+            text("[" + files.get(fileIndex).getName() + "]", 15, 150);
             showSeq();
         }
+        
     }
 
     public void keyPressed() {
@@ -269,6 +277,11 @@ public class VisualizeBTSSequence extends PApplet {
 
         case 'n':
             fileIndex++;
+            loadSeq();
+            break;
+            
+        case 'p':
+            fileIndex = Math.max(fileIndex-1, 0);
             loadSeq();
             break;
         }

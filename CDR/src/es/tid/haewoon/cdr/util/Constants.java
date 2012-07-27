@@ -18,6 +18,7 @@ public class Constants {
     public static final String SORTED_COMMUTING_HOURS_PATH = FILTERED_PATH + File.separator + "5_sorted_commuting_hours";
     
     public static final String CELL_INFO_FILE_NAME = "GASSET_CELULA_900913.TXT";
+//    public static final String CELL_INFO_FILE_NAME = "cells_spain.txt";
     public static final String BARCELONA_CELL_INFO_PATH = FILTERED_PATH + File.separator + 
                                                           "4_barcelona_CELLs" + File.separator + CELL_INFO_FILE_NAME;
     
