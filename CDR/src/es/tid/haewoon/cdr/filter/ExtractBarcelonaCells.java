@@ -22,7 +22,7 @@ public class ExtractBarcelonaCells {
                 "4_barcelona_CELLs" + File.separator + Constants.CELL_INFO_FILE_NAME));
         BufferedReader br = new BufferedReader(new FileReader(Constants.BASE_PATH + File.separator + Constants.CELL_INFO_FILE_NAME));
         while((line = br.readLine()) != null) {
-            if (line.startsWith("cell")) continue;  // skip the first line of column description
+            if (line.startsWith("cell") || line.startsWith("CELL")) continue;  // skip the first line of column description
             try {
                 Cell cell = new Cell(line);
                 if(cell.isIn(Constants.BARCELONA_BOX)) {

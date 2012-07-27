@@ -20,6 +20,7 @@ public class ElBulliRecipe {
     String person;
     List<String> ingredients;
     
+    
     public ElBulliRecipe(File file) throws IOException {
         this.ID = file.getName().split("\\.")[0];
         String line;
@@ -54,11 +55,13 @@ public class ElBulliRecipe {
                         ingredient = ingredient + " tempered";
                         i++;
                     }
+                    
                     String refined = IngredientRefiner.refine(ingredient);
                     if (refined.length() == 0) {
                         continue;
                     }
-                    ingredients.add(IngredientRefiner.refine(ingredient));
+                    
+                    ingredients.add(refined);
                 }
             }
         }

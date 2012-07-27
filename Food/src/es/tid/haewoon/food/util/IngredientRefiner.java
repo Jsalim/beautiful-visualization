@@ -34,6 +34,23 @@ public class IngredientRefiner {
                 replaceAll("\\sg\\s", "").
                 replaceAll("\\?", "").
                 replaceAll("\\s+", " ").
+                replaceAll("sheets", "sheet").          // plural -> singular libraries do not work well... :'(
+                replaceAll("eggs", "egg").
+                replaceAll("yolks", "yolk").
+                replaceAll("leaves", "leaf").
+                replaceAll("tomatoes", "tomato").
+                replaceAll("onions", "onion").
+                replaceAll("apples", "apple").
+                replaceAll("plums", "plum").
+                replaceAll("segments", "").
+                replaceAll("carrots", "carrot").
+                replaceAll("rounds", "").
+                replaceAll("brains", "brain").
+                replaceAll("yogurts", "yogurt").
+                replaceAll("potatoes", "potato").
+                replaceAll("pistachios", "pistachio").
+                replaceAll("noodles", "noodle").
+                replaceAll("mushrooms", "mushroom").
                 trim();
     }
 }
