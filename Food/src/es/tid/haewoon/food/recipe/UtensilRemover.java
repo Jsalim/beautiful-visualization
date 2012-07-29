@@ -11,7 +11,7 @@ public class UtensilRemover extends Stemmer {
                 replaceAll(".*transparency$", "").
                 replaceAll(".*metal frame$", "").
                 replaceAll(".*wooden skewers$", "").
-                replaceAll(".*soda siphon$", "").
+                replaceAll(".*siphon$", "").
                 replaceAll(".*silicon mold$", "").
                 replaceAll(".*transparencies", "").
                 replaceAll("N.{1,5}cartridge", "").       // N20 Catridge
