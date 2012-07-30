@@ -271,6 +271,12 @@ public class VisualizeBTSSequence extends PApplet {
         for ( Polygon2D polygon : voronoi.getRegions() ) {
             gfx.polygon2D( polygon );
         }
+        
+        fill(255, 0, 255);
+        noStroke();
+        for (Vec2D c : voronoi.getSites() ) {
+            ellipse(c.x, c.y, 5, 5);
+        }
     }
 
     public void interactiveMode() {

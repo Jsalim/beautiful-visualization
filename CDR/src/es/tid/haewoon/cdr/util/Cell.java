@@ -15,13 +15,8 @@ public class Cell {
         String[] tokens = line.split("\\|");
         this.cellID = tokens[0];
         this.btsID = tokens[1];
-        if (Constants.CELL_INFO_FILE_NAME.equals("GASSET_CELULA_900913.TXT")) {
-            this.longitude = Double.valueOf(tokens[6]);
-            this.latitude = Double.valueOf(tokens[7]);
-        } else if (Constants.CELL_INFO_FILE_NAME.equals("cells_spain.txt")) {
-            this.longitude = Double.valueOf(tokens[2]);
-            this.latitude = Double.valueOf(tokens[3]);
-        }
+        this.longitude = Double.valueOf(tokens[6]);
+        this.latitude = Double.valueOf(tokens[7]);
     }
     
     @Deprecated
