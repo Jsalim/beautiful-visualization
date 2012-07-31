@@ -15,7 +15,7 @@ public class QuantifierRemover extends Stemmer {
                 replaceAll("\\sg\\s", "").
                 replaceAll(unitsPattern, "").
                 replaceAll(unitPattern, "").
-                replaceAll("approx.", "").
+                replaceAll("approx\\.", "").
                 replaceAll("per 2 cups of .*", "").
                 replaceAll("a few drops of", "").
                 replaceAll("$a\\s|\\sa\\s", " ").
@@ -31,9 +31,10 @@ public class QuantifierRemover extends Stemmer {
                 replaceAll("semi-circlular", "").
                 replaceAll("piece of", "").
                 replaceAll("large pinch of", "").
-                replaceAll("^of", "").
+                replaceAll("a pinch of", "").
                 replaceAll("\\bpinch\\b", "").
                 replaceAll("\\bpinches\\b", "").
+                replaceAll("^of", "").
                 replaceAll("cans of", "").
                 replaceAll("diced into .? (cubes|cube)", "").
                 replaceAll("tiny cube of", "").

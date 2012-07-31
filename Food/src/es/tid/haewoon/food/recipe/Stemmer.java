@@ -14,6 +14,7 @@ public abstract class Stemmer {
     public abstract String refine(String raw); 
     
     public String stem(String raw) {
+        
         String result = refine(raw);
         if (next != null) {
             return next.stem(result);

@@ -10,7 +10,7 @@ public class SpecialCharRemover extends Stemmer {
         return raw.replaceAll(".*\\(ready prepared\\)", "").
                 replaceAll("\\(.*\\)", "").
                 replaceAll("\\bx\\b", "").
-                replaceAll("[^a-zA-Z\\s\\-é]", "");
+                replaceAll("[^a-zA-Z\\sé]", "");
 //                replaceAll("\\d", "").     // any number(s)
 //                replaceAll("\\.", "").
 //                replaceAll("\\?", "").
