@@ -2,10 +2,11 @@ package es.tid.haewoon.food.recipe;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -24,13 +25,21 @@ public class ElBulliRecipe {
     String person;
     List<String> ingredients;
 
-
+    
     public ElBulliRecipe(File file) throws IOException {
+        this(file, "UTF-8");
+    }
+    
+    public ElBulliRecipe(File file, String encoding) throws IOException {
         this.ID = file.getName().split("\\.")[0];
-        String line;
-        ingredients = new ArrayList<String>();
-        BufferedReader br = new BufferedReader(new FileReader(file));
+        BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file), encoding));
+        fill(br);
+    }
 
+    public void fill(BufferedReader br) throws IOException {
+        ingredients = new ArrayList<String>();
+        String line;
+        
         while((line = br.readLine()) != null) {
             if (line.startsWith("titol")) {
                 title = parse(line);
@@ -52,7 +61,12 @@ public class ElBulliRecipe {
                 String mixed = parse(line);
                 String[] tokens;
                 
-                tokens = mixed.split("<br>");
+                if (mixed.indexOf("<br>") != -1) {
+                    tokens = mixed.split("<br>");
+                } else {
+                    tokens = mixed.split("#");
+                }
+                
                 for (int i = 0; i < tokens.length; i++) {
                     String ingredient = tokens[i].trim();
                     if (i < tokens.length-1 && tokens[i+1].trim().equals("(ready prepared)")) {

@@ -13,7 +13,12 @@ public class UtensilRemover extends Stemmer {
                 replaceAll(".*wooden skewers$", "").
                 replaceAll(".*siphon$", "").
                 replaceAll(".*silicon mold$", "").
+                replaceAll(".*\\bcellophane\\b.*", "").
                 replaceAll(".*transparencies", "").
+                replaceAll(".*pipettes", "").
+                replaceAll("\\bcup\\b", "").
+                replaceAll("in an icing bag", "").
+                replaceAll("in a shaker", "").
                 replaceAll("N.{1,5}cartridge", "").       // N20 Catridge
                 replaceAll("ISI.*", "").
                 replaceAll(".*spoons", "");         // ISI 1 pint soda siphon

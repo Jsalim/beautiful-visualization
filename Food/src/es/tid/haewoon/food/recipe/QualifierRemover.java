@@ -24,6 +24,7 @@ public class QualifierRemover extends Stemmer {
                 replaceAll("medium-sized", "").
                 replaceAll("for frying", "").
                 replaceAll("thins$", "thin").
+                replaceAll("oven-ready", "").
 //                replaceAll("peel of", "").
 //                replaceAll("zest of", "").
 //                replaceAll("(leaf|leaves) of", "").

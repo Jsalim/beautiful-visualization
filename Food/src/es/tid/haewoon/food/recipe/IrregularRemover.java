@@ -18,8 +18,12 @@ public class IrregularRemover extends Stemmer {
                 replaceAll("^of", "").
                 replaceAll("leaf of oregano leaf", "oregano leaf").
                 replaceAll("stabiliser", "stabilizer").
-                replaceAll(" orange", "orange").
-                replaceAll("fleur de sel", "sea salt");
+                replaceAll("fleur de sel", "sea salt").
+                replaceAll("nb use other herbs if these are not", "").
+                replaceAll("seasonably available", "").
+                replaceAll("st georges mushroom large and", "St. george's mushroom").
+                replaceAll("st georges mushroom stock", "").
+                replaceAll("bfor the amaretto toffeeb", "");    // typos in DVD
     }
 
 }
