@@ -25,10 +25,12 @@ public class PluralToSingular extends Stemmer {
                 replaceAll("caramels", "caramel").
                 replaceAll("carrots", "carrot").
                 replaceAll("ceps", "cep").
+                replaceAll("cheeses", "cheese").
                 replaceAll("cherries", "cheery").
                 replaceAll("chillies", "chilli").
                 replaceAll("clams", "clam").
                 replaceAll("cloves", "clove").
+                replaceAll("cones", "cone").
                 replaceAll("cookies", "cookie").
                 replaceAll("cubes", "cube").
                 replaceAll("cucumbers", "cucumber").
@@ -51,6 +53,7 @@ public class PluralToSingular extends Stemmer {
                 replaceAll("mushrooms", "mushroom").
                 replaceAll("mussels", "mussel").
                 replaceAll("noodles", "noodle").
+                replaceAll("nuts", "nut").
                 replaceAll("rashers", "rasher").
                 replaceAll("olives", "olive").
                 replaceAll("onions", "onion").
@@ -68,14 +71,17 @@ public class PluralToSingular extends Stemmer {
                 replaceAll("potatoes", "potato").
                 replaceAll("raspberries", "raspberry").
                 replaceAll("redcurrants", "redcurrant").
+                replaceAll("rinds", "rind").
                 replaceAll("rounds", "").
                 replaceAll("scallops", "scallop").
                 replaceAll("seeds", "seed").
                 replaceAll("sheets", "sheet").         
                 replaceAll("shoots", "shoot").
                 replaceAll("shells", "shell").
+                replaceAll("sherbets", "sherbet").
                 replaceAll("shoots", "shoot").
                 replaceAll("snails", "snail").
+                replaceAll("sprigs", "sprig").
                 replaceAll("squids", "squid").
                 replaceAll("stamens", "stamen").
                 replaceAll("stems of", "stem of").

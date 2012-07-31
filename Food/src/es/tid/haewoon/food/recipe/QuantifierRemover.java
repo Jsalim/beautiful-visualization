@@ -18,11 +18,13 @@ public class QuantifierRemover extends Stemmer {
                 replaceAll("approx.", "").
                 replaceAll("per 2 cups of .*", "").
                 replaceAll("a few drops of", "").
-                replaceAll("$a\\s|\\sa\\s", "").
+                replaceAll("$a\\s|\\sa\\s", " ").
                 replaceAll("cube of", "").
                 replaceAll("drop of", "").
                 replaceAll("drops of", "").
+                replaceAll("\\bdrops\\b", "").
                 replaceAll("pieces of", "").
+                replaceAll("\\bpieces\\b", "").
                 replaceAll("semicircles of", "").
                 replaceAll("slices of", "").
                 replaceAll("sliced in half", "").
@@ -30,8 +32,11 @@ public class QuantifierRemover extends Stemmer {
                 replaceAll("piece of", "").
                 replaceAll("large pinch of", "").
                 replaceAll("^of", "").
+                replaceAll("\\bpinch\\b", "").
+                replaceAll("\\bpinches\\b", "").
                 replaceAll("cans of", "").
                 replaceAll("diced into .? (cubes|cube)", "").
+                replaceAll("tiny cube of", "").
                 replaceAll("segments", "").
                 replaceAll("by inches high", "").
                 replaceAll("of \" diameter", "").

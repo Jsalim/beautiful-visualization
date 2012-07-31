@@ -9,18 +9,22 @@ public class SpecialCharRemover extends Stemmer {
     public String refine(String raw) {
         return raw.replaceAll(".*\\(ready prepared\\)", "").
                 replaceAll("\\(.*\\)", "").
-                replaceAll("\\d+", "").     // any number(s)
-                replaceAll("\\.", "").
-                replaceAll("\\?", "").
-                replaceAll("º", "").
-                replaceAll("½", "").
-                replaceAll("¼", "").
-                replaceAll(" b ", "").      // DVD's typo
-                replaceAll("\"", "").
-                replaceAll("/", "").
-                replaceAll("'", "").
-                replaceAll("\\.", "").
-                replaceAll(" x ", "");
+                replaceAll("\\bx\\b", "").
+                replaceAll("[^a-zA-Z\\s\\-é]", "");
+//                replaceAll("\\d", "").     // any number(s)
+//                replaceAll("\\.", "").
+//                replaceAll("\\?", "").
+//                replaceAll("º", "").
+//                replaceAll("½", "").
+//                replaceAll("¼", "").
+//                replaceAll("¾", "").
+//                replaceAll("¾", "").
+//                replaceAll(" b ", " ").      // DVD's typo
+//                replaceAll("\"", "").
+//                replaceAll("/", "").
+//                replaceAll("'", "").
+//                replaceAll("\\.", "").
+//                replaceAll(" x ", "");
     }
 
 }
