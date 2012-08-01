@@ -44,7 +44,7 @@ public class FoodUtil {
             stemmer = new SpecialCharRemover(new QuantifierRemover(new QualifierRemover(new UtensilRemover(
                     new PluralToSingular(new NeedlessWhiteSpaceRemover(new LowerCaser(new IrregularRemover())))))));
         }
-        return stemmer.stem(raw);
+        return stemmer.stem(raw).trim();
     }
     
     public static List<File> loadFiles(String root, String pattern, String keyword) {

@@ -24,7 +24,7 @@ public class IngredientDictionaryMaker {
     
     public void run() throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(
-                Constants.RESULT_PATH + File.separator + "1_extract_ingredients" + File.separator + "CD2"));
+                Constants.RESULT_PATH + File.separator + "1_extract_ingredients" + File.separator + "CD2_and_3"));
         
         int id = 0;
         String line;
@@ -40,10 +40,10 @@ public class IngredientDictionaryMaker {
         List<String> ingList = new ArrayList<String>(ingredients);
         Collections.sort(ingList);
         
-        BufferedWriter bw = new BufferedWriter(new FileWriter(targetPath + File.separator + "CD2_dictionary.na"));
+        BufferedWriter bw = new BufferedWriter(new FileWriter(targetPath + File.separator + "ingredient_dictionary.na"));
         
-        bw.write("ID\tLabel");
-        bw.newLine();
+//        bw.write("ID (numeric)\tLabel");
+//        bw.newLine();
         
         for (String ing : ingList) {
             bw.write(id + "\t" + ing);

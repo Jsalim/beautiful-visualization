@@ -51,7 +51,7 @@ public class ElBulliRecipe {
                 if(parse(line).equals("ALL YEAR")) {
                     months = "1,2,3,4,5,6,7,8,9,10,11,12";
                 } else {
-                    months = parse(line);
+                    months = parse(line).replaceAll("\\.", ",");
                 }
             } else if (line.startsWith("&temperatura")) {
                 temperature = parse(line);
@@ -71,6 +71,21 @@ public class ElBulliRecipe {
                     String ingredient = tokens[i].trim();
                     if (i < tokens.length-1 && tokens[i+1].trim().equals("(ready prepared)")) {
                         ingredient = ingredient + tokens[i+1].trim();
+                        i++;
+                    }
+                    
+                    if (i < tokens.length - 1 && tokens[i].trim().endsWith("previous")) {
+                        ingredient = ingredient + " " + tokens[i+1].trim();
+                        i++;
+                    }
+                    
+                    if (i < tokens.length - 1 && tokens[i+1].trim().startsWith("and")) {
+                        ingredient = ingredient + " " + tokens[i+1].trim();
+                        i++;
+                    }
+                    
+                    if (i < tokens.length - 1 && tokens[i].trim().endsWith("yellow")) {
+                        ingredient = ingredient + " " + tokens[i+1].trim();
                         i++;
                     }
 

@@ -12,7 +12,7 @@ public class NeedlessWhiteSpaceRemover extends Stemmer {
     }
     @Override
     public String refine(String raw) {
-        return raw.replaceAll("\\s+", " ").replaceAll("$\\s", "").trim();
+        return raw.replaceAll("\\s+", " ").trim();
     }
 
 }

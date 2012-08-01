@@ -21,10 +21,12 @@ public class PluralToSingular extends Stemmer {
                 replaceAll("berries", "berry").
                 replaceAll("bones", "bone").
                 replaceAll("brains", "brain").
+                replaceAll("capers", "caper").
                 replaceAll("caps", "cap").
                 replaceAll("caramels", "caramel").
                 replaceAll("carrots", "carrot").
                 replaceAll("ceps", "cep").
+                replaceAll("chanterelles", "chanterelle").
                 replaceAll("cheeses", "cheese").
                 replaceAll("cherries", "cheery").
                 replaceAll("chillies", "chilli").
