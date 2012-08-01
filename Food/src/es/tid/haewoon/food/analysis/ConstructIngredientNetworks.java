@@ -21,7 +21,7 @@ public class ConstructIngredientNetworks {
     public static void main(String[] args) throws IOException {
         String targetPath = Constants.RESULT_PATH + File.separator + "3_construct_networks_of_each_month";
         ConstructIngredientNetworks cin = new ConstructIngredientNetworks();
-        cin.printHeaders(targetPath, 1994, 2001, "source\ttarget\tyear\tmonth\tcategory\ttype");
+        cin.printHeaders(targetPath, 1994, 2001, "source\ttarget\tyear\tmonth\tcategory\ttemperature\ttype");
         cin.readIngredientDictionary();
         cin.printNetworks(targetPath, 1994, 2001);
     }
@@ -57,6 +57,7 @@ public class ConstructIngredientNetworks {
         int year = -1;
         String category = "N/A";
         String ingredient = "N/A";
+        String temperature = "N/A";
         
         BufferedReader br = new BufferedReader(new FileReader(
                 Constants.RESULT_PATH + File.separator + "1_extract_ingredients" + File.separator + "CD2_and_3"));
@@ -73,7 +74,8 @@ public class ConstructIngredientNetworks {
                             if (ing1.equals(ing2)) {
                                 continue;       // don't count self-edges
                             }
-                            bw.write(ing1 + "\t" + ing2 + "\t" + year + "\t" + month + "\t" + category + "\tUndirected\r\n");
+                            bw.write(ing1 + "\t" + ing2 + "\t" + year + "\t" + month + 
+                                    "\t" + category + "\t" + temperature + "\tUndirected\r\n");
                         }
                     }
                     bw.close();
@@ -85,8 +87,9 @@ public class ConstructIngredientNetworks {
                 recipe = tokens[0];
                 year = Integer.valueOf(tokens[1]);
                 category = tokens[2];
-                months = tokens[3].split(",");
-                ingredient = tokens[4];
+                temperature = tokens[3];
+                months = tokens[4].split(",");
+                ingredient = tokens[5];
                 ings.add(ingredient);
             }
         }
