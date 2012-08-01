@@ -3,14 +3,11 @@ package es.tid.haewoon.food.analysis;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -19,108 +16,113 @@ import org.apache.log4j.Logger;
 import es.tid.haewoon.food.util.Constants;
 
 public class ConstructIngredientNetworks {
-    private static Logger logger = Logger.getLogger(ConstructIngredientNetworks.class);
-    private static String targetPath = Constants.RESULT_PATH + File.separator + "2_ingredient_networks";
-    private static Map<String, Set<String>> when2nodes = new HashMap<String, Set<String>>();
-    
-    public void flush(String id, String year, String category, String months, Set<String> ingredients) throws IOException {
-        List<String> ings = new ArrayList<String>(ingredients);
-        for (String month : months.split(",")) {
-
-            BufferedWriter bw = new BufferedWriter(new FileWriter(targetPath + File.separator + year + "-" + month + "-edges.csv", true));
-            for (int outer = 0; outer < ings.size(); outer++) {
-                for (int inner = outer; inner < ings.size(); inner++) { 
-                    if (outer == inner) {
-                        continue;
-                    }
-                    Set<String> already = (when2nodes.get(year+"-"+month) == null) ?new HashSet<String>() :when2nodes.get(year+"-"+month);
-                    already.add(ings.get(outer));
-                    already.add(ings.get(inner));
-                    when2nodes.put(year + "-" + month, already);
-                    
-//                    bw.write(id + "\t" + year + "\t" + category + "\t" + month + "\t" + ings.get(outer) + "\t" + ings.get(inner));
-                    bw.write(decoration(ings.get(outer)) + "," + decoration(ings.get(inner)) + "," + category + ",Undirected");
-                    bw.newLine();
-                }
-            }
-            bw.close();
-        }
-    }
-    
-    private String decoration(String raw) {
-        if (raw.indexOf(" ") != -1) {
-            return "\"" + raw + "\"";
-        } else {
-            return raw;
-        }
-    }
-    
-    public void run() throws FileNotFoundException {
-        BufferedReader br = new BufferedReader(new FileReader("/workspace/Food/result/1_extract_ingredients/all"));
-        String line = "";
-        Set<String> ingredients = new HashSet<String>();
-        
-        try {
-            String id = "";
-            String year = "";
-            String category = "";
-            String month = "";
-            
-            while((line = br.readLine()) != null) {
-                if (line.trim().length() == 0) {
-                    continue;
-                }
-                String[] tokens = line.split("\\t");
-                
-                if (!id.equals(tokens[0]) && ingredients.size() != 0) {    // check whether this is the first-time loop
-                    logger.debug("processing recipe[" + id + "]");
-                    flush(id, year, category, month, ingredients);
-                    ingredients.clear();
-                } else { 
-                    id = tokens[0];
-                    year = tokens[1];
-                    category = tokens[2];
-                    month = tokens[3];
-                    ingredients.add(tokens[4]);
-                }
-            }
-        } catch (IOException e) {
-            logger.error(e);
-        } catch (Exception e) {
-            logger.error(line, e);
-        }
-  
-    }
+    static Logger logger = Logger.getLogger(ConstructIngredientNetworks.class);
+    private Map<String, String> label2numeric = new HashMap<String, String>();
     public static void main(String[] args) throws IOException {
-        boolean success =  
-                (new File(targetPath)).mkdir();
-        if (success) {
-            logger.debug("A directory [" + targetPath + "] is created");
-        }
-        
-        for (int year=1994;year<=1997;year++) {
-            for (int month=1;month<=12;month++) {
-                BufferedWriter bw = new BufferedWriter(new FileWriter(targetPath + File.separator + year + "-" + month + "-edges.csv"));
-                bw.write("Source,Target,Category,Type");
+        String targetPath = Constants.RESULT_PATH + File.separator + "3_construct_networks_of_each_month";
+        ConstructIngredientNetworks cin = new ConstructIngredientNetworks();
+        cin.printHeaders(targetPath, 1994, 2001, "source\ttarget\tyear\tmonth\tcategory\ttype");
+        cin.readIngredientDictionary();
+        cin.printNetworks(targetPath, 1994, 2001);
+    }
+    
+    private void printHeaders(String targetPath, int startYear, int endYear, String header) throws IOException {
+        for (int year = startYear; year <= endYear; year++) {
+            for (int month = 1; month <= 12; month++) {
+                BufferedWriter bw = new BufferedWriter(new FileWriter(targetPath + File.separator + year + "-" + month));
+                bw.write(header);
                 bw.newLine();
                 bw.close();
             }
         }
-
-        ConstructIngredientNetworks cin = new ConstructIngredientNetworks();
-        cin.run();
-        
-        for (String key : when2nodes.keySet()) {
-            BufferedWriter bw = new BufferedWriter(new FileWriter(targetPath + File.separator + key + "-nodes.csv"));
-            bw.write("Id,Label");
-            bw.newLine();
-            Set<String> ingredients = when2nodes.get(key);
-            for (String ing: ingredients) {
-                bw.write(ing + "," + ing);
-                bw.newLine();
-            }
-            bw.close();
-        }
-       
     }
+    
+    private void readIngredientDictionary() throws IOException {
+        BufferedReader br = new BufferedReader(new FileReader(
+                Constants.RESULT_PATH + File.separator + "2_ingredient_integer_id/ingredient_dictionary.na"));
+        String line; 
+        
+        while ((line = br.readLine()) != null) {
+            String[] tokens = line.split("\\t");
+            label2numeric.put(tokens[1].trim(), tokens[0].trim());
+        }
+        
+        logger.debug("read [" + label2numeric.size() + "] ingredients");
+    }
+    
+    private void printNetworks(String targetPath, int startYear, int endYear) throws IOException {
+        Set<String> ings = new HashSet<String>();
+        String recipe = "N/A";
+        String[] months = {};
+        int year = -1;
+        String category = "N/A";
+        String ingredient = "N/A";
+        
+        BufferedReader br = new BufferedReader(new FileReader(
+                Constants.RESULT_PATH + File.separator + "1_extract_ingredients" + File.separator + "CD2_and_3"));
+        String line;
+        
+        while ((line = br.readLine()) != null) {
+            String[] tokens = line.split("\\t");
+            
+            if (!recipe.equals(tokens[0]) && ings.size() != 0) {
+                for (String month : months) {
+                    BufferedWriter bw = new BufferedWriter(new FileWriter(targetPath + File.separator + year + "-" + month, true));
+                    for (String ing1 : ings) {
+                        for (String ing2 : ings) {
+                            if (ing1.equals(ing2)) {
+                                continue;       // don't count self-edges
+                            }
+                            bw.write(ing1 + "\t" + ing2 + "\t" + year + "\t" + month + "\t" + category + "\tUndirected\r\n");
+                        }
+                    }
+                    bw.close();
+                }
+                ings.clear();
+            }
+            
+            if (Integer.valueOf(tokens[1]) >= startYear && Integer.valueOf(tokens[1]) <= endYear) {
+                recipe = tokens[0];
+                year = Integer.valueOf(tokens[1]);
+                category = tokens[2];
+                months = tokens[3].split(",");
+                ingredient = tokens[4];
+                ings.add(ingredient);
+            }
+        }
+    }
+
+
+//  for line in codecs.open("../1_extract_ingredients/CD2_and_3", "r", "UTF-8"):
+//      tokens = [term.strip() for term in line.split("\t")]
+//
+//      if recipe != tokens[0]:
+//          # flush
+//          for month in months:
+//              fo = codecs.open(year + "-" + month, "a", "UTF-8")
+//              for edges in [(i,j) for i in ings for j in ings if i != j]:
+//  ##                fo.write(label2numeric[edges[0]] + "\t" + \
+//  ##                         label2numeric[edges[1]] + "\t" + \
+//  ##                         year + "\t" + month + "\t" + \
+//  ##                         category + "\r\n")
+//                  fo.write(edges[0] + "\t" + \
+//                           edges[1] + "\t" + \
+//                           year + "\t" + month + "\t" + \
+//                           category + "\tundirected\r\n")
+//
+//              fo.close()
+//          ings = set()
+//      
+//      recipe = tokens[0]
+//      year = tokens[1]
+//      category = tokens[2]
+//      months = tokens[3].split(",")
+//      ingredient = tokens[4]
+//      ings.add(ingredient)
+//
+//          
+//      
+
+    
+    
 }
