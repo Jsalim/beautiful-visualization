@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import es.tid.haewoon.food.recipe.ElBulliRecipeCategory;
 import es.tid.haewoon.food.recipe.IrregularRemover;
 import es.tid.haewoon.food.recipe.LowerCaser;
 import es.tid.haewoon.food.recipe.NeedlessWhiteSpaceRemover;
@@ -46,6 +47,33 @@ public class FoodUtil {
         }
         return stemmer.stem(raw).trim();
     }
+    
+    public static ElBulliRecipeCategory getCategory(String category) {
+        if (category.equals("AVANT POSTRES")) {
+            return ElBulliRecipeCategory.AVANT_POSTRES;
+        } else if (category.equals("COCKTAILS")) {
+            return ElBulliRecipeCategory.COCKTAILS;
+        } else if (category.equals("DESSERTS")) {
+            return ElBulliRecipeCategory.DESSERTS;
+        } else if (category.equals("DISHES")) {
+            return ElBulliRecipeCategory.DISHES;
+        } else if (category.equals("FOLLIES")) {
+            return ElBulliRecipeCategory.FOLLIES;
+        } else if (category.equals("MORPHINGS")) {
+            return ElBulliRecipeCategory.MORPHINGS;
+        } else if (category.equals("PETITS FOURS")) {
+            return ElBulliRecipeCategory.PETITS_FOURS;
+        } else if (category.equals("PRE-DESSERTS")) {
+            return ElBulliRecipeCategory.PRE_DESSERTS;
+        } else if (category.equals("SNACKS")) {
+            return ElBulliRecipeCategory.SNACKS;
+        } else if (category.equals("TAPAS")) {
+            return ElBulliRecipeCategory.TAPAS;
+        } else {
+            throw new AssertionError("not matched string [" + category + "]");
+        }
+    }
+    
     
     public static List<File> loadFiles(String root, String pattern, String keyword) {
         List<File> temp = FoodUtil.loadFiles(root, pattern);
