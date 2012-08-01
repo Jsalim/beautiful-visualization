@@ -129,7 +129,7 @@ public class ElBulliRecipe {
         String lineDelimeter = "";
         for (String ingredient : ingredients) {
             sb.append(lineDelimeter);
-            sb.append(this.ID + "\t" + this.year + "\t" + this.category + "\t" + this.months + "\t" + ingredient);
+            sb.append(this.ID + "\t" + this.year + "\t" + this.category + "\t" + this.temperature + "\t" + this.months + "\t" + ingredient);
             lineDelimeter = "\r\n";
         }
 

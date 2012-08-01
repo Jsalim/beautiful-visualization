@@ -33,7 +33,7 @@ public class IngredientDictionaryMaker {
                 continue;
             }
             
-            String ingredient = line.split("\\t")[4];
+            String ingredient = line.split("\\t")[5];
             ingredients.add(ingredient);
         }
         
