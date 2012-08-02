@@ -37,11 +37,8 @@
  * ***** END LICENSE BLOCK ***** */
 package es.tid.haewoon.food.util;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.InputStreamReader;
-import java.util.Arrays;
 
 import org.apache.log4j.Logger;
 import org.mozilla.universalchardet.UniversalDetector;
@@ -54,8 +51,26 @@ public class EncodingDetector
     {
 
         byte[] buf = new byte[4096];
-//        java.io.FileInputStream fis = new java.io.FileInputStream(Constants.CD3_RECIPES_PATH + File.separator + "455.dat");
-        java.io.FileInputStream fis = new java.io.FileInputStream(Constants.CD2_RECIPES_PATH + File.separator + "277.dat");
+        
+        // UTF-8
+//        java.io.FileInputStream fis = new java.io.FileInputStream(Constants.CD2_PREPARATION_SWEET_PATH + File.separator + "1.dat");
+
+        // UTF-8
+//        java.io.FileInputStream fis = new java.io.FileInputStream(Constants.CD2_PREPARATION_SAVOURY_PATH + File.separator + "1.dat");
+  
+        // UTF-16LE
+//        java.io.FileInputStream fis = new java.io.FileInputStream(Constants.CD2_STYLE_SWEET_PATH + File.separator + "1.dat");
+
+        // UTF-16LE
+//        java.io.FileInputStream fis = new java.io.FileInputStream(Constants.CD2_STYLE_SAVOURY_PATH + File.separator + "1.dat");
+
+        // WINDOWS-1252
+//        java.io.FileInputStream fis = new java.io.FileInputStream(Constants.CD3_PREPARATION_PATH + File.separator + "1.txt");
+        
+        // UTF-16LE
+//        java.io.FileInputStream fis = new java.io.FileInputStream(Constants.CD3_STYLE_SWEET_PATH + File.separator + "1.dat");
+        
+        FileInputStream fis = new FileInputStream(Constants.CD3_STYLE_SWEET_PATH + File.separator + "1.dat");
         
         // (1)
         UniversalDetector detector = new UniversalDetector(null);
@@ -65,6 +80,7 @@ public class EncodingDetector
         while ((nread = fis.read(buf)) > 0 && !detector.isDone()) {
             detector.handleData(buf, 0, nread);
         }
+        fis.close();
         // (3)
         detector.dataEnd();
 
@@ -79,14 +95,14 @@ public class EncodingDetector
         // (5)
         detector.reset();
         
-        BufferedReader br = new BufferedReader(new InputStreamReader(
-                        new FileInputStream(Constants.CD2_RECIPES_PATH + File.separator + "277.dat"), "UTF-8"));
-        String line = null;
-        while ((line = br.readLine()) != null) {
-            
-            logger.debug(line);
-            logger.debug(Arrays.asList(line.split("<br>")));
-            
-        }
+//        BufferedReader br = new BufferedReader(new InputStreamReader(
+//                        new FileInputStream(Constants.CD2_RECIPES_PATH + File.separator + "277.dat"), "UTF-8"));
+//        String line = null;
+//        while ((line = br.readLine()) != null) {
+//            
+//            logger.debug(line);
+//            logger.debug(Arrays.asList(line.split("<br>")));
+//            
+//        }
     }
 }
