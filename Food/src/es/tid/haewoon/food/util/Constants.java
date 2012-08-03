@@ -1,9 +1,31 @@
 package es.tid.haewoon.food.util;
 
 import java.io.File;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
 
 public class Constants {
-    public final static String ENGLISH_ROOT = "/workspace/Food/elBulli/";
+    static Logger logger = Logger.getLogger(Constants.class);
+    
+    static {
+        if (System.getProperty("os.name").startsWith("Windows")) {
+            ENGLISH_ROOT = "F:\\Dropbox\\elBulli\\English";
+        } else {
+            ENGLISH_ROOT = "/workspace/Food/elBulli/";
+        }
+    }
+    
+    public static void main(String[] args) {
+        for (Map.Entry<Object, Object> e : System.getProperties().entrySet()) {
+            logger.debug(e);
+        }
+        
+        logger.debug(ENGLISH_ROOT);
+        logger.debug(CD2_DATA_PATH);
+    }
+    
+    public final static String ENGLISH_ROOT;
     
     public final static String CD2_ROOT = ENGLISH_ROOT + File.separator + "CD2";
     

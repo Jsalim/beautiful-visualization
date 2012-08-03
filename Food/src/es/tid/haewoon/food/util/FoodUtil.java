@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -22,7 +24,20 @@ import es.tid.haewoon.food.recipe.UtensilRemover;
 
 
 public class FoodUtil {
+    private static class NumericComparator implements Comparator<File> {
+
+        @Override
+        public int compare(File o1, File o2) {
+            File f1 = (File) o1;
+            File f2 = (File) o2;
+            
+            return (new Integer(f1.getName().split("\\.")[0])).compareTo(new Integer(f2.getName().split("\\.")[0]));
+        }
+    }
+    
     private static final Logger logger = Logger.getLogger(FoodUtil.class);
+    private static final Comparator<File> nc = new NumericComparator();
+    
     public static List<File> loadFiles(String root, String pattern) {
         List<File> filtered = new ArrayList<File>();
         File targetPath = new File(root);
@@ -35,6 +50,8 @@ public class FoodUtil {
                 }
             }
         }
+        
+        Collections.sort(filtered, nc);
         return filtered;
     }
     
@@ -95,6 +112,7 @@ public class FoodUtil {
                 logger.error(e);
             }
         }
+        Collections.sort(filtered, nc);
         return filtered;
     }
 }
