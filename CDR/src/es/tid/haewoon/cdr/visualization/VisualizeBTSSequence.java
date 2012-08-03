@@ -15,14 +15,11 @@ import org.apache.log4j.Logger;
 
 import processing.core.PApplet;
 import processing.core.PFont;
-import processing.core.PGraphics;
-import processing.core.PImage;
 import toxi.geom.Polygon2D;
 import toxi.geom.Vec2D;
 import toxi.geom.mesh2d.Voronoi;
 import toxi.processing.ToxiclibsSupport;
 import codeanticode.glgraphics.GLConstants;
-import codeanticode.glgraphics.GLGraphicsOffScreen;
 import de.fhpotsdam.unfolding.Map;
 import de.fhpotsdam.unfolding.geo.Location;
 import de.fhpotsdam.unfolding.providers.Google;
@@ -35,7 +32,8 @@ import es.tid.haewoon.cdr.util.RankComparator;
 import es.tid.haewoon.cdr.util.Transition;
 
 public class VisualizeBTSSequence extends PApplet {
-
+    private static final long serialVersionUID = -4085039003253887831L;
+    
     PFont font;
     Map map;
     Voronoi voronoi;
@@ -47,7 +45,7 @@ public class VisualizeBTSSequence extends PApplet {
     String targetPath;
 
     public void setup() {
-        size(1500, 1000, GLConstants.GLGRAPHICS);
+        size(1900, 1000, GLConstants.GLGRAPHICS);
         smooth();
         gfx = new ToxiclibsSupport( this );
         font = createFont("Arial",14);
@@ -96,6 +94,9 @@ public class VisualizeBTSSequence extends PApplet {
     boolean showVoronoi = false;
     boolean saveFile = false;
     boolean showSeq = false;
+    boolean normalize = false;
+    boolean showAgg = false;
+    boolean showLabel = false;
 
     int from = 0xFFe9b20e;
     int to = 0xFFef1628;
@@ -115,9 +116,14 @@ public class VisualizeBTSSequence extends PApplet {
         max_weight = -1;
         BufferedReader br;
         try {
-            br = new BufferedReader(new FileReader(Constants.RESULT_PATH + File.separator + "10_one_big_markov_chain_of_BTS" 
+            if (normalize) {
+                br = new BufferedReader(new FileReader(Constants.RESULT_PATH + File.separator + "10_one_big_markov_chain_of_BTS" 
+                        + File.separator + "3_normalized_big_chain"));
+            } else {
+                br = new BufferedReader(new FileReader(Constants.RESULT_PATH + File.separator + "10_one_big_markov_chain_of_BTS" 
                     + File.separator + "2_pruned_big_chain"));
-
+            }
+            
             String line = "";
             while((line = br.readLine()) != null) {
                 String[] tokens = line.split("\\t");
@@ -154,17 +160,23 @@ public class VisualizeBTSSequence extends PApplet {
         max_weight = -1;
         BufferedReader br;
         try {
-            br = new BufferedReader(new FileReader(
-                    Constants.RESULT_PATH + File.separator + "9_2_pruned_markov_chain_of_BTS" + File.separator + file.getName()));
-
+            if (normalize) {
+                br = new BufferedReader(new FileReader(
+                        Constants.RESULT_PATH + File.separator + "9_3_normalized_markov_chain_of_BTS" + File.separator + file.getName()));
+            } else {
+                br = new BufferedReader(new FileReader(
+                        Constants.RESULT_PATH + File.separator + "9_2_pruned_markov_chain_of_BTS" + File.separator + file.getName()));
+            }
+            
             String line = "";
             while((line = br.readLine()) != null) {
                 String[] tokens = line.split("\\t");
-                if (tokens[0].equals(tokens[1])) {
+                if (BTS2Location.get(tokens[0]).equals(BTS2Location.get(tokens[1]))) {
                     continue;
                 }
                 if (max_weight < Double.valueOf(tokens[2])) {
                     max_weight = Double.valueOf(tokens[2]);
+                    logger.debug(tokens[0] + "->" + tokens[1] + ": " + tokens[2]);
                 }
                 tran2wt.put(new Transition(tokens[0], tokens[1]), Double.valueOf(tokens[2]));
             }
@@ -227,20 +239,43 @@ public class VisualizeBTSSequence extends PApplet {
                 pushStyle();
                 noStroke();
                 fill(0xFF1f1adb, 40);
-
+                
                 ellipse(cxy[0], cxy[1], 20, 20);
                 ellipse(lxy[0], lxy[1], 20, 20);
 
-                int thickness = (int) map((float) weight, 0f, (float) max_weight, 5f, 200f);
-                int alpha = (int) map((float) weight, 0f, (float) max_weight, 40f, 255f);
+                int thickness = (int) map((float) weight, 0f, (float) max_weight, 5f, 20f);
+                int alpha = (int) map((float) weight, 0f, (float) max_weight, 30f, 255f);
+
                 
                 stroke(edgeColor, alpha);
                 strokeWeight(thickness);
                 
                 line(lxy[0], lxy[1], cxy[0], cxy[1]);
-                
-//                float slope = (cxy[0]-lxy[0])/(cxy[1]-lxy[1]);
-//                text("" + weight, (lxy[0]+cxy[0])/2, (lxy[1]+cxy[1])/2-20);
+ 
+                if (showLabel && !ll.equals(cl)) {
+                    if (weight != 0) {
+                        pushMatrix();
+                        textSize(20);
+                        fill(100, alpha);
+                        
+                        String msg = "";
+                        int yPos_adjustment = 0;
+                        if (lxy[0] < cxy[0]) {
+                            msg = "-> ";
+                            yPos_adjustment = 10;
+                        } else {
+                            msg = "<- ";
+                            yPos_adjustment = -10;
+                        }
+                        
+                        if (normalize) {
+                            text(msg + String.format("%.2f", weight), (lxy[0]+cxy[0])/2, (lxy[1]+cxy[1])/2 + yPos_adjustment);
+                        } else {
+                            text(msg + String.format("%.0f", weight), (lxy[0]+cxy[0])/2, (lxy[1]+cxy[1])/2 + yPos_adjustment);
+                        }
+                        popMatrix();
+                    }
+                }
                 
                 popStyle();
             }
@@ -281,11 +316,15 @@ public class VisualizeBTSSequence extends PApplet {
 
     public void interactiveMode() {
         fill(100);
-        text("Press V to toggle the Voronoi diagram on the map", 15, 30);  
+        text("Press V to toggle the Voronoi diagram", 15, 30);  
         text("Press S to save the current screen", 15, 50);
-        text("Press Q to toggle the sequence", 15, 70);
+        text("Press Q to toggle the individual sequence", 15, 70);
         text("Press N to proceed to the next sequence", 15, 90);
         text("Press P to return to the last sequence", 15, 110);
+        text("Press A to show the aggregated Markov chain", 15, 130);
+        text("Press Z to toggle the normalization of the chain", 15, 150);
+        text("Press L to toggle the label of transitions", 15, 170);
+        
 
         if (showVoronoi) {
             showVoronoi();
@@ -302,6 +341,7 @@ public class VisualizeBTSSequence extends PApplet {
             text("[" + files.get(fileIndex).getName() + "]", 15, 150);
             showSeq();
         }
+        
         
     }
 
@@ -322,17 +362,34 @@ public class VisualizeBTSSequence extends PApplet {
         case 'n':
             fileIndex++;
             loadSeq();
+            showAgg = false;
             break;
             
         case 'p':
             fileIndex = Math.max(fileIndex-1, 0);
             loadSeq();
+            showAgg = false;
             break;
         
         case 'a':
             loadEntireBCN();
             showSeq = !showSeq;
+            showAgg = true;
             break;
+            
+        case 'z':
+            normalize = !normalize;
+            if (showAgg) {
+                loadEntireBCN();
+            } else {
+                loadSeq();
+            }
+            break;
+            
+        case 'l':
+            showLabel = !showLabel;
         }
+        
+            
     }
 }
