@@ -1,11 +1,15 @@
 package es.tid.haewoon.food.analysis;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,16 +20,41 @@ import es.tid.haewoon.food.util.Constants;
 import es.tid.haewoon.food.util.FoodUtil;
 
 public class EvolutionaryAnalysis {
-    Logger logger = Logger.getLogger(EvolutionaryAnalysis.class);
+    static Logger logger = Logger.getLogger(EvolutionaryAnalysis.class);
+    static String targetPath = Constants.RESULT_PATH + File.separator + "5_evolutionary_analysis";
+    static BufferedWriter bw;
+    static Map<Integer, List<String>> num2str = new HashMap<Integer, List<String>>();
     
-    public static void main(String[] args) throws IOException {
-        EvolutionaryAnalysis ea = new EvolutionaryAnalysis();
-        ea.cd2_run(FoodUtil.loadFiles(Constants.CD2_PREPARATION_SWEET_PATH, "^\\d+\\.dat$"), "UTF-8");
-        ea.cd2_run(FoodUtil.loadFiles(Constants.CD2_PREPARATION_SAVOURY_PATH, "^\\d+\\.dat$"), "UTF-8");
-
+    public EvolutionaryAnalysis() throws IOException {
+        bw = new BufferedWriter(new FileWriter(targetPath + File.separator + "CD2_and_3_preparation"));
     }
     
-    private void cd2_run(List<File> files, String encoding) throws IOException {
+    public static void main(String[] args) throws IOException {
+        boolean success = (new File(targetPath)).mkdir();
+        if (success) {
+            logger.debug("A directory [" + targetPath + "] is created");
+        }
+        
+        EvolutionaryAnalysis ea = new EvolutionaryAnalysis();
+        
+        ea.run(FoodUtil.loadFiles(Constants.CD2_PREPARATION_SWEET_PATH, "^\\d+\\.dat$"), "UTF-8");
+        ea.run(FoodUtil.loadFiles(Constants.CD2_PREPARATION_SAVOURY_PATH, "^\\d+\\.dat$"), "UTF-8");
+        ea.run(FoodUtil.loadFiles(Constants.CD3_PREPARATION_PATH, "^\\d+\\.txt$"), "WINDOWS-1252");
+        
+        List<Integer> nums = new ArrayList<Integer>(num2str.keySet());
+        Collections.sort(nums);
+        
+        for (int i : nums) {
+            List<String> strs = num2str.get(i);
+            for (String str : strs) {
+                bw.write(str);
+                bw.newLine();
+            }
+        }
+        bw.close();
+    }
+    
+    private void run(List<File> files, String encoding) throws IOException {
         String line;
        
         for (File afile : files) {
@@ -45,7 +74,7 @@ public class EvolutionaryAnalysis {
                 
             }
             
-            if (keyValue.get("composicion1") == null) {
+            if (keyValue.get("sabor1") == null || keyValue.get("composicion1") == null) {
                 continue;
             }
             
@@ -60,6 +89,16 @@ public class EvolutionaryAnalysis {
                 logger.debug(keyValue.get("sabor" + i));
                 logger.debug(keyValue.get("utilizacion" + i));
                 logger.debug(Arrays.asList(keyValue.get("composicion" + i).split("\\s*!\\s")));
+                List<String> flavors = (num2str.get(Integer.valueOf(keyValue.get("num" + i))) == null) 
+                        ? new ArrayList<String>() :num2str.get(Integer.valueOf(keyValue.get("num" + i)));
+                        
+                flavors.add(keyValue.get("num" + i) + "\t" + keyValue.get("mundo") + "\t" + 
+                        keyValue.get("codigoA" + i) + "\t" + keyValue.get("sabor" + i).replaceAll("\\s*!\\s", "|") + "\t" + 
+                        keyValue.get("composicion" + i).replaceAll("\\s*!\\s", "|") + "\t" + keyValue.get("utilizacion" + i)); // + "\t" + afile.getPath());
+                
+                
+                num2str.put(Integer.valueOf(keyValue.get("num" + i)), flavors);
+
             }
         }
     }
