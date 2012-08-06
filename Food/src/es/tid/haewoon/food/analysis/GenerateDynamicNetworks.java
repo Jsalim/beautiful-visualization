@@ -61,6 +61,11 @@ public class GenerateDynamicNetworks {
         logger.debug(startYear + "-" + endYear + ", " + category);
         
         String targetPath = Constants.RESULT_PATH + File.separator + "4_dynamic_networks";
+        boolean success = (new File(targetPath)).mkdir();
+        if (success) {
+            logger.debug("A directory [" + targetPath + "] is created");
+        }
+        
         printHeaders(targetPath + File.separator + this.category + "-" + this.startYear + "-to-" + this.endYear + "-dynamics-edges.csv", 
                 "Source\tTarget\tType\tTime Interval");
         printHeaders(targetPath + File.separator + this.category + "-" + this.startYear + "-to-" + this.endYear + "-dynamics-nodes.csv", 
