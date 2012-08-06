@@ -20,6 +20,11 @@ public class ConstructIngredientNetworks {
     private Map<String, String> label2numeric = new HashMap<String, String>();
     public static void main(String[] args) throws IOException {
         String targetPath = Constants.RESULT_PATH + File.separator + "3_construct_networks_of_each_month";
+        boolean success = (new File(targetPath)).mkdir();
+        if (success) {
+            logger.debug("A directory [" + targetPath + "] is created");
+        }
+        
         ConstructIngredientNetworks cin = new ConstructIngredientNetworks();
         cin.printHeaders(targetPath, 1994, 2001, "source\ttarget\tyear\tmonth\tcategory\ttemperature\ttype");
         cin.readIngredientDictionary();

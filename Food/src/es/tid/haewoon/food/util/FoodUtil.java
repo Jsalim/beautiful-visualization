@@ -31,7 +31,19 @@ public class FoodUtil {
             File f1 = (File) o1;
             File f2 = (File) o2;
             
-            return (new Integer(f1.getName().split("\\.")[0])).compareTo(new Integer(f2.getName().split("\\.")[0]));
+            if (f1.getName().split("\\.")[0].indexOf("-") != -1) {
+                int f1_year = Integer.valueOf(f1.getName().split("\\.")[0].split("-")[0]);
+                int f1_month = Integer.valueOf(f1.getName().split("\\.")[0].split("-")[1]);
+                int f2_year = Integer.valueOf(f2.getName().split("\\.")[0].split("-")[0]);
+                int f2_month = Integer.valueOf(f2.getName().split("\\.")[0].split("-")[1]);
+                if (f1_year == f2_year) {
+                    return new Integer(f1_month).compareTo(new Integer(f2_month));
+                } else {
+                    return new Integer(f1_year).compareTo(new Integer(f2_year));
+                }
+            } else {
+                return (new Integer(f1.getName().split("\\.")[0])).compareTo(new Integer(f2.getName().split("\\.")[0]));
+            }
         }
     }
     
