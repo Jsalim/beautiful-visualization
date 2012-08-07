@@ -81,7 +81,7 @@ public class ExtractActiveWalkers {
                     if (tnFilter.filter(cdr)) {
                         String movistarNum = cdr.getMovistarNum();
                         BufferedWriter bw = new BufferedWriter(new FileWriter(
-                                targetDirectory + File.separator + num2Rank.get(movistarNum) + "-" + cdr.getMovistarNum() + 
+                                targetDirectory + File.separator + num2Rank.get(movistarNum) + "-" + movistarNum + 
                                 "-" + num2Cell.get(movistarNum), true));
                         bw.write(line.trim());
                         bw.newLine();
