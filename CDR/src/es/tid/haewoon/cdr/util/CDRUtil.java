@@ -177,7 +177,7 @@ public class CDRUtil {
         
         return files;
     }
-    
+ 
     public static List<File> loadFiles(String string, String pattern) {
         // TODO Auto-generated method stub
         List<File> filtered = new ArrayList<File>();
@@ -190,6 +190,9 @@ public class CDRUtil {
                     filtered.add(file);
                 }
             }
+        }
+        if (filtered.get(0).getName().indexOf("-") != -1) {
+            Collections.sort(filtered, new RankComparator());
         }
         return filtered;
     }
