@@ -73,6 +73,17 @@ public class ClusterBTS {
             
             BufferedWriter bw = new BufferedWriter(new FileWriter(
                     targetPath + "_threshold_" + THRESHOLD + "m" + File.separator + aFile.getName()));
+            
+            double sum = 0.0;
+            for (BTS center : center2neighbors.keySet()) {
+                int count = bts2count.get(center);
+                Set<BTS> neighbors = center2neighbors.get(center);
+                for (BTS neighbor : neighbors) {
+                    count += bts2count.get(neighbor);
+                }
+                sum += count;
+            }
+            
             for (BTS center : center2neighbors.keySet()) {
                 int count = bts2count.get(center);
                 
@@ -85,7 +96,7 @@ public class ClusterBTS {
                     delim = "|";
                 }
                 
-                bw.write(center.getID() + "\t" + count + "\t" + neighbors.size() + "\t" + sb.toString());
+                bw.write(center.getID() + "\t" + count + "\t" + (count/sum) + "\t" + neighbors.size() + "\t" + sb.toString());
                 bw.newLine();
             }
             bw.close();
