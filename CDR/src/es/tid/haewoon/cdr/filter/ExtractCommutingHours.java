@@ -17,6 +17,7 @@ import java.util.zip.GZIPInputStream;
 import org.apache.log4j.Logger;
 
 import es.tid.haewoon.cdr.util.CDR;
+import es.tid.haewoon.cdr.util.CDRUtil;
 import es.tid.haewoon.cdr.util.Constants;
 
 public class ExtractCommutingHours {
@@ -27,7 +28,7 @@ public class ExtractCommutingHours {
         CDRFilter weekdayFilter = new WeekdayFilter();
         
         ExtractCommutingHours eodm = new ExtractCommutingHours();
-        List<File> files = eodm.loadFiles(Constants.MOVISTAR_TO_OTHERS_PATH);
+        List<File> files = CDRUtil.loadFiles(Constants.MOVISTAR_TO_OTHERS_PATH, "^F1_GASSET_VOZ_\\d{1,2}092009$");
         
         String targetPath = Constants.FILTERED_PATH + File.separator + "3_commuting_hours";
         boolean success = (new File(targetPath)).mkdir();
@@ -50,7 +51,7 @@ public class ExtractCommutingHours {
         String line;
         
         for (File file: files) {
-            System.out.println("processing " + file);
+            logger.debug("processing " + file);
             BufferedReader br = new BufferedReader(new FileReader(file));
             BufferedWriter hToWBW = new BufferedWriter(new FileWriter(hToWPath + File.separator + file.getName()));
             BufferedWriter wToHBW = new BufferedWriter(new FileWriter(wToHPath + File.separator + file.getName()));
@@ -77,20 +78,5 @@ public class ExtractCommutingHours {
             hToWBW.close();
             wToHBW.close();
         }
-    }
-    private List<File> loadFiles(String string) {
-        // TODO Auto-generated method stub
-        List<File> filtered = new ArrayList<File>();
-        File targetPath = new File(string);
-        if (targetPath.isDirectory()) {
-            File[] files = targetPath.listFiles();
-            for (File file : files) {
-                String filename = file.getName();
-                if (filename.matches("^F1_GASSET_VOZ_\\d{1,2}092009$")) {
-                    filtered.add(file);
-                }
-            }
-        }
-        return filtered;
     }
 }

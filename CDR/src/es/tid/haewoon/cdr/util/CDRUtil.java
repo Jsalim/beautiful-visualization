@@ -32,6 +32,7 @@ public class CDRUtil {
     
     public static Cell getCell(String cellID) {
         if (cellid2Cell == null) {
+            logger.debug("cell/bts info. initialization for the first time running");
             cellid2Cell = new HashMap<String, Cell>();
             BufferedReader br;
             String line;
