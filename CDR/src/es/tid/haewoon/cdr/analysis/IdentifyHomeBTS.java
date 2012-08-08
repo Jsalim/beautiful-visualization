@@ -29,7 +29,7 @@ public class IdentifyHomeBTS {
         String line;
         
         BufferedWriter bw = new BufferedWriter(new FileWriter(
-                        targetPath + File.separator + "telnumber_homeBTS_threshold_" + THRESHOLD + ".tsv"));
+                        targetPath + File.separator + "telnumber_homeBTS_threshold_" + THRESHOLD));
         
         // what i do here is to find BTS has the highest number of events in HomeHours.       
         for (File aFile : files) {
