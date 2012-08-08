@@ -32,7 +32,7 @@ public class IdentifyWorkBTS {
         
         String line;
         BufferedWriter bw = new BufferedWriter(new FileWriter(
-                        targetPath + File.separator + "telnumber_workBTS_threshold_" + THRESHOLD + ".tsv"));
+                        targetPath + File.separator + "telnumber_workBTS_threshold_" + THRESHOLD));
         
         
         // what i do here is to find BTS has the highest number of events in HomeHours.       
@@ -78,7 +78,7 @@ public class IdentifyWorkBTS {
                 double wprop = bts2wprop.get(bts);
                 double hprop = (bts2hprop.get(bts) != null) ?bts2hprop.get(bts) :0;
                
-                double score = wprop + Math.sqrt(1-hprop);  // we weigh low home hour events.
+                double score = wprop + (1-hprop);  // we weigh low home hour events.
                 
                 if (mScore < score) {
                     mScore = score;
