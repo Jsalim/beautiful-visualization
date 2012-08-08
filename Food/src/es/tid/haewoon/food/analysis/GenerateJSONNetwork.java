@@ -16,11 +16,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import es.tid.haewoon.food.util.Constants;
 import es.tid.haewoon.food.util.FoodUtil;
 
-public class GenerateJsonNetwork {
+public class GenerateJSONNetwork {
     Map<String, Integer> ingredient2id = new HashMap<String, Integer>();
     Map<Integer, String> id2ingredient = new HashMap<Integer, String>();
 
-    static Logger logger = Logger.getLogger(GenerateJsonNetwork.class);
+    static Logger logger = Logger.getLogger(GenerateJSONNetwork.class);
     static String targetPath = Constants.RESULT_PATH + File.separator + "6_json_networks";
 
     public static void main(String[] args) throws IOException {
@@ -29,11 +29,11 @@ public class GenerateJsonNetwork {
             logger.debug("A directory [" + targetPath + "] is created");
         }
         
-        GenerateJsonNetwork gjn = new GenerateJsonNetwork();
+        GenerateJSONNetwork gjn = new GenerateJSONNetwork();
         gjn.run();
     }
 
-    public GenerateJsonNetwork() {
+    public GenerateJSONNetwork() {
         nodes = new ArrayList<Node>();
         links = new ArrayList<Link>();
     }
@@ -41,7 +41,7 @@ public class GenerateJsonNetwork {
     List<Node> nodes;
     List<Link> links;
 
-    public class Link {
+    public static class Link {
         public Link(int x, int y, int v) {
             this.source = x;
             this.target = y;
@@ -69,7 +69,7 @@ public class GenerateJsonNetwork {
         }
     }
 
-    public class Node {
+    public static class Node {
         public String name;
         public int id;
         public int group;
