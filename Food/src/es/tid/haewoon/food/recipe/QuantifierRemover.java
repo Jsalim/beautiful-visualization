@@ -15,7 +15,8 @@ public class QuantifierRemover extends Stemmer {
                 replaceAll("\\sg\\s", "").
                 replaceAll(unitsPattern, "").
                 replaceAll(unitPattern, "").
-                replaceAll("approx\\.", "").
+                replaceAll("approx\\b", "").
+                replaceAll("\\bb\\b", "").
                 replaceAll("per 2 cups of .*", "").
                 replaceAll("a few drops of", "").
                 replaceAll("$a\\s|\\sa\\s", " ").
