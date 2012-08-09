@@ -88,13 +88,13 @@ public class EvolutionaryAnalysis {
                 logger.debug(keyValue.get("codigoA" + i));
                 logger.debug(keyValue.get("sabor" + i));
                 logger.debug(keyValue.get("utilizacion" + i));
-                logger.debug(Arrays.asList(keyValue.get("composicion" + i).split("\\s*!\\s")));
+                logger.debug(Arrays.asList(keyValue.get("composicion" + i).split("\\s*!\\s*")));
                 List<String> flavors = (num2str.get(Integer.valueOf(keyValue.get("num" + i))) == null) 
                         ? new ArrayList<String>() :num2str.get(Integer.valueOf(keyValue.get("num" + i)));
                         
                 flavors.add(keyValue.get("num" + i) + "\t" + keyValue.get("mundo") + "\t" + 
-                        keyValue.get("codigoA" + i) + "\t" + keyValue.get("sabor" + i).replaceAll("\\s*!\\s", "|") + "\t" + 
-                        keyValue.get("composicion" + i).replaceAll("\\s*!\\s", "|") + "\t" + keyValue.get("utilizacion" + i)); // + "\t" + afile.getPath());
+                        keyValue.get("codigoA" + i) + "\t" + keyValue.get("sabor" + i).replaceAll("\\s*!\\s*", "|").replaceAll("\\s*/\\s*", "|") + "\t" + 
+                        keyValue.get("composicion" + i).replaceAll("\\s*!\\s*", "|") + "\t" + keyValue.get("utilizacion" + i)); // + "\t" + afile.getPath());
                 
                 
                 num2str.put(Integer.valueOf(keyValue.get("num" + i)), flavors);

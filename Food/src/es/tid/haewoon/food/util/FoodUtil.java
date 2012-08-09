@@ -1,13 +1,17 @@
 package es.tid.haewoon.food.util;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -126,5 +130,21 @@ public class FoodUtil {
         }
         Collections.sort(filtered, nc);
         return filtered;
+    }
+    
+    public static Map<Integer, List<String>> sortByValue(Map<String, Integer> old) {
+        Map<Integer, List<String>> transpose = new HashMap<Integer, List<String>>();
+        
+        for (String key: old.keySet()) {
+            Integer value = old.get(key);
+            List<String> correspondingKeys = transpose.get(value);
+            if (correspondingKeys == null) {
+                correspondingKeys = new ArrayList<String>();
+            } 
+            correspondingKeys.add(key);
+            transpose.put(value, correspondingKeys);
+        }
+        
+        return transpose;
     }
 }
