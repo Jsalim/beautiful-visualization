@@ -23,6 +23,15 @@ public class FindCommonIngredients {
     private Logger logger = Logger.getLogger(FindCommonIngredients.class);
     private String targetPath;
     
+    Map<String, Integer> ingredient2recipe = new HashMap<String, Integer>(); 
+    Map<String, Set<String>> ingredient2neighbors = new HashMap<String, Set<String>>();
+    Map<String, Set<String>> ingredient2flavors = new HashMap<String, Set<String>>();
+        
+    int RECIPE_THRESHOLD = 100;
+    int NEIGHBOR_THRESHOLD = 500;
+    int FLAVOR_THRESHOLD = 30;    	
+    
+    
     public static void main(String[] args) throws IOException {
         (new FindCommonIngredients(Constants.RESULT_PATH + File.separator + "8_ingredient_commonality")).run();
     }
@@ -40,14 +49,46 @@ public class FindCommonIngredients {
         countRecipes();
         countNeighborIngredients();
         countFlavors();
+        
+        extractCommons();
     }
+    
+    private void extractCommons() throws IOException {
+    	Set<String> commons = new HashSet<String>();
+    	
+    	for (String ing : ingredient2recipe.keySet()) {
+    		if (ingredient2recipe.get(ing) >= RECIPE_THRESHOLD) {
+    			commons.add(ing);
+    		}
+    	}
+    	
+    	for (String ing : ingredient2neighbors.keySet()) {
+    		if (ingredient2neighbors.get(ing).size() >= NEIGHBOR_THRESHOLD) {
+    			commons.add(ing);
+    		}
+    	}
+    	
+    	for (String ing : ingredient2flavors.keySet()) {
+    		if (ingredient2flavors.get(ing).size() >= FLAVOR_THRESHOLD) {
+    			commons.add(ing);
+    		}
+    	}
+    	
+    	BufferedWriter bw = new BufferedWriter(new FileWriter(targetPath + File.separator + "common_ingredients"));
+    	for (String common : commons) {
+    		bw.write(common);
+    		bw.newLine();
+    	}
+    	bw.close();
+    }
+    
     
     private void countRecipes() throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(
                 Constants.RESULT_PATH + File.separator + "1_extract_ingredients" + File.separator + "CD2_and_3"));
         String line;
         
-        Map<String, Integer> ingredient2recipe = new HashMap<String, Integer>(); 
+        
         while ((line = br.readLine()) != null) {
             String[] tokens = line.split("\t");
             String recipe = tokens[0];
@@ -81,7 +122,7 @@ public class FindCommonIngredients {
         List<File> files = 
                 FoodUtil.loadFiles(Constants.RESULT_PATH + File.separator + "3_construct_networks_of_each_month", "^\\d{4}-\\d{1,2}$");
         String line;
-        Map<String, Set<String>> ingredient2neighbors = new HashMap<String, Set<String>>();
+       
         
         for (File file : files) {
             BufferedReader br = new BufferedReader(new FileReader(file));
@@ -117,7 +158,7 @@ public class FindCommonIngredients {
                 Constants.RESULT_PATH + File.separator + "5_evolutionary_analysis" + File.separator + "CD2_and_3_preparation"));
         String line;
         
-        Map<String, Set<String>> ingredient2flavors = new HashMap<String, Set<String>>(); 
+         
         while ((line = br.readLine()) != null) {
             String[] tokens = line.split("\t");
             String flavor = tokens[3];
