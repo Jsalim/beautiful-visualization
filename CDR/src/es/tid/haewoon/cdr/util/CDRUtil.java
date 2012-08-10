@@ -3,7 +3,6 @@ package es.tid.haewoon.cdr.util;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -13,6 +12,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -29,6 +29,26 @@ public class CDRUtil {
     @Deprecated
     public static CDRUtil getInstance() {
         return null;
+    }
+    
+    public static Set<Cell> getCells(Province p) {
+        Set<Cell> s = new HashSet<Cell>();
+        if (p == Province.BARCELONA) {
+            try {
+                BufferedReader br = new BufferedReader(new FileReader(Constants.BARCELONA_CELL_INFO_PATH));
+                String line;
+                while((line = br.readLine()) != null) {
+                    // do something with line.
+                    if (line.startsWith("cell")) continue;
+                    Cell cell = new Cell(line);
+                    s.add(cell);
+                }   
+            } catch (Exception e) {
+                logger.error(e);
+            }
+        }
+        logger.debug("loaded Barcelona cell info. [" + s.size() + "]");
+        return s;
     }
     
     public static Cell getCell(String cellID) {

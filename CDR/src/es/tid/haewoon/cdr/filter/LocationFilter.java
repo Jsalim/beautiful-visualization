@@ -4,7 +4,7 @@ import es.tid.haewoon.cdr.util.CDR;
 import es.tid.haewoon.cdr.util.CDRUtil;
 import es.tid.haewoon.cdr.util.Cell;
 
-
+@Deprecated
 public class LocationFilter implements CDRFilter {
     double[][] boundingBox;
     public LocationFilter(double[][] boundingBox) {
