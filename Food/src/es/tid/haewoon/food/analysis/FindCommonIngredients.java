@@ -88,7 +88,7 @@ public class FindCommonIngredients {
                 Constants.RESULT_PATH + File.separator + "1_extract_ingredients" + File.separator + "CD2_and_3"));
         String line;
         
-        
+        String last = "N/A";
         while ((line = br.readLine()) != null) {
             String[] tokens = line.split("\t");
             String recipe = tokens[0];
@@ -150,7 +150,7 @@ public class FindCommonIngredients {
         }
         
         Map<Integer, List<String>> sortedIngredient2numNb = FoodUtil.sortByValue(ingredient2numNb);
-        printMap("ingredient2neighborIngs", sortedIngredient2numNb);        
+        printMap("ingredient2neighbors", sortedIngredient2numNb);        
     }
     
     private void countFlavors() throws IOException {
