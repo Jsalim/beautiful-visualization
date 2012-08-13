@@ -14,6 +14,13 @@ public class Constants {
         } else {
             ENGLISH_ROOT = "/workspace/Food/elBulli/";
         }
+        
+        if (System.getProperty("os.name").startsWith("Windows")) {
+//            RESULT_PATH = "F:\\Dropbox\\elBulli\\result";
+        	RESULT_PATH = "C:\\Users\\usuario\\Dropbox\\elBulli\\result";
+        } else {
+            RESULT_PATH = "/workspace/Food/result";
+        }
     }
     
     public static void main(String[] args) {
@@ -49,5 +56,5 @@ public class Constants {
     public final static String RECIPE_PATTERN = "^\\d{3}\\.dat";
     public final static String CD3_PREPARATION_PATTERN ="^\\d{1,2}\\.txt";
     
-    public final static String RESULT_PATH = "/workspace/Food/result";
+    public final static String RESULT_PATH;
 }
