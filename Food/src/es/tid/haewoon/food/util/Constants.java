@@ -10,7 +10,8 @@ public class Constants {
     
     static {
         if (System.getProperty("os.name").startsWith("Windows")) {
-            ENGLISH_ROOT = "F:\\Dropbox\\elBulli\\English";
+//            ENGLISH_ROOT = "F:\\Dropbox\\elBulli\\English";
+        	ENGLISH_ROOT = "C:\\Users\\usuario\\Dropbox\\elBulli\\English";
         } else {
             ENGLISH_ROOT = "/workspace/Food/elBulli/";
         }
