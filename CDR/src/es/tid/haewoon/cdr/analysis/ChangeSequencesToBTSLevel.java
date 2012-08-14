@@ -29,11 +29,10 @@ public class ChangeSequencesToBTSLevel {
     Map<String, String> cell2bts = new HashMap<String, String>();
 
     public static void main(String[] args) throws IOException, ParseException {
-        ChangeSequencesToBTSLevel csbts = new ChangeSequencesToBTSLevel();
-        csbts.run();
+        (new ChangeSequencesToBTSLevel()).run(Constants.RESULT_PATH + File.separator + "8_BTS_sequences_interval_less_than_" + FindSequences.THRESHOLD_MIN + "_min");
     }
-
-    public void run() throws IOException, ParseException {
+    
+    public ChangeSequencesToBTSLevel() throws IOException, ParseException {
         String line = "";
         BufferedReader br = new BufferedReader(new FileReader(Constants.BARCELONA_CELL_INFO_PATH));
         while((line = br.readLine()) != null) {
@@ -43,27 +42,27 @@ public class ChangeSequencesToBTSLevel {
             String btsID = cell.getBTSID();
             cell2bts.put(cellID, btsID);
         }
-        br.close();
-        
-        List<File> files = CDRUtil.loadFiles(Constants.RESULT_PATH + File.separator + "5_sequences_threshold_" + FindSequences.THRESHOLD_MIN 
-                + "_min", "^.*-.*$");
-       
-        Collections.sort(files, new RankComparator());
-        logger.debug(files.size() + " files loaded...");
+        br.close(); 
+    }
 
-        String targetPath = Constants.RESULT_PATH + File.separator + "8_sequences_of_BTS_threshold_" + FindSequences.THRESHOLD_MIN + "_min";
-        boolean success = (new File(targetPath)).mkdir();
+    public void run(String targetDirectory) throws IOException, ParseException {
+        List<File> files = CDRUtil.loadFiles(Constants.RESULT_PATH + File.separator + "7_cell_sequences_interval_less_than_" + FindSequences.THRESHOLD_MIN 
+                + "_min", "^.*-.*$");
+        Collections.sort(files, new RankComparator());
+       
+        boolean success = (new File(targetDirectory)).mkdir();
         if (success) {
-            logger.debug("A directory [" + targetPath + "] is created");
+            logger.debug("A directory [" + targetDirectory + "] is created");
         }
 
+        String line;
         for (File file: files) {
             logger.debug("processing " + file);
-            br = new BufferedReader(new FileReader(file));
-            BufferedWriter bw = new BufferedWriter(new FileWriter(targetPath + File.separator + file.getName()));
+            BufferedReader br = new BufferedReader(new FileReader(file));
+            BufferedWriter bw = new BufferedWriter(new FileWriter(targetDirectory + File.separator + file.getName()));
             
             while((line = br.readLine()) != null) {
-                String[] tokens = line.split("\\t");
+                String[] tokens = line.split("\t");
                 List<String> newTokens = new ArrayList<String>();
                 newTokens.add(tokens[0]);
                 newTokens.add(tokens[1]);

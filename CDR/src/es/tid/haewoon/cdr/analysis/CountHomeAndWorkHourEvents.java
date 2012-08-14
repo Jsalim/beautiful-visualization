@@ -15,7 +15,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
-import es.tid.haewoon.cdr.filter.ExtractActiveWalkers;
+import es.tid.haewoon.cdr.filter.ExtractTopNormalUsersCDR;
 import es.tid.haewoon.cdr.filter.TelephoneNumberFilter;
 import es.tid.haewoon.cdr.util.CDR;
 import es.tid.haewoon.cdr.util.CDRUtil;
@@ -25,7 +25,7 @@ public class CountHomeAndWorkHourEvents {
     private static Logger logger = Logger.getLogger(CountHomeAndWorkHourEvents.class);
     
     private Map<String, Integer> num2Rank = new HashMap<String, Integer>();
-    private Map<String, String> num2Cell = new HashMap<String, String>();
+    private Map<String, Integer> num2Count = new HashMap<String, Integer>();
     TelephoneNumberFilter tnFilter;
     
     private String fileToReadPath;
@@ -34,15 +34,16 @@ public class CountHomeAndWorkHourEvents {
     Map<String, Map<String, Integer>> num2bts2cnt = new HashMap<String, Map<String, Integer>>();
     
     public static void main(String[] args) throws IOException, ParseException {
-        (new CountHomeAndWorkHourEvents(Constants.FILTERED_PATH + File.separator + "5_1_sorted_home_hours", 
-                Constants.RESULT_PATH + File.separator + "14_1_count_home_hour_events")).run();
+        (new CountHomeAndWorkHourEvents(Constants.FILTERED_PATH + File.separator + "6_1_normal_home_hours", 
+                Constants.RESULT_PATH + File.separator + "2_1_count_home_hour_events")).run();
         
-        (new CountHomeAndWorkHourEvents(Constants.FILTERED_PATH + File.separator + "5_2_sorted_work_hours", 
-                Constants.RESULT_PATH + File.separator + "14_2_count_work_hour_events")).run();
+        (new CountHomeAndWorkHourEvents(Constants.FILTERED_PATH + File.separator + "6_2_normal_work_hours", 
+                Constants.RESULT_PATH + File.separator + "2_2_count_work_hour_events")).run();
         
     }
     
     public CountHomeAndWorkHourEvents(String fileToReadPath, String targetPath) throws IOException {
+        
         this.fileToReadPath = fileToReadPath;
         this.targetPath = targetPath;
         
@@ -54,32 +55,30 @@ public class CountHomeAndWorkHourEvents {
         String line = "";
         Set<String> s = new HashSet<String>();
 
-        int i = 0;
-        
-        BufferedReader br = new BufferedReader(new FileReader(Constants.RESULT_PATH + "/3_count_telnum_2_cells/all"));
+        BufferedReader br = new BufferedReader(new FileReader(
+                Constants.RESULT_PATH + File.separator + "1_count_basic_statistics" + File.separator + "all.caller"));
 
         while((line = br.readLine()) != null) {
-
-            // loading TOP_K users into Set s
-            if (i >= ExtractActiveWalkers.TOP_K) {
+            if (s.size() >= 10000) {    // up to 10000 users
                 break;
             }
-
-            String number = line.split("\\t")[0].trim();
-            s.add(number);
-            i++;
-            num2Rank.put(number, i);
-            num2Cell.put(number, line.split("\\t")[1].trim());
+            
+            String[] tokens = line.split("\t");
+            String number = tokens[0].trim();
+            int count = Integer.valueOf(tokens[1]);
+            if (count <= Constants.DAYS * 3) {
+                s.add(number);
+                num2Rank.put(number, s.size());
+                num2Count.put(number, count);
+            }
         }
         
         logger.info(s.size());
         tnFilter = new TelephoneNumberFilter(s);
     }
     
-    
-    
     private void run() throws IOException, ParseException {
-        List<File> files = CDRUtil.loadFiles(this.fileToReadPath, "^F1_GASSET_VOZ_\\d{1,2}092009$");
+        List<File> files = CDRUtil.loadFiles(this.fileToReadPath, Constants.RAW_DATA_FILE_PATTERN);
         
         for (File file: files) { 
             logger.debug("processing " + file);
@@ -90,8 +89,15 @@ public class CountHomeAndWorkHourEvents {
                 CDR cdr;
                 cdr = new CDR(line);
                 if (tnFilter.filter(cdr)) {
+                    try {
                     handlingCount(num2cell2cnt, cdr, true);
                     handlingCount(num2bts2cnt, cdr, false);
+                    } catch (Exception e) {
+                        logger.error(line);
+                        logger.error(cdr.getMovistarNum());
+                        logger.error(cdr.getInitCellID());
+                        logger.error(cdr.getFinCellID());
+                    }
                 }
             }
         }
@@ -129,8 +135,7 @@ public class CountHomeAndWorkHourEvents {
             Map<String, Integer> bts2cnt = num2bts2cnt.get(movistarNum);
             
             BufferedWriter bw = new BufferedWriter(new FileWriter(
-                    this.targetPath + File.separator + num2Rank.get(movistarNum) + "-" + movistarNum + 
-                    "-" + num2Cell.get(movistarNum), true));
+                    this.targetPath + File.separator + num2Rank.get(movistarNum) + "-" + movistarNum + "-" + num2Count.get(movistarNum), true));
             
             for (String cell : cell2cnt.keySet()) {
                 String bts = CDRUtil.getCell(cell).getBTSID();

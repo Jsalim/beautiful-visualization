@@ -3,11 +3,11 @@ package es.tid.haewoon.cdr.filter;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -19,55 +19,51 @@ import org.apache.log4j.Logger;
 import es.tid.haewoon.cdr.util.CDR;
 import es.tid.haewoon.cdr.util.CDRUtil;
 import es.tid.haewoon.cdr.util.Constants;
+import es.tid.haewoon.cdr.util.MonthDayComparator;
 
 
-public class ExtractActiveWalkers {
-    TelephoneNumberFilter tnFilter;
-    private final String active_walker_path = Constants.RESULT_PATH + "/3_count_telnum_2_cells/all";
-    private static Logger logger = Logger.getLogger(ExtractActiveWalkers.class);
+public class ExtractTopNormalUsersCDR {
+    TelephoneNumberFilter tnf;
+    private static Logger logger = Logger.getLogger(ExtractTopNormalUsersCDR.class);
     public static final int TOP_K = 10000;
-    private final String targetDirectory;
     private Map<String, Integer> num2Rank = new HashMap<String, Integer>();
-    private Map<String, String> num2Cell = new HashMap<String, String>();
+    private Map<String, Integer> num2Count = new HashMap<String, Integer>();
     
-    public ExtractActiveWalkers() {
-        String line = "";
+    public ExtractTopNormalUsersCDR() throws IOException {
+        BufferedReader br = new BufferedReader(new FileReader(
+                Constants.RESULT_PATH + File.separator + "1_count_basic_statistics" + File.separator + "all.caller"));
+        String line;
         Set<String> s = new HashSet<String>();
-
-        int i = 0;
-        try {
-            BufferedReader br = new BufferedReader(new FileReader(active_walker_path));
-
-            while((line = br.readLine()) != null) {
-
-                // loading TOP_K users into Set s
-                if (i >= TOP_K) {
-                    break;
-                }
-
-                String number = line.split("\\t")[0].trim();
+        
+        while((line = br.readLine()) != null) {
+            if (s.size() >= 10000) {    // up to 10000 users
+                break;
+            }
+            
+            String[] tokens = line.split("\t");
+            String number = tokens[0].trim();
+            int count = Integer.valueOf(tokens[1]);
+            if (count <= Constants.DAYS * 3) {
                 s.add(number);
-                i++;
-                num2Rank.put(number, i);
-                num2Cell.put(number, line.split("\\t")[1].trim());
-            }        
-        } catch (Exception e) {
-            logger.debug(line);
-            e.printStackTrace();    // something wrong
+                num2Rank.put(number, s.size());
+                num2Count.put(number, count);
+            }
         }
         
         logger.info(s.size());
-        tnFilter = new TelephoneNumberFilter(s);
-        
-        targetDirectory = Constants.RESULT_PATH + File.separator + "4_most_frequent_" + TOP_K + "_active_walkers";
+        tnf = new TelephoneNumberFilter(s);
+    }
+    
+    public void run(String targetDirectory) throws IOException {
         boolean success = (new File(targetDirectory)).mkdir();
         if (success) {
             logger.debug("[" + targetDirectory + "] directory created");
         }
-    }
-    
-    public void run() throws IOException {
-        List<File> files = CDRUtil.loadRefinedCDRFiles();
+        
+        List<File> files = CDRUtil.loadFiles(Constants.FILTERED_PATH + File.separator + "6_3_normal_commuting_hours", 
+                                             Constants.RAW_DATA_FILE_PATTERN);
+        Collections.sort(files, new MonthDayComparator());
+        logger.debug(files.size());
         
         for (File file: files) {
             logger.debug("processing " + file);
@@ -78,11 +74,11 @@ public class ExtractActiveWalkers {
                 CDR cdr;
                 try {
                     cdr = new CDR(line);
-                    if (tnFilter.filter(cdr)) {
+                    if (tnf.filter(cdr)) {
                         String movistarNum = cdr.getMovistarNum();
                         BufferedWriter bw = new BufferedWriter(new FileWriter(
                                 targetDirectory + File.separator + num2Rank.get(movistarNum) + "-" + movistarNum + 
-                                "-" + num2Cell.get(movistarNum), true));
+                                "-" + num2Count.get(movistarNum), true));
                         bw.write(line.trim());
                         bw.newLine();
                         bw.close();
@@ -112,8 +108,7 @@ public class ExtractActiveWalkers {
      */
     public static void main(String[] args) throws IOException {
         // TODO Auto-generated method stub
-        ExtractActiveWalkers eaw = new ExtractActiveWalkers();
-        eaw.run();
+        (new ExtractTopNormalUsersCDR()).run(Constants.RESULT_PATH + File.separator + "6_top_" + TOP_K + "_users_during_commuting_hours");
     }
 
 }

@@ -17,7 +17,7 @@ public class CellFilter implements CDRFilter {
     }
     @Override
     public boolean filter(CDR cdr) {
-        return s.contains(cdr.getInitCellID()) || s.contains(cdr.getFinCellID());
+        return s.contains(cdr.getInitCellID()) && s.contains(cdr.getFinCellID());
     }
 
 }

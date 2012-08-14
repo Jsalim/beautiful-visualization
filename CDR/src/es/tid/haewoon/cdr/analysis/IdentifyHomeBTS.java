@@ -59,10 +59,10 @@ public class IdentifyHomeBTS {
     }
     
     public static void main(String[] args) throws IOException {
-        (new IdentifyHomeBTS()).run(Constants.RESULT_PATH + File.separator + "16_1_clustered_home_hour_events_threshold_1000m",
-                                    Constants.RESULT_PATH + File.separator + "17_1_home_BTS");
-        (new IdentifyHomeBTS()).run(Constants.RESULT_PATH + File.separator + "16_1_clustered_home_hour_events_threshold_2000m",
-                Constants.RESULT_PATH + File.separator + "17_1_home_BTS");
+        (new IdentifyHomeBTS()).run(Constants.RESULT_PATH + File.separator + "4_1_clustered_home_hour_events_threshold_1000m",
+                                    Constants.RESULT_PATH + File.separator + "5_1_home_BTS");
+//        (new IdentifyHomeBTS()).run(Constants.RESULT_PATH + File.separator + "16_1_clustered_home_hour_events_threshold_2000m",
+//                Constants.RESULT_PATH + File.separator + "17_1_home_BTS");
     }
     
 }

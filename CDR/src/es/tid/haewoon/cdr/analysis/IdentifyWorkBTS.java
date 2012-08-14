@@ -95,12 +95,12 @@ public class IdentifyWorkBTS {
     }
     
     public static void main(String[] args) throws IOException {
-        (new IdentifyWorkBTS()).run(Constants.RESULT_PATH + File.separator + "16_2_clustered_work_hour_events_threshold_1000m",
-                                    Constants.RESULT_PATH + File.separator + "16_1_clustered_home_hour_events_threshold_1000m",
-                                    Constants.RESULT_PATH + File.separator + "17_2_work_BTS");
+        (new IdentifyWorkBTS()).run(Constants.RESULT_PATH + File.separator + "4_2_clustered_work_hour_events_threshold_1000m",
+                                    Constants.RESULT_PATH + File.separator + "4_1_clustered_home_hour_events_threshold_1000m",
+                                    Constants.RESULT_PATH + File.separator + "5_2_work_BTS");
         
-        (new IdentifyWorkBTS()).run(Constants.RESULT_PATH + File.separator + "16_2_clustered_work_hour_events_threshold_2000m",
-                                    Constants.RESULT_PATH + File.separator + "16_1_clustered_home_hour_events_threshold_2000m",
-                                    Constants.RESULT_PATH + File.separator + "17_2_work_BTS");
+//        (new IdentifyWorkBTS()).run(Constants.RESULT_PATH + File.separator + "16_2_clustered_work_hour_events_threshold_2000m",
+//                                    Constants.RESULT_PATH + File.separator + "16_1_clustered_home_hour_events_threshold_2000m",
+//                                    Constants.RESULT_PATH + File.separator + "17_2_work_BTS");
     }
 }

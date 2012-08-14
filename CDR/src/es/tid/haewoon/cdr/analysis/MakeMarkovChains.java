@@ -29,14 +29,14 @@ public class MakeMarkovChains {
     private Map<String, MarkovChainState> markovChain = new HashMap<String, MarkovChainState>();
 
     public static void main(String[] args) throws IOException {
-        MakeMarkovChains mcc = new MakeMarkovChains();
 //        mcc.run(Constants.RESULT_PATH + File.separator + "5_sequences_threshold_" + FindSequences.THRESHOLD_MIN + "_min", 
 //                "^.*-.*$", 
 //                Constants.RESULT_PATH + File.separator + "6_1_markov_chain_of_cells", 
 //                Constants.RESULT_PATH + File.separator + "6_2_pruned_markov_chain_of_cells", 
 //                Constants.RESULT_PATH + File.separator + "6_3_normalized_markov_chain_of_cells");
         
-        mcc.run(Constants.RESULT_PATH + File.separator + "8_sequences_of_BTS_threshold_" + FindSequences.THRESHOLD_MIN + "_min", 
+        (new MakeMarkovChains()).run(
+                Constants.RESULT_PATH + File.separator + "8_BTS_sequences_interval_less_than_" + FindSequences.THRESHOLD_MIN + "_min", 
                 "^.*-.*$", 
                 Constants.RESULT_PATH + File.separator + "9_1_markov_chain_of_BTS", 
                 Constants.RESULT_PATH + File.separator + "9_2_pruned_markov_chain_of_BTS", 
@@ -45,8 +45,6 @@ public class MakeMarkovChains {
     }
     
     public void run(String inputPath, String pattern, String targetPath, String targetPPath, String targetNPath) throws IOException {
-        
-        // TODO Auto-generated method stub
         List<File> files = CDRUtil.loadFiles(inputPath, pattern);
         Collections.sort(files, new RankComparator());
         

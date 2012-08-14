@@ -58,7 +58,7 @@ public class CDRUtil {
             BufferedReader br;
             String line;
             try {
-                br = new BufferedReader(new FileReader(Constants.BASE_PATH + File.separator + Constants.CELL_INFO_FILE_NAME));
+                br = new BufferedReader(new FileReader(Constants.BARCELONA_CELL_INFO_PATH));
                 while((line = br.readLine()) != null) {
                     // do something with line.
                     if (line.startsWith("cell")) continue;
@@ -72,6 +72,7 @@ public class CDRUtil {
                 // TODO Auto-generated catch block
                 logger.debug("No file?", e);
             }
+            logger.debug(cellid2Cell.size());
         }
         
         return cellid2Cell.get(cellID);
@@ -84,7 +85,7 @@ public class CDRUtil {
             BufferedReader br;
             String line;
             try {
-                br = new BufferedReader(new FileReader(Constants.BASE_PATH + File.separator + Constants.CELL_INFO_FILE_NAME));
+                br = new BufferedReader(new FileReader(Constants.BARCELONA_CELL_INFO_PATH));
                 while((line = br.readLine()) != null) {
                     // do something with line.
                     if (line.startsWith("cell")) continue;
@@ -175,6 +176,17 @@ public class CDRUtil {
         logger.debug(CDRUtil.getCell("181562"));
     }
     
+    public static List<File> loadAllCDRFiles() {
+        List<File> files = CDRUtil.loadFiles(Constants.FILTERED_PATH + File.separator + "5_1_sorted_home_hours", Constants.RAW_DATA_FILE_PATTERN);
+        files.addAll(CDRUtil.loadFiles(Constants.FILTERED_PATH + File.separator + "5_2_sorted_work_hours", Constants.RAW_DATA_FILE_PATTERN));
+        files.addAll(CDRUtil.loadFiles(Constants.FILTERED_PATH + File.separator + "5_3_sorted_commuting_hours", Constants.RAW_DATA_FILE_PATTERN));
+        
+        Collections.sort(files, new MonthDayComparator());
+        return files;
+    }
+    
+    
+    @Deprecated
     public static List<File> loadRefinedCDRFiles() {
         List<File> files = CDRUtil.loadFiles(Constants.SORTED_COMMUTING_HOURS_PATH + File.separator + "7-10", Constants.RAW_DATA_FILE_PATTERN);
         files.addAll(CDRUtil.loadFiles(Constants.SORTED_COMMUTING_HOURS_PATH + File.separator + "17-20", Constants.RAW_DATA_FILE_PATTERN));
@@ -197,9 +209,8 @@ public class CDRUtil {
         
         return files;
     }
- 
+    
     public static List<File> loadFiles(String string, String pattern) {
-        // TODO Auto-generated method stub
         List<File> filtered = new ArrayList<File>();
         File targetPath = new File(string);
         if (targetPath.isDirectory()) {
@@ -211,15 +222,18 @@ public class CDRUtil {
                 }
             }
         }
-        if (filtered.get(0).getName().indexOf("-") != -1) {
-            Collections.sort(filtered, new RankComparator());
-        }
+
+        logger.debug("loading [" + filtered.size() + "] files...");
         return filtered;
     }
     
     public static void printMap(String path, Map map) {
+        printMap(path, map, false);
+    }
+    
+    public static void printMap(String path, Map map, boolean append) {
         try {
-            BufferedWriter bw = new BufferedWriter(new FileWriter(path));
+            BufferedWriter bw = new BufferedWriter(new FileWriter(path, append));
 
             List keys = new ArrayList(map.keySet());
             Collections.sort(keys);
