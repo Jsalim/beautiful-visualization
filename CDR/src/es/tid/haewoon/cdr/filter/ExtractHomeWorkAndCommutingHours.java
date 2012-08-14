@@ -15,10 +15,15 @@ import es.tid.haewoon.cdr.util.CDR;
 import es.tid.haewoon.cdr.util.CDRUtil;
 import es.tid.haewoon.cdr.util.Constants;
 
-public class ExtractHomeAndWorkHours {
-    private final static Logger logger = Logger.getLogger(ExtractHomeAndWorkHours.class);
+/*
+ * Home / Work / Commuting hours
+ */
+public class ExtractHomeWorkAndCommutingHours {
+    private final static Logger logger = Logger.getLogger(ExtractHomeWorkAndCommutingHours.class);
     private final static String homeTargetPath = Constants.FILTERED_PATH + File.separator + "3_1_home_hours";
     private final static String workTargetPath = Constants.FILTERED_PATH + File.separator + "3_2_work_hours";
+    private final static String commTargetPath = Constants.FILTERED_PATH + File.separator + "3_3_commuting_hours";
+    
     public static void main(String[] args) throws IOException, ParseException {
         boolean success = (new File(homeTargetPath)).mkdir();
         if (success) {
@@ -30,24 +35,32 @@ public class ExtractHomeAndWorkHours {
             logger.debug("A directory [" + workTargetPath + "] is created");
         }
         
-        ExtractHomeAndWorkHours ehh = new ExtractHomeAndWorkHours();
-        ehh.run();
+        success = (new File(commTargetPath)).mkdir();
+        if (success) {
+            logger.debug("A directory [" + workTargetPath + "] is created");
+        }
+        
+        (new ExtractHomeWorkAndCommutingHours()).run();
     }
     
     private void run() throws IOException {
-        List<File> files = CDRUtil.loadFiles(Constants.MOVISTAR_TO_OTHERS_PATH, "^F1_GASSET_VOZ_\\d{1,2}092009$");
+        List<File> files = CDRUtil.loadFiles(Constants.FILTERED_PATH + File.separator + "1_barcelona", "^F1_GASSET_VOZ_\\d{4}2009$");
 
         CDRFilter hFilter1 = new HourFilter(19, 24);     // from 7pm to 24
         CDRFilter hFilter2 = new HourFilter(0, 7);     // from 0 to 7am
         CDRFilter wFilter = new HourFilter(13, 17);   // from 1pm to 5pm
         CDRFilter weekdayFilter = new WeekdayFilter();
- 
+
+        CDRFilter cFilter1 = new HourFilter(7, 9);   // from 7 to 9am
+        CDRFilter cFilter2 = new HourFilter(17, 19);     // from 5 to 7pm
+        
         String line;
         for (File file: files) {
             logger.debug("processing " + file);
             BufferedReader br = new BufferedReader(new FileReader(file));
             BufferedWriter hbw = new BufferedWriter(new FileWriter(homeTargetPath + File.separator + file.getName()));
             BufferedWriter wbw = new BufferedWriter(new FileWriter(workTargetPath + File.separator + file.getName()));
+            BufferedWriter cbw = new BufferedWriter(new FileWriter(commTargetPath + File.separator + file.getName()));
 
             while((line = br.readLine()) != null) {
                 try {
@@ -60,6 +73,9 @@ public class ExtractHomeAndWorkHours {
                         } else if (wFilter.filter(cdr)) {
                             wbw.write(line.trim());
                             wbw.newLine();
+                        } else if (cFilter1.filter(cdr) || cFilter2.filter(cdr)) {
+                            cbw.write(line.trim());
+                            cbw.newLine();
                         }
                     } else {
                         // weekend
@@ -76,6 +92,7 @@ public class ExtractHomeAndWorkHours {
             br.close();
             hbw.close();
             wbw.close();
+            cbw.close();
         }
     }
 }

@@ -16,7 +16,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import es.tid.haewoon.cdr.filter.ExtractActiveWalkers;
+import es.tid.haewoon.cdr.filter.ExtractTopNormalUsersCDR;
 import es.tid.haewoon.cdr.util.CDR;
 import es.tid.haewoon.cdr.util.CDRUtil;
 import es.tid.haewoon.cdr.util.Constants;
@@ -35,16 +35,17 @@ public class FindSequences {
      * @throws IOException 
      */
     public static void main(String[] args) throws IOException {
-        // TODO Auto-generated method stub
-        List<File> files = CDRUtil.loadFiles(Constants.RESULT_PATH + File.separator + "4_most_frequent_" + 
-                                            ExtractActiveWalkers.TOP_K + "_active_walkers", "^.*-.*$");
-        
+        new FindSequences().run(Constants.RESULT_PATH + File.separator + "7_cell_sequences_interval_less_than_" + THRESHOLD_MIN + "_min");
+    }
+    
+    private void run(String targetDirectory) throws IOException {
+        List<File> files = CDRUtil.loadFiles(Constants.RESULT_PATH + File.separator + "6_top_10000_users_during_commuting_hours", 
+                                             "^.*-.*$");
         Collections.sort(files, new RankComparator());
 
-        String targetPath = Constants.RESULT_PATH + File.separator + "5_sequences_threshold_" + THRESHOLD_MIN + "_min";
-        boolean success = (new File(targetPath)).mkdir();
+        boolean success = (new File(targetDirectory)).mkdir();
         if (success) {
-            logger.debug("A directory [" + targetPath + "] is created");
+            logger.debug("A directory [" + targetDirectory + "] is created");
         }
         
         for (File file: files) {
@@ -77,7 +78,7 @@ public class FindSequences {
                                 sb.append(delim).append(cell);
                                 delim = "\t";
                             }
-                            BufferedWriter bw = new BufferedWriter(new FileWriter(targetPath + File.separator + file.getName(), true));
+                            BufferedWriter bw = new BufferedWriter(new FileWriter(targetDirectory + File.separator + file.getName(), true));
                             bw.write(sdf.format(cdr.getDatetime()) + "\t" + cellSeq.size() + "\t" + sb.toString());
                             bw.newLine();
                             bw.close();

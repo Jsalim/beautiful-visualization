@@ -1,14 +1,10 @@
 package es.tid.haewoon.cdr.analysis;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,16 +20,22 @@ public class CountBasicStatistics {
     private static Logger logger = Logger.getLogger(CountBasicStatistics.class); 
 
     public static void main(String[] args) throws IOException {
-        CountBasicStatistics cc = new CountBasicStatistics();
-
-        Map origin2Count = new HashMap();
-        Map dest2Count = new HashMap();
-        Map cell2Count = new HashMap();
-        Map duration2Count = new HashMap();
-        Map number2Count = new HashMap();
+        (new CountBasicStatistics()).run(Constants.RESULT_PATH + File.separator + "1_count_basic_statistics");
+    }
+    
+    private void run(String targetDirectory) throws IOException {
+        boolean success = (new File(targetDirectory)).mkdir();
+        if (success) {
+            logger.debug("[" + targetDirectory + "] is created...");
+        }
         
-        List<File> files = CDRUtil.loadRefinedCDRFiles();
+        Map<String, Integer> origin2Count = new HashMap<String, Integer>();
+        Map<String, Integer> dest2Count = new HashMap<String, Integer>();
+        Map<String, Integer> cell2Count = new HashMap<String, Integer>();
+        Map<String, Integer> duration2Count = new HashMap<String, Integer>();
+        Map<String, Integer> number2Count = new HashMap<String, Integer>();
         
+        List<File> files = CDRUtil.loadAllCDRFiles();
         String line;
 
         for (File file: files) {
@@ -72,12 +74,12 @@ public class CountBasicStatistics {
                 } 
             }
        
-            String basePath = Constants.RESULT_PATH + "/count_basic_statistics/" + file.getName();
-            CDRUtil.printMap(basePath + ".on2c", origin2Count);
-            CDRUtil.printMap(basePath + ".dn2c", dest2Count);
-            CDRUtil.printMap(basePath + ".cl2c", cell2Count);
-            CDRUtil.printMap(basePath + ".du2c", duration2Count);
-            CDRUtil.printMap(basePath + ".nb2c", number2Count);
+            String basePath = targetDirectory + File.separator + file.getName();
+            CDRUtil.printMap(basePath + ".caller", origin2Count, true);
+            CDRUtil.printMap(basePath + ".callee", dest2Count, true);
+            CDRUtil.printMap(basePath + ".cell", cell2Count, true);
+            CDRUtil.printMap(basePath + ".duration", duration2Count, true);
+            CDRUtil.printMap(basePath + ".caller_ee", number2Count, true);
         }
     }
     

@@ -18,10 +18,10 @@ import org.apache.log4j.Logger;
 import es.tid.haewoon.cdr.util.CDRUtil;
 import es.tid.haewoon.cdr.util.Constants;
 import es.tid.haewoon.cdr.util.MarkovChainState;
+import es.tid.haewoon.cdr.util.NumericComparator;
 import es.tid.haewoon.cdr.util.StateBuilder;
+import es.tid.haewoon.cdr.util.StringStateBuilder;
 import es.tid.haewoon.cdr.util.Transition;
-import es.tid.haewoon.cdr.util.TransitionComparator;
-import es.tid.haewoon.cdr.util.TransitionStateBuilder;
 
 public class AggregateMarkovChains<T> {
     private static Logger logger = Logger.getLogger(AggregateMarkovChains.class);
@@ -38,18 +38,18 @@ public class AggregateMarkovChains<T> {
 //                new StringStateBuilder(),
 //                new NumericComparator());
         
-//        amc.run(Constants.RESULT_PATH + File.separator + "9_2_pruned_markov_chain_of_BTS", 
-//                "^.*-.*$", 
-//                Constants.RESULT_PATH + File.separator + "10_one_big_markov_chain_of_BTS",
-//                new StringStateBuilder(),
-//                new NumericComparator());
-        
-        AggregateMarkovChains<Transition> amc = new AggregateMarkovChains<Transition>();
-        amc.run(Constants.RESULT_PATH + File.separator + "11_2_pruned_BTS_trans_cell_trans", 
+        (new AggregateMarkovChains<Transition>()).
+        run(Constants.RESULT_PATH + File.separator + "9_2_pruned_markov_chain_of_BTS", 
                 "^.*-.*$", 
-                Constants.RESULT_PATH + File.separator + "12_one_big_BTS_trans_cell_trans", 
-                new TransitionStateBuilder(),
-                new TransitionComparator());
+                Constants.RESULT_PATH + File.separator + "10_one_big_markov_chain_of_BTS",
+                new StringStateBuilder(),
+                new NumericComparator());
+        
+//        (new AggregateMarkovChains<Transition>()).run(Constants.RESULT_PATH + File.separator + "11_2_pruned_BTS_trans_cell_trans", 
+//                "^.*-.*$", 
+//                Constants.RESULT_PATH + File.separator + "10_one_big_BTS_trans_cell_trans", 
+//                new TransitionStateBuilder(),
+//                new TransitionComparator());
     }
     
     
@@ -93,10 +93,10 @@ public class AggregateMarkovChains<T> {
 //        }
 //    }
     
-    public void run(String inputPath, String pattern, String targetPath, StateBuilder sb, Comparator<T> cp) throws NumberFormatException, IOException {
-        boolean success = (new File(targetPath)).mkdir();
+    public void run(String inputPath, String pattern, String targetDirectory, StateBuilder sb, Comparator cp) throws NumberFormatException, IOException {
+        boolean success = (new File(targetDirectory)).mkdir();
         if (success) {
-            logger.debug("A directory [" + targetPath + "] is created");
+            logger.debug("A directory [" + targetDirectory + "] is created");
         }
         
         // TODO Auto-generated method stub
@@ -115,9 +115,9 @@ public class AggregateMarkovChains<T> {
         List<T> cells = new ArrayList<T>(bigChains.keySet());
         Collections.sort(cells, cp);
         
-        BufferedWriter bw = new BufferedWriter(new FileWriter(targetPath + File.separator + "1_big_chain"));
-        BufferedWriter pbw = new BufferedWriter(new FileWriter(targetPath + File.separator + "2_pruned_big_chain"));
-        BufferedWriter nbw = new BufferedWriter(new FileWriter(targetPath + File.separator + "3_normalized_big_chain"));
+        BufferedWriter bw = new BufferedWriter(new FileWriter(targetDirectory + File.separator + "1_big_chain"));
+        BufferedWriter pbw = new BufferedWriter(new FileWriter(targetDirectory + File.separator + "2_pruned_big_chain"));
+        BufferedWriter nbw = new BufferedWriter(new FileWriter(targetDirectory + File.separator + "3_normalized_big_chain"));
         
         for (T cell: cells) {
             MarkovChainState<T> s = bigChains.get(cell);

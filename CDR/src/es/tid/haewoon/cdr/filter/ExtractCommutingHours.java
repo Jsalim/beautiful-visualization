@@ -20,6 +20,7 @@ import es.tid.haewoon.cdr.util.CDR;
 import es.tid.haewoon.cdr.util.CDRUtil;
 import es.tid.haewoon.cdr.util.Constants;
 
+@Deprecated
 public class ExtractCommutingHours {
     private final static Logger logger = Logger.getLogger(ExtractCommutingHours.class);
     public static void main(String[] args) throws FileNotFoundException, IOException, ParseException {

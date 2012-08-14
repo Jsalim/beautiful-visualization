@@ -2,6 +2,7 @@ package es.tid.haewoon.cdr.analysis;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -16,10 +17,10 @@ public class AggregateTelNumToCells {
      * @param args
      * @throws FileNotFoundException 
      */
-    public static void main(String[] args) throws FileNotFoundException {
+    public static void main(String[] args) throws IOException {
         // TODO Auto-generated method stub
         String targetPath = Constants.RESULT_PATH + File.separator + "3_count_telnum_2_cells";
-        Map agg = StatisticsAggregator.run(targetPath, Constants.RAW_DATA_FILE_PATTERN);
+        Map agg = (new StatisticsAggregator()).run(targetPath, Constants.RAW_DATA_FILE_PATTERN);
         CDRUtil.printMapSortedByValue(targetPath + File.separator + "all", agg);
     }
 

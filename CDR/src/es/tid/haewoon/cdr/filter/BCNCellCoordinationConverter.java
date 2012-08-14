@@ -18,12 +18,10 @@ public class BCNCellCoordinationConverter {
         CoordinationConverter cc = new CoordinationConverter();
         String line = "";
         
-        BufferedWriter bw = new BufferedWriter(new FileWriter(Constants.FILTERED_PATH + File.separator + 
-                "4_barcelona_CELLs" + File.separator + Constants.CELL_INFO_FILE_NAME));
-        BufferedWriter be = new BufferedWriter(new FileWriter(Constants.FILTERED_PATH + File.separator + 
-                "4_barcelona_CELLs" + File.separator + "error_" + Constants.CELL_INFO_FILE_NAME));
+        BufferedWriter bw = new BufferedWriter(new FileWriter(Constants.BASE_PATH + File.separator + "GASSET_CELULA_BCN_haewoon.TXT")); 
+        BufferedWriter be = new BufferedWriter(new FileWriter(Constants.FILTERED_PATH + File.separator + "error_GASSET_CELULA_BCN_haewoon.TXT"));
         
-        BufferedReader br = new BufferedReader(new FileReader(Constants.BASE_PATH + File.separator + Constants.CELL_INFO_FILE_NAME));
+        BufferedReader br = new BufferedReader(new FileReader(Constants.BASE_PATH + File.separator + "GASSET_CELULA.TXT"));
         while((line = br.readLine()) != null) {
             String[] tokens = line.split("\\|");
             
@@ -32,6 +30,11 @@ public class BCNCellCoordinationConverter {
                 String easting = tokens[4];
                 String northing = tokens[5];
                 double[] latlong = cc.utm2LatLon("31 T " + easting + " " + northing);
+                
+                // warning! 
+                if (latlong[1] > 4.0) {
+                    latlong = cc.utm2LatLon("30 T " + easting + " " + northing);
+                }
                 
                 String delim = "|";
                 StringBuffer sb = new StringBuffer();

@@ -105,19 +105,19 @@ public class ClusterBTS {
     
     public static void main(String[] args) throws IOException {
         (new ClusterBTS()).run(
-                Constants.RESULT_PATH + File.separator + "15_1_sorted_home_hour_events",
-                Constants.RESULT_PATH + File.separator + "16_1_clustered_home_hour_events", 1000);
+                Constants.RESULT_PATH + File.separator + "3_1_sorted_home_hour_events",
+                Constants.RESULT_PATH + File.separator + "4_1_clustered_home_hour_events", 1000);
         
         (new ClusterBTS()).run(
-                Constants.RESULT_PATH + File.separator + "15_2_sorted_work_hour_events",
-                Constants.RESULT_PATH + File.separator + "16_2_clustered_work_hour_events", 1000);
+                Constants.RESULT_PATH + File.separator + "3_2_sorted_work_hour_events",
+                Constants.RESULT_PATH + File.separator + "4_2_clustered_work_hour_events", 1000);
 
-        (new ClusterBTS()).run(
-                Constants.RESULT_PATH + File.separator + "15_1_sorted_home_hour_events",
-                Constants.RESULT_PATH + File.separator + "16_1_clustered_home_hour_events", 2000);
-        
-        (new ClusterBTS()).run(
-                Constants.RESULT_PATH + File.separator + "15_2_sorted_work_hour_events",
-                Constants.RESULT_PATH + File.separator + "16_2_clustered_work_hour_events", 2000);
+//        (new ClusterBTS()).run(
+//                Constants.RESULT_PATH + File.separator + "15_1_sorted_home_hour_events",
+//                Constants.RESULT_PATH + File.separator + "16_1_clustered_home_hour_events", 2000);
+//        
+//        (new ClusterBTS()).run(
+//                Constants.RESULT_PATH + File.separator + "15_2_sorted_work_hour_events",
+//                Constants.RESULT_PATH + File.separator + "16_2_clustered_work_hour_events", 2000);
     }
 }
