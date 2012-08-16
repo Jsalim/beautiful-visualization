@@ -72,8 +72,8 @@ public class ExtractNormalUsers {
                         bw.write(line.trim());
                         bw.newLine();
                     } 
-                } catch (ParseException pe) {
-                    logger.error("wrong-format CDR", pe);
+                } catch (Exception e) {
+                    logger.error("wrong-format CDR [" + line + "]", e);
                 } catch (AssertionError e) {
                     logger.debug(line);
                     logger.fatal("something wrong / all CDRs here must have at least one Movistar number", e);

@@ -29,7 +29,16 @@ public class ChangeSequencesToBTSLevel {
     Map<String, String> cell2bts = new HashMap<String, String>();
 
     public static void main(String[] args) throws IOException, ParseException {
-        (new ChangeSequencesToBTSLevel()).run(Constants.RESULT_PATH + File.separator + "8_BTS_sequences_interval_less_than_" + FindSequences.THRESHOLD_MIN + "_min");
+        (new ChangeSequencesToBTSLevel()).run(
+                Constants.RESULT_PATH + File.separator + "7_1_cell_sequences_in_home_hours_interval_less_than_" + FindSequences.THRESHOLD_MIN + "_min",
+                Constants.RESULT_PATH + File.separator + "8_1_BTS_sequences_in_home_hours_interval_less_than_" + FindSequences.THRESHOLD_MIN + "_min");
+        (new ChangeSequencesToBTSLevel()).run(
+                Constants.RESULT_PATH + File.separator + "7_2_cell_sequences_in_work_hours_interval_less_than_" + FindSequences.THRESHOLD_MIN + "_min",
+                Constants.RESULT_PATH + File.separator + "8_2_BTS_sequences_in_work_hours_interval_less_than_" + FindSequences.THRESHOLD_MIN + "_min");
+        (new ChangeSequencesToBTSLevel()).run(
+                Constants.RESULT_PATH + File.separator + "7_3_cell_sequences_in_commuting_hours_interval_less_than_" + FindSequences.THRESHOLD_MIN + "_min",
+                Constants.RESULT_PATH + File.separator + "8_3_BTS_sequences_in_commuting_hours_interval_less_than_" + FindSequences.THRESHOLD_MIN + "_min");
+
     }
     
     public ChangeSequencesToBTSLevel() throws IOException, ParseException {
@@ -45,9 +54,8 @@ public class ChangeSequencesToBTSLevel {
         br.close(); 
     }
 
-    public void run(String targetDirectory) throws IOException, ParseException {
-        List<File> files = CDRUtil.loadFiles(Constants.RESULT_PATH + File.separator + "7_cell_sequences_interval_less_than_" + FindSequences.THRESHOLD_MIN 
-                + "_min", "^.*-.*$");
+    public void run(String loadPath, String targetDirectory) throws IOException, ParseException {
+        List<File> files = CDRUtil.loadFiles(loadPath, "^.*-.*$");
         Collections.sort(files, new RankComparator());
        
         boolean success = (new File(targetDirectory)).mkdir();

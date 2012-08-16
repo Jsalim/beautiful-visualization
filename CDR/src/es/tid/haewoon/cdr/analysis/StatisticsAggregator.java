@@ -2,9 +2,9 @@ package es.tid.haewoon.cdr.analysis;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 
 import es.tid.haewoon.cdr.util.CDRUtil;
 import es.tid.haewoon.cdr.util.Constants;
+import es.tid.haewoon.cdr.util.MonthDayComparator;
 
 public class StatisticsAggregator {
     private static Logger logger = Logger.getLogger(StatisticsAggregator.class);
@@ -32,6 +33,7 @@ public class StatisticsAggregator {
     
     public Map<String, Integer> run(String basePath, String pattern) throws IOException {
         List<File> files = CDRUtil.loadFiles(basePath, pattern);
+        Collections.sort(files, new MonthDayComparator());
         
         Map<String, Integer> agg = new HashMap<String, Integer>();
         for (File file: files) {

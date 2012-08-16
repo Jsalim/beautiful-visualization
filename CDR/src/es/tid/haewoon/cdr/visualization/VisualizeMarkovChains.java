@@ -31,13 +31,17 @@ import es.tid.haewoon.cdr.util.Constants;
 import es.tid.haewoon.cdr.util.RankComparator;
 import es.tid.haewoon.cdr.util.Transition;
 
-public class VisualizeBTSSequence extends PApplet {
-    private static Logger logger = Logger.getLogger(VisualizeBTSSequence.class);
+public class VisualizeMarkovChains extends PApplet {
+    private static Logger logger = Logger.getLogger(VisualizeMarkovChains.class);
 
     private static final long serialVersionUID = -4085039003253887831L;
     java.util.Map<String, Location> BTS2Location = new HashMap<String, Location>();
     int fileIndex = 0;
-    List<File> files;
+    
+    List<File> hFiles;
+    List<File> wFiles;
+    List<File> cFiles;
+    
     PFont font;
     int from = 0xFFd91901;
     int to = 0xFF2e3dbf;
@@ -60,7 +64,10 @@ public class VisualizeBTSSequence extends PApplet {
 
     java.util.Map<String, String> num2home = new HashMap<String, String>();
     java.util.Map<String, String> num2work = new HashMap<String, String>();
-    java.util.Map<Transition, Double> tran2wt = new HashMap<Transition, Double>();
+    
+    java.util.Map<Transition, Double> hTran2wt = new HashMap<Transition, Double>(); // for home
+    java.util.Map<Transition, Double> wTran2wt = new HashMap<Transition, Double>(); // for work
+    java.util.Map<Transition, Double> cTran2wt = new HashMap<Transition, Double>(); // for commuting
 
     Voronoi voronoi;
 
@@ -81,9 +88,9 @@ public class VisualizeBTSSequence extends PApplet {
         yLoc += 20;
         text("Press H to toggle the home/work location", 15, yLoc);
         yLoc += 20;
-        text("Press N to proceed to the next sequence", 15, yLoc);
+        text("Press N to proceed to the next people", 15, yLoc);
         yLoc += 20;
-        text("Press P to return to the last sequence", 15, yLoc);
+        text("Press P to return to the last people", 15, yLoc);
         yLoc += 20;
         text("Press A to show the aggregated Markov chain", 15, yLoc);
         yLoc += 20;
@@ -95,29 +102,29 @@ public class VisualizeBTSSequence extends PApplet {
             showVoronoi();
         }
 
-        if (saveFile) {
-            Location center = map.getLocationFromScreenPosition(width / 2,
-                    height / 2);
-            save(targetPath + File.separator + files.get(fileIndex).getName()
-                    + "_level" + map.getZoomLevel() + "_" + +center.x + "_"
-                    + center.y + ".png");
-            saveFile = false;
-        }
+//        if (saveFile) {
+//            Location center = map.getLocationFromScreenPosition(width / 2,
+//                    height / 2);
+//            save(targetPath + File.separator + files.get(fileIndex).getName()
+//                    + "_level" + map.getZoomLevel() + "_" + +center.x + "_"
+//                    + center.y + ".png");
+//            saveFile = false;
+//        }
 
         if (showMarkov) {
+            showMarkov();
             pushStyle();
             textSize(30);
             fill(0xFFf52a76);
             textAlign(RIGHT);
-            text("[" + files.get(fileIndex).getName() + "]", width, 30);
+            text("[" + hFiles.get(fileIndex).getName() + "]", width, 30);
             popStyle();
-            showMarkov();
         }
 
         if (showHome) {
             showHomeAndWork();
         }
-
+        
     }
 
     public void keyPressed() {
@@ -171,36 +178,64 @@ public class VisualizeBTSSequence extends PApplet {
 
     }
     public void loadEntireBCN() {
+        max_weight = -1;
+        load(Constants.RESULT_PATH + File.separator + "12_1_one_big_markov_chain_of_BTS_in_home_hours" + File.separator + "3_normalized_big_chain", 
+             new File(Constants.RESULT_PATH + File.separator + "12_1_one_big_markov_chain_of_BTS_in_home_hours" + File.separator + "2_pruned_big_chain"), 
+             hTran2wt);
+        load(Constants.RESULT_PATH + File.separator + "12_2_one_big_markov_chain_of_BTS_in_work_hours" + File.separator + "3_normalized_big_chain", 
+                new File(Constants.RESULT_PATH + File.separator + "12_2_one_big_markov_chain_of_BTS_in_work_hours" + File.separator + "2_pruned_big_chain"), 
+                wTran2wt);
+        load(Constants.RESULT_PATH + File.separator + "12_3_one_big_markov_chain_of_BTS_in_commuting_hours" + File.separator + "3_normalized_big_chain", 
+                new File(Constants.RESULT_PATH + File.separator + "12_3_one_big_markov_chain_of_BTS_in_commuting_hours" + File.separator + "2_pruned_big_chain"), 
+                cTran2wt);
+    }
+
+
+    public void loadIndividualMarkov() {
+        // home
+        max_weight = -1;
+
+        while (true) {
+            if (new File(Constants.RESULT_PATH + File.separator + "9_1_markov_chain_of_BTS_in_home_hours" + File.separator + hFiles.get(fileIndex).getName()).exists() && 
+                new File(Constants.RESULT_PATH + File.separator + "9_2_markov_chain_of_BTS_in_work_hours" + File.separator + hFiles.get(fileIndex).getName()).exists() && 
+                new File(Constants.RESULT_PATH + File.separator + "9_3_markov_chain_of_BTS_in_commuting_hours" + File.separator + hFiles.get(fileIndex).getName()).exists()) {
+                logger.debug((new File(Constants.RESULT_PATH + File.separator + "9_1_markov_chain_of_BTS_in_home_hours" + File.separator + hFiles.get(fileIndex).getName()).exists()));
+                load(Constants.RESULT_PATH + File.separator + "11_1_normalized_markov_chain_of_BTS_in_home_hours" + File.separator + hFiles.get(fileIndex).getName(),
+                     new File(Constants.RESULT_PATH + File.separator + "9_1_markov_chain_of_BTS_in_home_hours" + File.separator + hFiles.get(fileIndex).getName()), 
+                     hTran2wt);
+                load(Constants.RESULT_PATH + File.separator + "11_2_normalized_markov_chain_of_BTS_in_work_hours" + File.separator + hFiles.get(fileIndex).getName(),
+                        new File(Constants.RESULT_PATH + File.separator + "9_2_markov_chain_of_BTS_in_work_hours" + File.separator + hFiles.get(fileIndex).getName()), 
+                        wTran2wt);
+                load(Constants.RESULT_PATH + File.separator + "11_3_normalized_markov_chain_of_BTS_in_commuting_hours" + File.separator + hFiles.get(fileIndex).getName(),
+                        new File(Constants.RESULT_PATH + File.separator + "9_3_markov_chain_of_BTS_in_commuting_hours" + File.separator + hFiles.get(fileIndex).getName()), 
+                        cTran2wt);
+                break;
+            } 
+            
+            fileIndex++;
+        }
+
+    }
+
+    private void load(String normalizedFilePath, File file, java.util.Map<Transition, Double> tran2wt) {
+        logger.debug(file.getName());
+        
         BufferedReader br;
         try {
             if (normalize) {
-                br = new BufferedReader(new FileReader(Constants.RESULT_PATH
-                        + File.separator + "10_one_big_markov_chain_of_BTS"
-                        + File.separator + "3_normalized_big_chain"));
+                br = new BufferedReader(new FileReader(normalizedFilePath));
             } else {
-                br = new BufferedReader(new FileReader(Constants.RESULT_PATH
-                        + File.separator + "10_one_big_markov_chain_of_BTS"
-                        + File.separator + "2_pruned_big_chain"));
+                br = new BufferedReader(new FileReader(file));
             }
-            loadMarkovChain(br);            
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            logger.error("not happened", e);
-        }
-    }
+            tran2wt.clear();
 
-    public void loadMarkovChain(BufferedReader br) {
-        tran2wt.clear();
-        max_weight = -1;
-
-        try {
             String line = "";
             while ((line = br.readLine()) != null) {
-                logger.debug(line);
+                
                 String[] tokens = line.split("\t");
-//                if (tokens[0].equals(tokens[1])) {
-//                    continue;
-//                }
+                //                    if (tokens[0].equals(tokens[1])) {
+                //                        continue;
+                //                    }
                 if (max_weight < Double.valueOf(tokens[2])) {
                     max_weight = Double.valueOf(tokens[2]);
                 }
@@ -208,31 +243,11 @@ public class VisualizeBTSSequence extends PApplet {
                 tran2wt.put(t, Double.valueOf(tokens[2]));
             }
             br.close();
-        } catch (Exception e) {
-            logger.error("IOE?", e);
-        }
-
-        logger.debug("tran2wt.size(): " + tran2wt.size());
-        logger.debug("max_weight: " + max_weight);
-    }
-
-    public void loadIndividualMarkov() {
-        File file = files.get(fileIndex);
-        logger.debug(file.getAbsolutePath());
-
-        BufferedReader br;
-        try {
-            if (normalize) {
-                br = new BufferedReader(new FileReader(Constants.RESULT_PATH
-                        + File.separator + "9_3_normalized_markov_chain_of_BTS"
-                        + File.separator + file.getName()));
-            } else {
-                br = new BufferedReader(new FileReader(file));
-            }
-            loadMarkovChain(br);
+            
+            logger.debug("size(): " + tran2wt.size());
+            logger.debug("max_weight: " + max_weight);
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            logger.error("not happened", e);
         }
     }
 
@@ -243,10 +258,15 @@ public class VisualizeBTSSequence extends PApplet {
         font = createFont("Arial", 30);
         textFont(font);
 
-        files = CDRUtil.loadFiles(Constants.RESULT_PATH + File.separator
-                + "9_1_markov_chain_of_BTS", "^.*-.*$");
-        Collections.sort(files, new RankComparator());
-
+        hFiles = CDRUtil.loadFiles(Constants.RESULT_PATH + File.separator + "9_1_markov_chain_of_BTS_in_home_hours", "^.*-.*$");
+        Collections.sort(hFiles, new RankComparator());
+        
+        wFiles = CDRUtil.loadFiles(Constants.RESULT_PATH + File.separator + "9_2_markov_chain_of_BTS_in_work_hours", "^.*-.*$");
+        Collections.sort(wFiles, new RankComparator());
+        
+        cFiles = CDRUtil.loadFiles(Constants.RESULT_PATH + File.separator + "9_3_markov_chain_of_BTS_in_commuting_hours", "^.*-.*$");
+        Collections.sort(cFiles, new RankComparator());
+        
         // this is for the screenshots, but can't work due to the problem of libraries.
         //        targetPath = Constants.RESULT_PATH + File.separator
         //                + "13_visiualize_BTS_sequence";
@@ -309,6 +329,12 @@ public class VisualizeBTSSequence extends PApplet {
     }
 
     public void showMarkov() {
+        drawMarkov(hTran2wt, 0xFF331de8, 0xFF5185ea);   // home     // blue
+        drawMarkov(wTran2wt, 0xFF03b73b, 0xFFe17302);   // work     // green
+        drawMarkov(cTran2wt, 0xFFe12a33, 0xFF50f766);   // commuting    // red
+    }
+    
+    public void drawMarkov(java.util.Map<Transition, Double> tran2wt, int btsColor, int transitionColor) {
         for (Transition t: tran2wt.keySet()) {
             Location ll = BTS2Location.get(t.cur);
             Location cl = BTS2Location.get(t.next);
@@ -326,7 +352,7 @@ public class VisualizeBTSSequence extends PApplet {
 
             pushStyle();
             noStroke();
-            fill(0xFF1f1adb, 70);
+            fill(btsColor, 70);
 
             ellipse(cxy[0], cxy[1], 20, 20);
             ellipse(lxy[0], lxy[1], 20, 20);
@@ -335,8 +361,10 @@ public class VisualizeBTSSequence extends PApplet {
                     (float) max_weight, 5f, 20f);
             int alpha = (int) map((float) weight, 0f, (float) max_weight,
                     50f, 255f);
-
-            stroke(lerpColor(from, to, (float) weight/(float) max_weight), alpha);
+            
+            // lerpColor(from, to, (float) weight/(float) max_weight)
+            
+            stroke(transitionColor, alpha);
             strokeWeight(thickness);
 
             line(lxy[0], lxy[1], cxy[0], cxy[1]);
@@ -380,7 +408,7 @@ public class VisualizeBTSSequence extends PApplet {
         textAlign(CENTER);
         textSize(25);
         fill(0xFFfb4b1d);
-        String moviNum = files.get(fileIndex).getName().split("-")[1];
+        String moviNum = hFiles.get(fileIndex).getName().split("-")[1];
         String home = num2home.get(moviNum);
         String work = num2work.get(moviNum);
 
@@ -395,6 +423,8 @@ public class VisualizeBTSSequence extends PApplet {
             float[] wxy = this.map.getScreenPositionFromLocation(w);
             text("W", wxy[0], wxy[1]);
         }
+        
+//        logger.debug("home[" + home + "], work[" + work + "]");
 
         popStyle();
     }

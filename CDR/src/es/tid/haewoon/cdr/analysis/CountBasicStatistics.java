@@ -68,9 +68,8 @@ public class CountBasicStatistics {
                     }
                     duration2Count = CDRUtil.countItem(duration2Count, cdr.getDuration());
 
-                } catch (ParseException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                } catch (Exception e) {
+                    logger.error(line, e);
                 } 
             }
        

@@ -18,9 +18,9 @@ public class ExtractBarcelonaCells {
     public static void main(String[] args) throws IOException {
         String line = "";
         
-        BufferedWriter bw = new BufferedWriter(new FileWriter(Constants.FILTERED_PATH + File.separator + 
-                "4_barcelona_CELLs" + File.separator + Constants.CELL_INFO_FILE_NAME));
-        BufferedReader br = new BufferedReader(new FileReader(Constants.BASE_PATH + File.separator + Constants.CELL_INFO_FILE_NAME));
+        BufferedWriter bw = new BufferedWriter(new FileWriter(Constants.BASE_PATH + File.separator + 
+                "GASSET_CELULA_BCN_Box_haewoon.TXT"));
+        BufferedReader br = new BufferedReader(new FileReader(Constants.BASE_PATH + File.separator + "GASSET_CELULA_BCN_haewoon.TXT"));
         while((line = br.readLine()) != null) {
             if (line.startsWith("cell") || line.startsWith("CELL")) continue;  // skip the first line of column description
             try {
