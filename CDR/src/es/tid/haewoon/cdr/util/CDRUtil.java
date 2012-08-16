@@ -46,8 +46,9 @@ public class CDRUtil {
             } catch (Exception e) {
                 logger.error(e);
             }
+            logger.debug("loaded Barcelona cell info. [" + s.size() + "]");
+
         }
-        logger.debug("loaded Barcelona cell info. [" + s.size() + "]");
         return s;
     }
     
@@ -172,10 +173,6 @@ public class CDRUtil {
         return dist;
     }
     
-    public static void main(String[] args) {
-        logger.debug(CDRUtil.getCell("181562"));
-    }
-    
     public static List<File> loadAllCDRFiles() {
         List<File> files = CDRUtil.loadFiles(Constants.FILTERED_PATH + File.separator + "5_1_sorted_home_hours", Constants.RAW_DATA_FILE_PATTERN);
         files.addAll(CDRUtil.loadFiles(Constants.FILTERED_PATH + File.separator + "5_2_sorted_work_hours", Constants.RAW_DATA_FILE_PATTERN));
@@ -210,9 +207,9 @@ public class CDRUtil {
         return files;
     }
     
-    public static List<File> loadFiles(String string, String pattern) {
+    public static List<File> loadFiles(String loadDirectory, String pattern) {
         List<File> filtered = new ArrayList<File>();
-        File targetPath = new File(string);
+        File targetPath = new File(loadDirectory);
         if (targetPath.isDirectory()) {
             File[] files = targetPath.listFiles();
             for (File file : files) {
@@ -223,7 +220,7 @@ public class CDRUtil {
             }
         }
 
-        logger.debug("loading [" + filtered.size() + "] files...");
+        logger.debug("loading [" + loadDirectory + ", " + filtered.size() + "] files...");
         return filtered;
     }
     

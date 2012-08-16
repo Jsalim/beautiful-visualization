@@ -135,7 +135,7 @@ public class CountHomeAndWorkHourEvents {
             Map<String, Integer> bts2cnt = num2bts2cnt.get(movistarNum);
             
             BufferedWriter bw = new BufferedWriter(new FileWriter(
-                    this.targetPath + File.separator + num2Rank.get(movistarNum) + "-" + movistarNum + "-" + num2Count.get(movistarNum), true));
+                    this.targetPath + File.separator + num2Rank.get(movistarNum) + "-" + movistarNum + "-" + num2Count.get(movistarNum)));
             
             for (String cell : cell2cnt.keySet()) {
                 String bts = CDRUtil.getCell(cell).getBTSID();

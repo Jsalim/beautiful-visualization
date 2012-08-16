@@ -39,9 +39,23 @@ public class AggregateMarkovChains<T> {
 //                new NumericComparator());
         
         (new AggregateMarkovChains<Transition>()).
-        run(Constants.RESULT_PATH + File.separator + "9_2_pruned_markov_chain_of_BTS", 
+        run(Constants.RESULT_PATH + File.separator + "9_1_markov_chain_of_BTS_in_home_hours", 
                 "^.*-.*$", 
-                Constants.RESULT_PATH + File.separator + "10_one_big_markov_chain_of_BTS",
+                Constants.RESULT_PATH + File.separator + "12_1_one_big_markov_chain_of_BTS_in_home_hours",
+                new StringStateBuilder(),
+                new NumericComparator());
+ 
+        (new AggregateMarkovChains<Transition>()).
+        run(Constants.RESULT_PATH + File.separator + "9_2_markov_chain_of_BTS_in_work_hours", 
+                "^.*-.*$", 
+                Constants.RESULT_PATH + File.separator + "12_2_one_big_markov_chain_of_BTS_in_work_hours",
+                new StringStateBuilder(),
+                new NumericComparator());
+        
+        (new AggregateMarkovChains<Transition>()).
+        run(Constants.RESULT_PATH + File.separator + "9_3_markov_chain_of_BTS_in_commuting_hours", 
+                "^.*-.*$", 
+                Constants.RESULT_PATH + File.separator + "12_3_one_big_markov_chain_of_BTS_in_commuting_hours",
                 new StringStateBuilder(),
                 new NumericComparator());
         

@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +16,7 @@ import org.apache.log4j.Logger;
 
 import es.tid.haewoon.cdr.util.CDRUtil;
 import es.tid.haewoon.cdr.util.Constants;
+import es.tid.haewoon.cdr.util.RankComparator;
 
 // most part of this class is coming from IdentifyHomeBTS.class
 public class IdentifyWorkBTS {
@@ -23,6 +25,7 @@ public class IdentifyWorkBTS {
     private void run(String wPath, String hPath, String targetPath) throws IOException {
         String THRESHOLD = wPath.split("_")[wPath.split("_").length-1];
         List<File> wfiles = CDRUtil.loadFiles(wPath, "^\\d+-\\d+-\\d+$");
+        Collections.sort(wfiles, new RankComparator());
         logger.debug(wfiles.size());
         
         boolean success = (new File(targetPath)).mkdir();
@@ -78,7 +81,7 @@ public class IdentifyWorkBTS {
                 double wprop = bts2wprop.get(bts);
                 double hprop = (bts2hprop.get(bts) != null) ?bts2hprop.get(bts) :0;
                
-                double score = wprop + (1-hprop);  // we weigh low home hour events.
+                double score = wprop + Math.sqrt(1-hprop);  // we weigh low home hour events.
                 
                 if (mScore < score) {
                     mScore = score;

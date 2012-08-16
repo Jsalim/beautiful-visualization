@@ -28,19 +28,26 @@ public class FindSequences {
     
     public static final int THRESHOLD_MIN = 60;
     private static final int THRESHOLD = THRESHOLD_MIN * 60 * 1000;    // 60 minutes -> milliseconds
-    private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd hh:mm:ss");
+    private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
     
     /**
      * @param args
      * @throws IOException 
      */
     public static void main(String[] args) throws IOException {
-        new FindSequences().run(Constants.RESULT_PATH + File.separator + "7_cell_sequences_interval_less_than_" + THRESHOLD_MIN + "_min");
+        new FindSequences().run(
+                Constants.FILTERED_PATH + File.separator + "7_1_top_10000_nusers_home_hours",
+                Constants.RESULT_PATH + File.separator + "7_1_cell_sequences_in_home_hours_interval_less_than_" + THRESHOLD_MIN + "_min");
+        new FindSequences().run(
+                Constants.FILTERED_PATH + File.separator + "7_2_top_10000_nusers_work_hours",
+                Constants.RESULT_PATH + File.separator + "7_2_cell_sequences_in_work_hours_interval_less_than_" + THRESHOLD_MIN + "_min");
+        new FindSequences().run(
+                Constants.FILTERED_PATH + File.separator + "7_3_top_10000_nusers_commuting_hours",
+                Constants.RESULT_PATH + File.separator + "7_3_cell_sequences_in_commuting_hours_interval_less_than_" + THRESHOLD_MIN + "_min");
     }
     
-    private void run(String targetDirectory) throws IOException {
-        List<File> files = CDRUtil.loadFiles(Constants.RESULT_PATH + File.separator + "6_top_10000_users_during_commuting_hours", 
-                                             "^.*-.*$");
+    private void run(String loadingPath, String targetDirectory) throws IOException {
+        List<File> files = CDRUtil.loadFiles(loadingPath, "^.*-.*$");    
         Collections.sort(files, new RankComparator());
 
         boolean success = (new File(targetDirectory)).mkdir();
@@ -50,27 +57,23 @@ public class FindSequences {
         
         for (File file: files) {
             logger.debug("processing " + file);
+            BufferedWriter bw = new BufferedWriter(new FileWriter(targetDirectory + File.separator + file.getName()));
             String line = "";
             BufferedReader br = new BufferedReader(new FileReader(file));
             
             List<String> cellSeq = new ArrayList<String>();
             long lastTime = -1; // epoch
-            
-            while((line = br.readLine()) != null) {
-                try {
+            try {
+                while((line = br.readLine()) != null) {
+
                     CDR cdr = new CDR(line);
-                    
+
                     if (lastTime == -1) {
                         lastTime = cdr.getDatetime().getTime();
                         cellSeq.clear();
                     }
-                    
-                    if (cdr.getDatetime().getTime()-lastTime < THRESHOLD) {
-                        cellSeq.add(cdr.getInitCellID());
-                        if (cdr.getInitCellID() != cdr.getFinCellID()) {
-                            cellSeq.add(cdr.getFinCellID());
-                        }
-                    } else {
+
+                    if (cdr.getDatetime().getTime()-lastTime > THRESHOLD) {
                         if (cellSeq.size() > 0) {
                             String delim = "";
                             StringBuffer sb = new StringBuffer();
@@ -78,26 +81,44 @@ public class FindSequences {
                                 sb.append(delim).append(cell);
                                 delim = "\t";
                             }
-                            BufferedWriter bw = new BufferedWriter(new FileWriter(targetDirectory + File.separator + file.getName(), true));
+
                             bw.write(sdf.format(cdr.getDatetime()) + "\t" + cellSeq.size() + "\t" + sb.toString());
                             bw.newLine();
-                            bw.close();
-                            
                             cellSeq.clear();
                         }
                     }
                     lastTime = cdr.getDatetime().getTime();
 
-                } catch (ParseException pe) {
-                    // TODO Auto-generated catch block
-                    logger.error("wrong-format CDR", pe);
-                } catch (AssertionError e) {
-                    // TODO Auto-generated catch block
-                    logger.debug(line);
-                    logger.fatal("something wrong / all CDRs here must have at least one Movistar number", e);
-                    System.exit(0);
+                    cellSeq.add(cdr.getInitCellID());
+                    if (cdr.getInitCellID() != cdr.getFinCellID()) {
+                        cellSeq.add(cdr.getFinCellID());
+                    }
                 }
+
+                // the final row
+                if (cellSeq.size() > 0) {
+                    String delim = "";
+                    StringBuffer sb = new StringBuffer();
+                    for (String cell: cellSeq) {
+                        sb.append(delim).append(cell);
+                        delim = "\t";
+                    }
+                    bw.write(sdf.format(lastTime) + "\t" + cellSeq.size() + "\t" + sb.toString());
+                    bw.newLine();
+                    cellSeq.clear();
+                }
+            } catch (ParseException pe) {
+                // TODO Auto-generated catch block
+                logger.error("wrong-format CDR", pe);
+            } catch (AssertionError e) {
+                // TODO Auto-generated catch block
+                logger.debug(line);
+                logger.fatal("something wrong / all CDRs here must have at least one Movistar number", e);
+                System.exit(0);
             }
+           
+            bw.close();
+            
         }
     }
 }

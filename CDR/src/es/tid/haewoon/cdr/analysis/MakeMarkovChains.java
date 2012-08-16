@@ -36,12 +36,25 @@ public class MakeMarkovChains {
 //                Constants.RESULT_PATH + File.separator + "6_3_normalized_markov_chain_of_cells");
         
         (new MakeMarkovChains()).run(
-                Constants.RESULT_PATH + File.separator + "8_BTS_sequences_interval_less_than_" + FindSequences.THRESHOLD_MIN + "_min", 
+                Constants.RESULT_PATH + File.separator + "8_1_BTS_sequences_in_home_hours_interval_less_than_" + FindSequences.THRESHOLD_MIN + "_min", 
                 "^.*-.*$", 
-                Constants.RESULT_PATH + File.separator + "9_1_markov_chain_of_BTS", 
-                Constants.RESULT_PATH + File.separator + "9_2_pruned_markov_chain_of_BTS", 
-                Constants.RESULT_PATH + File.separator + "9_3_normalized_markov_chain_of_BTS");
+                Constants.RESULT_PATH + File.separator + "9_1_markov_chain_of_BTS_in_home_hours", 
+                Constants.RESULT_PATH + File.separator + "10_1_pruned_markov_chain_of_BTS_in_home_hours", 
+                Constants.RESULT_PATH + File.separator + "11_1_normalized_markov_chain_of_BTS_in_home_hours");
+
+        (new MakeMarkovChains()).run(
+                Constants.RESULT_PATH + File.separator + "8_2_BTS_sequences_in_work_hours_interval_less_than_" + FindSequences.THRESHOLD_MIN + "_min", 
+                "^.*-.*$", 
+                Constants.RESULT_PATH + File.separator + "9_2_markov_chain_of_BTS_in_work_hours", 
+                Constants.RESULT_PATH + File.separator + "10_2_pruned_markov_chain_of_BTS_in_work_hours", 
+                Constants.RESULT_PATH + File.separator + "11_2_normalized_markov_chain_of_BTS_in_work_hours");
         
+        (new MakeMarkovChains()).run(
+                Constants.RESULT_PATH + File.separator + "8_3_BTS_sequences_in_commuting_hours_interval_less_than_" + FindSequences.THRESHOLD_MIN + "_min", 
+                "^.*-.*$", 
+                Constants.RESULT_PATH + File.separator + "9_3_markov_chain_of_BTS_in_commuting_hours", 
+                Constants.RESULT_PATH + File.separator + "10_3_pruned_markov_chain_of_BTS_in_commuting_hours", 
+                Constants.RESULT_PATH + File.separator + "11_3_normalized_markov_chain_of_BTS_in_commuting_hours");
     }
     
     public void run(String inputPath, String pattern, String targetPath, String targetPPath, String targetNPath) throws IOException {

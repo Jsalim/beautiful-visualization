@@ -14,6 +14,7 @@ import org.apache.log4j.Logger;
 import es.tid.haewoon.cdr.util.CDR;
 import es.tid.haewoon.cdr.util.CDRUtil;
 import es.tid.haewoon.cdr.util.Constants;
+import es.tid.haewoon.cdr.util.Province;
 
 /*
  * Home / Work / Commuting hours

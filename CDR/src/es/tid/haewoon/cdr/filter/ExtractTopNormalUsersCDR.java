@@ -54,14 +54,13 @@ public class ExtractTopNormalUsersCDR {
         tnf = new TelephoneNumberFilter(s);
     }
     
-    public void run(String targetDirectory) throws IOException {
+    public void run(String loadPath, String targetDirectory) throws IOException {
         boolean success = (new File(targetDirectory)).mkdir();
         if (success) {
             logger.debug("[" + targetDirectory + "] directory created");
         }
         
-        List<File> files = CDRUtil.loadFiles(Constants.FILTERED_PATH + File.separator + "6_3_normal_commuting_hours", 
-                                             Constants.RAW_DATA_FILE_PATTERN);
+        List<File> files = CDRUtil.loadFiles(loadPath, Constants.RAW_DATA_FILE_PATTERN);
         Collections.sort(files, new MonthDayComparator());
         logger.debug(files.size());
         
@@ -102,13 +101,16 @@ public class ExtractTopNormalUsersCDR {
 
     }
     
-    /**
-     * @param args
-     * @throws IOException 
-     */
     public static void main(String[] args) throws IOException {
-        // TODO Auto-generated method stub
-        (new ExtractTopNormalUsersCDR()).run(Constants.RESULT_PATH + File.separator + "6_top_" + TOP_K + "_users_during_commuting_hours");
+        (new ExtractTopNormalUsersCDR()).run(
+                Constants.FILTERED_PATH + File.separator + "6_1_normal_home_hours",
+                Constants.FILTERED_PATH + File.separator + "7_1_top_" + TOP_K + "_nusers_home_hours");
+        (new ExtractTopNormalUsersCDR()).run(
+                Constants.FILTERED_PATH + File.separator + "6_2_normal_work_hours",
+                Constants.FILTERED_PATH + File.separator + "7_2_top_" + TOP_K + "_nusers_work_hours");
+        (new ExtractTopNormalUsersCDR()).run(
+                Constants.FILTERED_PATH + File.separator + "6_3_normal_commuting_hours",
+                Constants.FILTERED_PATH + File.separator + "7_3_top_" + TOP_K + "_nusers_commuting_hours");
     }
 
 }

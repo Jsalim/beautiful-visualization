@@ -6,12 +6,14 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 
 import es.tid.haewoon.cdr.util.CDRUtil;
 import es.tid.haewoon.cdr.util.Constants;
+import es.tid.haewoon.cdr.util.RankComparator;
 
 public class IdentifyHomeBTS {
     Logger logger = Logger.getLogger(IdentifyHomeBTS.class);
@@ -19,6 +21,8 @@ public class IdentifyHomeBTS {
     private void run(String fileToReadPath, String targetPath) throws IOException {
         String THRESHOLD = fileToReadPath.split("_")[fileToReadPath.split("_").length-1];
         List<File> files = CDRUtil.loadFiles(fileToReadPath, "^\\d+-\\d+-\\d+$");
+        Collections.sort(files, new RankComparator());
+        
         logger.debug(files.size());
         
         boolean success = (new File(targetPath)).mkdir();
