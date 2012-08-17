@@ -33,7 +33,7 @@ public class FindCommonIngredients {
     
     
     public static void main(String[] args) throws IOException {
-        (new FindCommonIngredients(Constants.RESULT_PATH + File.separator + "8_ingredient_commonality")).run();
+        (new FindCommonIngredients(Constants.RESULT_PATH + File.separator + "8_common_ingredients")).run();
     }
     
     public FindCommonIngredients(String targetPath) {
