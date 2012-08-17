@@ -34,7 +34,7 @@ public class CharacterizeNewComingIngerdient {
 		// the computation for the boxplot is handled by ggplot2
 		
 		BufferedReader br = new BufferedReader(new FileReader(
-				Constants.RESULT_PATH + File.separator + "8_ingredient_commonality" + File.separator + "ingredient2recipes"));
+				Constants.RESULT_PATH + File.separator + "8_common_ingredients" + File.separator + "ingredient2recipes"));
 		String line;
 		Map<String, Integer> ing2rcp = new HashMap<String, Integer>();
 		while ((line = br.readLine()) != null) {
@@ -63,14 +63,14 @@ public class CharacterizeNewComingIngerdient {
 		while ((line = br.readLine()) != null) {
 			String[] tokens = line.split("\t");
 //            String recipe = tokens[0];
-            int year = Integer.valueOf(tokens[1]);
-//            String category = tokens[2];
-//            String temperature = tokens[3];
-            String[] months = tokens[4].split(",");
+            int year = Integer.valueOf(tokens[2]);
+//            String category = tokens[3];
+//            String temperature = tokens[4];
+            String[] months = tokens[5].split(",");
             int month = Integer.valueOf(months[0]);
             int timeUnit = (year-1994)*12 + month;
             
-            String ingredient = tokens[5];
+            String ingredient = tokens[6];
 	
             if (old.contains(ingredient)) {
             	continue;	// already discovered ingredient

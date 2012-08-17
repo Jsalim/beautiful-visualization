@@ -6,27 +6,19 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
 
 import es.tid.haewoon.food.util.Constants;
-import es.tid.haewoon.food.util.FoodUtil;
 
 public class FlavorFreeIngredients {
 	Logger logger = Logger.getLogger(FlavorFreeIngredients.class);
 	public static void main(String[] args) throws IOException {
 		(new FlavorFreeIngredients()).run(Constants.RESULT_PATH + File.separator + "11_flavor_free_ingredients");
 	}
-	
-	Map<String, Integer> ffi2number = new HashMap<String, Integer>();
-		
+
 	private void run(String targetDirectory) throws IOException {
 		boolean success = (new File(targetDirectory)).mkdir();
 		if (success) {
@@ -36,14 +28,14 @@ public class FlavorFreeIngredients {
 		BufferedReader br = new BufferedReader(new FileReader(Constants.RESULT_PATH + File.separator + 
 				"5_evolutionary_analysis" + File.separator + "CD2_and_3_preparation"));
 		String line;
-		BufferedWriter bw = new BufferedWriter(new FileWriter(targetDirectory + File.separator + "flavor_ffi"));
-		BufferedWriter nbw = new BufferedWriter(new FileWriter(targetDirectory + File.separator + "fnfi"));
+		BufferedWriter bw = new BufferedWriter(new FileWriter(targetDirectory + File.separator + "flavor_ffi_fnfi"));
+		Set<String> allTimesFF = new HashSet<String>();
+        
 		while ((line = br.readLine()) != null) {
 			String[] tokens = line.split("\t");
 			String recipe = tokens[0];
 			String[] flavors = tokens[3].split("\\|");
 			String[] ings = tokens[4].split("\\|");
-			
 			Set<String> nonFree = new HashSet<String>();
 			
 			for (String ing : ings) {
@@ -52,15 +44,11 @@ public class FlavorFreeIngredients {
 					flavor = flavor.trim();
 					// fully contained?
 					if (ing.contains("couverture") ||	// exception couverture <-> chocolate 
-						ing.contains(flavor) || flavor.contains(ing) || 
-						ing.contains(flavor.substring(0, flavor.length()-1)) || 
-						flavor.contains(ing.substring(0, ing.length()-1))) {
+						ing.contains(flavor) || // flavor.contains(ing) || 
+						ing.contains(flavor.substring(0, flavor.length()-1)) //|| flavor.contains(ing.substring(0, ing.length()-1)) 
+						) {
 						// this is not flavor-free ingredient
 						nonFree.add(ing);
-						
-						if (ing.equals("cream")) logger.debug(line);
-						nbw.write(ing);
-						nbw.newLine();
 					} 
 					// this is flavor-free ingredient
 				}
@@ -68,30 +56,14 @@ public class FlavorFreeIngredients {
 			
 			for (String ing : ings) {
 				if (!nonFree.contains(ing)) {
-					bw.write(recipe + "\t" + tokens[3] + "\t" + ing);
+					bw.write(recipe + "\t" + tokens[3] + "\tFF\t" + ing);
 					bw.newLine();
-					
-					int old = (ffi2number.get(ing) != null) ?ffi2number.get(ing) :0;
-					ffi2number.put(ing, old+1);
+				} else {
+				    bw.write(recipe + "\t" + tokens[3] + "\tFNF\t" + ing);
+				    bw.newLine();
 				}
 			}
 		}
 		bw.close();
-		
-		bw = new BufferedWriter(new FileWriter(targetDirectory + File.separator + "ffi"));
-		Map<Integer, List<String>> sffi = FoodUtil.sortByValue(ffi2number);
-		List<Integer> numbers = new ArrayList(sffi.keySet());
-		Collections.sort(numbers);
-		Collections.reverse(numbers);
-		for (int number : numbers) {
-			List<String> ffis = sffi.get(number);
-			for (String ffi : ffis) {
-				bw.write(ffi + "\t" + number);
-				bw.newLine();
-			}
-		}
-		bw.close();
-		nbw.close();
-		
 	}
 }

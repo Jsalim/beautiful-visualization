@@ -40,7 +40,7 @@ public class ElBulliRecipe {
         String line;
         
         while((line = br.readLine()) != null) {
-            if (line.startsWith("titol")) {
+            if (line.startsWith("&titol=")) {
                 title = parse(line);
             } else if (line.startsWith("&any")) {
                 year = parse(line);
@@ -128,7 +128,7 @@ public class ElBulliRecipe {
         String lineDelimeter = "";
         for (String ingredient : ingredients) {
             sb.append(lineDelimeter);
-            sb.append(this.ID + "\t" + this.year + "\t" + this.category + "\t" + this.temperature + "\t" + this.months + "\t" + ingredient);
+            sb.append(this.ID + "\t" + this.title + "\t" + this.year + "\t" + this.category + "\t" + this.temperature + "\t" + this.months + "\t" + ingredient);
             lineDelimeter = "\r\n";
         }
 

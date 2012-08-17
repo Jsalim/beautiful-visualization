@@ -42,8 +42,8 @@ public class CountRecipes {
 		while ((line = br.readLine()) != null) {
 			String[] tokens = line.split("\t");
             String recipe = tokens[0];
-            int year = Integer.valueOf(tokens[1]);
-            String[] months = tokens[4].split(",");
+            int year = Integer.valueOf(tokens[2]);
+            String[] months = tokens[5].split(",");
             
             for (String month : months) {
             	int month_i = Integer.valueOf(month);

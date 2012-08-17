@@ -58,6 +58,7 @@ public class ConstructIngredientNetworks {
     private void printNetworks(String targetPath, int startYear, int endYear) throws IOException {
         Set<String> ings = new HashSet<String>();
         String recipe = "N/A";
+        String title = "N/A";
         String[] months = {};
         int year = -1;
         String category = "N/A";
@@ -90,11 +91,12 @@ public class ConstructIngredientNetworks {
             
             if (Integer.valueOf(tokens[1]) >= startYear && Integer.valueOf(tokens[1]) <= endYear) {
                 recipe = tokens[0];
-                year = Integer.valueOf(tokens[1]);
-                category = tokens[2];
-                temperature = tokens[3];
-                months = tokens[4].split(",");
-                ingredient = tokens[5];
+                title = tokens[1];
+                year = Integer.valueOf(tokens[2]);
+                category = tokens[3];
+                temperature = tokens[4];
+                months = tokens[5].split(",");
+                ingredient = tokens[6];
                 ings.add(ingredient);
             }
         }
