@@ -117,7 +117,11 @@ public class VisualizeMarkovChains extends PApplet {
             textSize(30);
             fill(0xFFf52a76);
             textAlign(RIGHT);
-            text("[" + hFiles.get(fileIndex).getName() + "]", width, 30);
+            if (showAgg) {
+                text("The aggregated Markov chain", width, 30);
+            } else {
+                text("[" + hFiles.get(fileIndex).getName() + "]", width, 30);
+            }
             popStyle();
         }
 
@@ -179,12 +183,12 @@ public class VisualizeMarkovChains extends PApplet {
     }
     public void loadEntireBCN() {
         max_weight = -1;
-        load(Constants.RESULT_PATH + File.separator + "12_1_one_big_markov_chain_of_BTS_in_home_hours" + File.separator + "3_normalized_big_chain", 
-             new File(Constants.RESULT_PATH + File.separator + "12_1_one_big_markov_chain_of_BTS_in_home_hours" + File.separator + "2_pruned_big_chain"), 
-             hTran2wt);
-        load(Constants.RESULT_PATH + File.separator + "12_2_one_big_markov_chain_of_BTS_in_work_hours" + File.separator + "3_normalized_big_chain", 
-                new File(Constants.RESULT_PATH + File.separator + "12_2_one_big_markov_chain_of_BTS_in_work_hours" + File.separator + "2_pruned_big_chain"), 
-                wTran2wt);
+//        load(Constants.RESULT_PATH + File.separator + "12_1_one_big_markov_chain_of_BTS_in_home_hours" + File.separator + "3_normalized_big_chain", 
+//             new File(Constants.RESULT_PATH + File.separator + "12_1_one_big_markov_chain_of_BTS_in_home_hours" + File.separator + "2_pruned_big_chain"), 
+//             hTran2wt);
+//        load(Constants.RESULT_PATH + File.separator + "12_2_one_big_markov_chain_of_BTS_in_work_hours" + File.separator + "3_normalized_big_chain", 
+//                new File(Constants.RESULT_PATH + File.separator + "12_2_one_big_markov_chain_of_BTS_in_work_hours" + File.separator + "2_pruned_big_chain"), 
+//                wTran2wt);
         load(Constants.RESULT_PATH + File.separator + "12_3_one_big_markov_chain_of_BTS_in_commuting_hours" + File.separator + "3_normalized_big_chain", 
                 new File(Constants.RESULT_PATH + File.separator + "12_3_one_big_markov_chain_of_BTS_in_commuting_hours" + File.separator + "2_pruned_big_chain"), 
                 cTran2wt);
@@ -329,9 +333,9 @@ public class VisualizeMarkovChains extends PApplet {
     }
 
     public void showMarkov() {
-        drawMarkov(hTran2wt, 0xFF331de8, 0xFF5185ea);   // home     // blue
+        drawMarkov(hTran2wt, 0xFFe12a33, 0xFF50f766);   // home     // blue
         drawMarkov(wTran2wt, 0xFF03b73b, 0xFFe17302);   // work     // green
-        drawMarkov(cTran2wt, 0xFFe12a33, 0xFF50f766);   // commuting    // red
+        drawMarkov(cTran2wt, 0xFF331de8, 0xFF5185ea);   // commuting    // red
     }
     
     public void drawMarkov(java.util.Map<Transition, Double> tran2wt, int btsColor, int transitionColor) {
