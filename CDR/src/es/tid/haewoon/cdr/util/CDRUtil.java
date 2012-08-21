@@ -82,30 +82,51 @@ public class CDRUtil {
     public static BTS getBTS(String btsID) {
         if (btsid2Bts == null) {
             logger.debug("bts info. initialization for the first time running");
-            btsid2Bts = new HashMap<String, BTS>();
-            BufferedReader br;
-            String line;
-            try {
-                br = new BufferedReader(new FileReader(Constants.BARCELONA_CELL_INFO_PATH));
-                while((line = br.readLine()) != null) {
-                    // do something with line.
-                    if (line.startsWith("cell")) continue;
-                    BTS bts = new BTS(line);
-                    btsid2Bts.put(bts.getID(), bts);
-                }
-            } catch (ParseException e) {
-                // TODO Auto-generated catch block
-                logger.debug("wrong-formatted cell", e);
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                logger.debug("No file?", e);
-            }
+            initializeBTSMap();
         }
         
         return btsid2Bts.get(btsID);
     }
     
+    private static void initializeBTSMap() {
+        btsid2Bts = new HashMap<String, BTS>();
+        BufferedReader br;
+        String line;
+        try {
+            br = new BufferedReader(new FileReader(Constants.BARCELONA_CELL_INFO_PATH));
+            while((line = br.readLine()) != null) {
+                // do something with line.
+                if (line.startsWith("cell")) continue;
+                BTS bts = new BTS(line);
+                btsid2Bts.put(bts.getID(), bts);
+            }
+        } catch (ParseException e) {
+            // TODO Auto-generated catch block
+            logger.debug("wrong-formatted cell", e);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            logger.debug("No file?", e);
+        }
+    }
+    
+    public static Set<BTS> getBTSs(Province p) {
+        if (p == Province.BARCELONA) {
+            if (btsid2Bts == null) {
+                logger.debug("bts info. initialization for the first time running");
+                initializeBTSMap();
+            }
+        }
+        return new HashSet<BTS>(btsid2Bts.values());
+    }
+    
     public static double getDistance(BTS b1, BTS b2) {
+        double lat1 = b1.getLatitude();
+        double lon1 = b1.getLongitude();
+        double lat2 = b2.getLatitude();
+        double lon2 = b2.getLongitude();
+
+        return getDistance(lat1, lon1, lat2, lon2);
+    }
         /**
          * Calculates geodetic distance between two points specified by latitude/longitude using Vincenty inverse formula
          * for ellipsoids
@@ -122,11 +143,8 @@ public class CDRUtil {
          * @see <a href="http://www.movable-type.co.uk/scripts/latlong-vincenty.html">Originally posted here</a>
          */
         
-        double lat1 = b1.getLatitude();
-        double lon1 = b1.getLongitude();
-        double lat2 = b2.getLatitude();
-        double lon2 = b2.getLongitude();
-
+    public static double getDistance(double lat1, double lon1, double lat2, double lon2) {
+        
         double a = 6378137, b = 6356752.314245, f = 1 / 298.257223563; // WGS-84 ellipsoid params
         double L = Math.toRadians(lon2 - lon1);
         double U1 = Math.atan((1 - f) * Math.tan(Math.toRadians(lat1)));
