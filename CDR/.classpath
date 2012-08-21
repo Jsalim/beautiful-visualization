@@ -51,6 +51,9 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/user/toxiclibs-complete-0020/toxiclibs_p5.jar"/>
 	<classpathentry kind="lib" path="lib/user/toxiclibs-complete-0020/toxiclibscore.jar"/>
+	<classpathentry kind="lib" path="lib/user/jackson-annotations-2.0.5.jar"/>
+	<classpathentry kind="lib" path="lib/user/jackson-core-2.0.5.jar"/>
+	<classpathentry kind="lib" path="lib/user/jackson-databind-2.0.5.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

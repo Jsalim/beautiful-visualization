@@ -47,6 +47,10 @@ public class BTS {
         return CDRUtil.getDistance(this, b2) < threshold_meter;
     }
     
+    public boolean closeEnough (double lat, double lon, double threshold_meter) {
+        return CDRUtil.getDistance(this.latitude, this.longitude, lat, lon) < threshold_meter;
+    }
+    
     public String toString() {
         return btsID;
     }

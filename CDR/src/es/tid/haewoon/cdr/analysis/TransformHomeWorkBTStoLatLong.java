@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,7 @@ import org.apache.log4j.Logger;
 import es.tid.haewoon.cdr.util.BTS;
 import es.tid.haewoon.cdr.util.CDRUtil;
 import es.tid.haewoon.cdr.util.Constants;
+import es.tid.haewoon.cdr.util.RankComparator;
 
 public class TransformHomeWorkBTStoLatLong {
     Logger logger = Logger.getLogger(TransformHomeWorkBTStoLatLong.class);
@@ -60,7 +62,12 @@ public class TransformHomeWorkBTStoLatLong {
         }
         
         BufferedWriter bw = new BufferedWriter(new FileWriter(targetDirectory + File.separator + "home_2_work"));
-        for (String number : numbers) {
+        List<File> files = CDRUtil.loadFiles(Constants.RESULT_PATH + File.separator + 
+                "4_1_clustered_home_hour_events_threshold_1000m", "^.*-.*$");
+        Collections.sort(files, new RankComparator());
+        
+        for (File file : files) {
+            String number = file.getName().split("-")[1];
             if (num2work.get(number) != null) {
                 BTS home = CDRUtil.getBTS(num2home.get(number));
                 BTS work = CDRUtil.getBTS(num2work.get(number));
