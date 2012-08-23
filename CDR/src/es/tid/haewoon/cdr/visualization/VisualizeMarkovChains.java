@@ -344,8 +344,8 @@ public class VisualizeMarkovChains extends PApplet {
     }
 
     public void showMarkov() {
-        drawMarkov(hTran2wt, 0xFFe12a33, 0xFF50f766);   // home     // blue
-        drawMarkov(wTran2wt, 0xFF03b73b, 0xFFe17302);   // work     // green
+//        drawMarkov(hTran2wt, 0xFFe12a33, 0xFF50f766);   // home     // blue
+//        drawMarkov(wTran2wt, 0xFF03b73b, 0xFFe17302);   // work     // green
         drawMarkov(cTran2wt, 0xFF331de8, 0xFF5185ea);   // commuting    // red
     }
     
@@ -422,7 +422,6 @@ public class VisualizeMarkovChains extends PApplet {
         pushStyle();
         textAlign(CENTER);
         textSize(25);
-        fill(0xFFfb4b1d);
         String moviNum = hFiles.get(fileIndex).getName().split("-")[1];
         String home = num2home.get(moviNum);
         String work = num2work.get(moviNum);
@@ -430,12 +429,20 @@ public class VisualizeMarkovChains extends PApplet {
         if (home != null) {
             Location h = BTS2Location.get(home);
             float[] hxy = this.map.getScreenPositionFromLocation(h);
+            fill(0xFF331de8);
+            ellipse(hxy[0], hxy[1], 20, 20);
+            fill(0xFFfb4b1d);
             text("H", hxy[0], hxy[1]);
+            
         }
+        
 
         if (work != null) {
             Location w = BTS2Location.get(work);
             float[] wxy = this.map.getScreenPositionFromLocation(w);
+            fill(0xFF331de8);
+            ellipse(wxy[0], wxy[1], 20, 20);
+            fill(0xFFfb4b1d);
             text("W", wxy[0], wxy[1]);
         }
         

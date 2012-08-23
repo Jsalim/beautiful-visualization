@@ -3,6 +3,7 @@ package es.tid.haewoon.cdr.analysis;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -71,20 +72,24 @@ public class FindMatchedSequencesWithGoogle {
     }
     
     private void findSequence(String number, File file, String targetDirectory) throws IOException {
-        BufferedReader br = new BufferedReader(new FileReader(file));
-        BufferedWriter bw = new BufferedWriter(new FileWriter(targetDirectory + File.separator + number));
-        String line;
-        while ((line = br.readLine()) != null) {
-            String[] tokens = line.split("\t");
-            String bts1 = tokens[0];
-            String bts2 = tokens[1];
-            
-            if (BTSs.contains(bts1) && BTSs.contains(bts2)) {
-                bw.write(line.trim());
-                bw.newLine();
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(file));
+            BufferedWriter bw = new BufferedWriter(new FileWriter(targetDirectory + File.separator + number));
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] tokens = line.split("\t");
+                String bts1 = tokens[0];
+                String bts2 = tokens[1];
+                
+                if (BTSs.contains(bts1) && BTSs.contains(bts2)) {
+                    bw.write(line.trim());
+                    bw.newLine();
+                }
             }
+            bw.close();
+            br.close();
+        } catch (FileNotFoundException fnfe) {
+            logger.error(file.getName(), fnfe);
         }
-        bw.close();
-        br.close();
     }
 }
