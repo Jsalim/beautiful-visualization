@@ -38,7 +38,6 @@ public class GoogleDirectionsAPIRequester {
         while ((line = br.readLine()) != null) {
             try {
                 logger.debug(line);
-                count ++;
                 String[] tokens = line.split("\t");
                 String number = tokens[0];
                 String home = tokens[1];
@@ -54,8 +53,9 @@ public class GoogleDirectionsAPIRequester {
                 boolean res2 = sendRequest(targetDirectory, work, home, number, "wh");
                 
                 if (res1 || res2) {
+                    count ++;
                     logger.debug("sleeping 10 secs");
-                    Thread.sleep(10 * 1000);    // sleep for 30 secs
+                    Thread.sleep(10 * 1000);    // sleep for 10 secs
                 }
             } catch (Exception e) {
                 logger.error(line, e);
