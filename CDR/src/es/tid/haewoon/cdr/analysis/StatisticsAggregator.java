@@ -13,39 +13,37 @@ import org.apache.log4j.Logger;
 
 import es.tid.haewoon.cdr.util.CDRUtil;
 import es.tid.haewoon.cdr.util.Constants;
-import es.tid.haewoon.cdr.util.MonthDayComparator;
+import es.tid.haewoon.cdr.util.RawFileComparator;
 
 public class StatisticsAggregator {
     private static Logger logger = Logger.getLogger(StatisticsAggregator.class);
+    String[] extensions = {"callee", "caller", "caller_ee", "cell", "duration"};
     
     public static void main(String[] args) throws IOException {
-        StatisticsAggregator sa = new StatisticsAggregator();
-        
-        String[] extensions = {"callee", "caller", "caller_ee", "cell", "duration"}; 
-        for (String extension: extensions) {
-            logger.debug("processing all [." + extension + "]");
-            Map<String, Integer> result = sa.run(
-                    Constants.RESULT_PATH + File.separator + "1_count_basic_statistics", "^.*" + extension + "$");
-            CDRUtil.printMapSortedByValue(
-                    Constants.RESULT_PATH + File.separator + "1_count_basic_statistics" + File.separator + "all."+ extension, result);
-        }
+//        (new StatisticsAggregator()).run(Constants.RESULT_PATH + File.separator + "1_count_basic_statistics");
+        (new StatisticsAggregator()).run(Constants.RESULT_PATH + File.separator + "1_3_count_basic_statistics_in_commuting_hours");
     }
     
-    public Map<String, Integer> run(String basePath, String pattern) throws IOException {
-        List<File> files = CDRUtil.loadFiles(basePath, pattern);
-        Collections.sort(files, new MonthDayComparator());
-        
-        Map<String, Integer> agg = new HashMap<String, Integer>();
-        for (File file: files) {
-            logger.debug("processing " + file);
-            String line = "";
-            BufferedReader br = new BufferedReader(new FileReader(file));
-            while((line = br.readLine()) != null) {
-                String[] keyValue = line.split("\\t");
-                agg = CDRUtil.countItem(agg, keyValue[0], Integer.valueOf(keyValue[1]));
+    public void run(String loadingDirectory) throws IOException {
+        for (String extension: extensions) {
+            logger.debug("processing all [." + extension + "]");
+
+
+            List<File> files = CDRUtil.loadFiles(loadingDirectory, "^.*" + extension + "$");
+            Collections.sort(files, new RawFileComparator());
+
+            Map<String, Integer> agg = new HashMap<String, Integer>();
+            for (File file: files) {
+                logger.debug("processing " + file);
+                String line = "";
+                BufferedReader br = new BufferedReader(new FileReader(file));
+                while((line = br.readLine()) != null) {
+                    String[] keyValue = line.split("\\t");
+                    agg = CDRUtil.countItem(agg, keyValue[0], Integer.valueOf(keyValue[1]));
+                }
             }
+
+            CDRUtil.printMapSortedByValue(loadingDirectory + File.separator + "all."+ extension, agg);
         }
-        
-        return agg;
     }
 }

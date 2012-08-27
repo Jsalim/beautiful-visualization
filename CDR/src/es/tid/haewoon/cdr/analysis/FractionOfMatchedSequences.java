@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -14,12 +13,11 @@ import org.apache.log4j.Logger;
 import es.tid.haewoon.cdr.util.BTS;
 import es.tid.haewoon.cdr.util.CDRUtil;
 import es.tid.haewoon.cdr.util.Constants;
-import es.tid.haewoon.cdr.util.RankComparator;
 
 public class FractionOfMatchedSequences {
     Logger logger = Logger.getLogger(FractionOfMatchedSequences.class);
     public static void main(String[] args) throws IOException {
-        (new FractionOfMatchedSequences()).run(Constants.RESULT_PATH + File.separator + "18_fraction_of_matched_sequences");
+        (new FractionOfMatchedSequences()).run(Constants.RESULT_PATH + File.separator + "16_fraction_of_matched_sequences");
     }
     
     private void run(String targetDirectory) throws IOException {
@@ -28,21 +26,17 @@ public class FractionOfMatchedSequences {
             logger.debug("A directory [" + targetDirectory + "] is created");
         }
         
-        List<File> files = CDRUtil.loadFiles(Constants.RESULT_PATH + File.separator + 
-                "9_3_markov_chain_of_BTS_in_commuting_hours", "^.*-.*$");
-        Collections.sort(files, new RankComparator());
+        String loadPath = Constants.RESULT_PATH + File.separator + "7_3_markov_chain_of_BTS_in_commuting_hours";
         
         BufferedWriter bw = new BufferedWriter(new FileWriter(targetDirectory + File.separator + "result"));
-        for (File file : files) {
-            String number = file.getName().split("-")[1];
-            String pruned = Constants.RESULT_PATH + File.separator + "10_3_pruned_markov_chain_of_BTS_in_commuting_hours" + File.separator + file.getName();
-            String matched = Constants.RESULT_PATH + File.separator + "17_3_matched_sequences_with_google_in_commuting_hours" + File.separator + number;
+        for (String number : CDRUtil.getOrderedNumbers()) {
+            String pruned = Constants.RESULT_PATH + File.separator + "8_3_pruned_markov_chain_of_BTS_in_commuting_hours" + File.separator + number;
+            String matched = Constants.RESULT_PATH + File.separator + "15_3_matched_sequences_with_google_in_commuting_hours" + File.separator + number;
             if (!(new File(matched)).exists()) {
                 continue;
             }
             
-            logger.debug(file);
-            int wholeSeq = countSequence(file.getAbsolutePath());
+            int wholeSeq = countSequence(loadPath + File.separator + number);
             int pruneSeq = countSequence(pruned);
             int matchedSeq = countSequence(matched);
             int matchedSeq_pruned = countSequence(matched, 1);

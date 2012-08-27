@@ -22,13 +22,13 @@ public class FindBTSnearGoogleRoute {
     Set<BTS> BTSs = new HashSet<BTS>(); 
     
     public static void main(String[] args) throws IOException {
-        (new FindBTSnearGoogleRoute()).run(Constants.RESULT_PATH + File.separator + "16_BTS_near_google_routes");
+        (new FindBTSnearGoogleRoute()).run(Constants.RESULT_PATH + File.separator + "14_BTS_near_google_routes");
     }
     
     private void run(String targetDirectory) throws IOException {
         boolean success = (new File(targetDirectory)).mkdir();
         if (success) {
-            logger.debug("A directory[" + targetDirectory + "] is created");
+            logger.info("A directory[" + targetDirectory + "] is created");
         }
         BufferedReader br = new BufferedReader(new FileReader(
                 Constants.RESULT_PATH + File.separator + "13_home_work_lat_long" + File.separator + "home_2_work"));
@@ -54,14 +54,14 @@ public class FindBTSnearGoogleRoute {
     }
     
     private boolean load(String number, String identifier) throws IOException {
-        if (!new File(Constants.RESULT_PATH + File.separator + "15_parsed_routes_by_google" + 
+        if (!new File(Constants.RESULT_PATH + File.separator + "13_parsed_routes_by_google" + 
                         File.separator + number + "-" + identifier).exists()) {
-            logger.debug("No [" + Constants.RESULT_PATH + File.separator + "15_parsed_routes_by_google" + 
+            logger.error("No [" + Constants.RESULT_PATH + File.separator + "13_parsed_routes_by_google" + 
                     File.separator + number + "-" + identifier + "] file");
             return false;
         }
         BufferedReader br = new BufferedReader(new FileReader(Constants.RESULT_PATH + File.separator + 
-                "15_parsed_routes_by_google" + File.separator + number + "-" + identifier));
+                "13_parsed_routes_by_google" + File.separator + number + "-" + identifier));
         String line;
         boolean isFirst = true;
         double[] ll = {0.0, 0.0};

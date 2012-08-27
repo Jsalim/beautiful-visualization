@@ -19,7 +19,6 @@ import es.tid.haewoon.cdr.util.CDRUtil;
 import es.tid.haewoon.cdr.util.Constants;
 import es.tid.haewoon.cdr.util.MarkovChainState;
 import es.tid.haewoon.cdr.util.NumericComparator;
-import es.tid.haewoon.cdr.util.RankComparator;
 
 public class MakeMarkovChains {
     private static final Logger logger = Logger.getLogger(MakeMarkovChains.class);
@@ -29,37 +28,30 @@ public class MakeMarkovChains {
     private Map<String, MarkovChainState> markovChain = new HashMap<String, MarkovChainState>();
 
     public static void main(String[] args) throws IOException {
-//        mcc.run(Constants.RESULT_PATH + File.separator + "5_sequences_threshold_" + FindSequences.THRESHOLD_MIN + "_min", 
+//        (new MakeMarkovChains()).run(
+//                Constants.RESULT_PATH + File.separator + "8_1_BTS_sequences_in_home_hours_interval_less_than_" + FindSequences.THRESHOLD_MIN + "_min", 
 //                "^.*-.*$", 
-//                Constants.RESULT_PATH + File.separator + "6_1_markov_chain_of_cells", 
-//                Constants.RESULT_PATH + File.separator + "6_2_pruned_markov_chain_of_cells", 
-//                Constants.RESULT_PATH + File.separator + "6_3_normalized_markov_chain_of_cells");
+//                Constants.RESULT_PATH + File.separator + "9_1_markov_chain_of_BTS_in_home_hours", 
+//                Constants.RESULT_PATH + File.separator + "10_1_pruned_markov_chain_of_BTS_in_home_hours", 
+//                Constants.RESULT_PATH + File.separator + "11_1_normalized_markov_chain_of_BTS_in_home_hours");
+//
+//        (new MakeMarkovChains()).run(
+//                Constants.RESULT_PATH + File.separator + "8_2_BTS_sequences_in_work_hours_interval_less_than_" + FindSequences.THRESHOLD_MIN + "_min", 
+//                "^.*-.*$", 
+//                Constants.RESULT_PATH + File.separator + "9_2_markov_chain_of_BTS_in_work_hours", 
+//                Constants.RESULT_PATH + File.separator + "10_2_pruned_markov_chain_of_BTS_in_work_hours", 
+//                Constants.RESULT_PATH + File.separator + "11_2_normalized_markov_chain_of_BTS_in_work_hours");
         
         (new MakeMarkovChains()).run(
-                Constants.RESULT_PATH + File.separator + "8_1_BTS_sequences_in_home_hours_interval_less_than_" + FindSequences.THRESHOLD_MIN + "_min", 
-                "^.*-.*$", 
-                Constants.RESULT_PATH + File.separator + "9_1_markov_chain_of_BTS_in_home_hours", 
-                Constants.RESULT_PATH + File.separator + "10_1_pruned_markov_chain_of_BTS_in_home_hours", 
-                Constants.RESULT_PATH + File.separator + "11_1_normalized_markov_chain_of_BTS_in_home_hours");
-
-        (new MakeMarkovChains()).run(
-                Constants.RESULT_PATH + File.separator + "8_2_BTS_sequences_in_work_hours_interval_less_than_" + FindSequences.THRESHOLD_MIN + "_min", 
-                "^.*-.*$", 
-                Constants.RESULT_PATH + File.separator + "9_2_markov_chain_of_BTS_in_work_hours", 
-                Constants.RESULT_PATH + File.separator + "10_2_pruned_markov_chain_of_BTS_in_work_hours", 
-                Constants.RESULT_PATH + File.separator + "11_2_normalized_markov_chain_of_BTS_in_work_hours");
-        
-        (new MakeMarkovChains()).run(
-                Constants.RESULT_PATH + File.separator + "8_3_BTS_sequences_in_commuting_hours_interval_less_than_" + FindSequences.THRESHOLD_MIN + "_min", 
-                "^.*-.*$", 
-                Constants.RESULT_PATH + File.separator + "9_3_markov_chain_of_BTS_in_commuting_hours", 
-                Constants.RESULT_PATH + File.separator + "10_3_pruned_markov_chain_of_BTS_in_commuting_hours", 
-                Constants.RESULT_PATH + File.separator + "11_3_normalized_markov_chain_of_BTS_in_commuting_hours");
+                Constants.RESULT_PATH + File.separator + "6_3_BTS_sequences_in_commuting_hours_interval_less_than_" + FindSequences.THRESHOLD_MIN + "_min", 
+                Constants.TELNUM_FILE_PATTERN, 
+                Constants.RESULT_PATH + File.separator + "7_3_markov_chain_of_BTS_in_commuting_hours", 
+                Constants.RESULT_PATH + File.separator + "8_3_pruned_markov_chain_of_BTS_in_commuting_hours", 
+                Constants.RESULT_PATH + File.separator + "9_3_normalized_markov_chain_of_BTS_in_commuting_hours");
     }
     
     public void run(String inputPath, String pattern, String targetPath, String targetPPath, String targetNPath) throws IOException {
         List<File> files = CDRUtil.loadFiles(inputPath, pattern);
-        Collections.sort(files, new RankComparator());
         
         logger.debug(files.size() + " files loaded...");
 
@@ -78,9 +70,13 @@ public class MakeMarkovChains {
             logger.debug("A directory [" + targetNPath + "] is created");
         }
         
+        int processed = 0;
         for (File file: files) {
             markovChain.clear();
-            logger.debug("processing " + file);
+            processed ++;
+            if (processed % 100 == 0) {
+                logger.debug("processing [" + processed + "] files");
+            }
             
             BufferedReader br = new BufferedReader(new FileReader(file));
             

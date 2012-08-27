@@ -196,7 +196,7 @@ public class CDRUtil {
         files.addAll(CDRUtil.loadFiles(Constants.FILTERED_PATH + File.separator + "5_2_sorted_work_hours", Constants.RAW_DATA_FILE_PATTERN));
         files.addAll(CDRUtil.loadFiles(Constants.FILTERED_PATH + File.separator + "5_3_sorted_commuting_hours", Constants.RAW_DATA_FILE_PATTERN));
         
-        Collections.sort(files, new MonthDayComparator());
+        Collections.sort(files, new RawFileComparator());
         return files;
     }
     
@@ -326,5 +326,62 @@ public class CDRUtil {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }         
+    }
+    
+    public static Set<BTS> nearBTS (double clat, double clon, Set<BTS> BTSs, int THRESHOLD) {
+        for (BTS bts : CDRUtil.getBTSs(Constants.PROVINCE)) {
+            if (bts.closeEnough(clat, clon, THRESHOLD)) {
+//                logger.debug(bts + " near " + clat + "," + clon);
+                BTSs.add(bts);
+            }
+        }
+        return BTSs;
+    }
+    
+    public static Set<BTS> nearBTS(double llat, double llon, double clat, double clon, Set<BTS> BTSs, int THRESHOLD) {
+        final double latDelta = clat - llat;
+        final double lonDelta = clon - llon;
+        
+        if (latDelta == 0 && lonDelta == 0) {
+            return BTSs;
+        }
+        
+        for (BTS bts : CDRUtil.getBTSs(Constants.PROVINCE)) {
+            final double u = ((bts.getLatitude() - llat) * latDelta + (bts.getLongitude() - llon) * lonDelta) / (latDelta * latDelta + lonDelta * lonDelta);
+            
+            if (u < 0 || u > 1) {
+                continue;
+            } else {
+                double[] closePoint = {llat + u * latDelta, llon + u * lonDelta};
+                if (bts.closeEnough(closePoint[0], closePoint[1], THRESHOLD)) {
+//                    logger.debug(bts + " near " + llat + "," + llon + "->" + clat + "," + clon);
+                    BTSs.add(bts);
+                }
+            }
+        }
+        
+        return BTSs;
+    }
+    
+    public static List<String> getOrderedNumbers() {
+        List<String> numbers = new ArrayList<String>();
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(
+                    Constants.RESULT_PATH + File.separator + "1_3_count_basic_statistics_in_commuting_hours" + File.separator + "all.caller_ee"));
+            String line;
+
+            while ((line = br.readLine()) != null) {
+                String[] tokens = line.split("\t");
+                String number = tokens[0];
+                int calls = Integer.valueOf(tokens[1]);
+
+                if (calls >= 1 * Constants.DAYS && calls <= 10 * Constants.DAYS) {
+                    numbers.add(number);
+                }
+            }
+        } catch (Exception e) {
+            logger.error(e);
+        }
+        return numbers;
     }
 }

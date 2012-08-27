@@ -3,7 +3,7 @@ package es.tid.haewoon.cdr.util;
 import java.io.File;
 import java.util.Comparator;
 
-public class MonthDayComparator implements Comparator<File> {
+public class RawFileComparator implements Comparator<File> {
     @Override
     public int compare(File f1, File f2) {
         // month * 100 + day

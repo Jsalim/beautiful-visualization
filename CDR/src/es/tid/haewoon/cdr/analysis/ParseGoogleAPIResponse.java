@@ -19,8 +19,8 @@ import es.tid.haewoon.cdr.util.Constants;
 public class ParseGoogleAPIResponse {
     Logger logger = Logger.getLogger(ParseGoogleAPIResponse.class);
     public static void main(String[] args) throws IOException {
-        (new ParseGoogleAPIResponse()).run(Constants.RESULT_PATH + File.separator + "14_directions_from_google", 
-                                           Constants.RESULT_PATH + File.separator + "15_parsed_routes_by_google");
+        (new ParseGoogleAPIResponse()).run(Constants.RESULT_PATH + File.separator + "12_directions_from_google", 
+                                           Constants.RESULT_PATH + File.separator + "13_parsed_routes_by_google");
     }
     
     private void run(String readPath, String targetDirectory) throws IOException {

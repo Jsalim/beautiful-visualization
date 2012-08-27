@@ -19,9 +19,9 @@ import org.apache.log4j.Logger;
 import es.tid.haewoon.cdr.util.CDR;
 import es.tid.haewoon.cdr.util.CDRUtil;
 import es.tid.haewoon.cdr.util.Constants;
-import es.tid.haewoon.cdr.util.MonthDayComparator;
+import es.tid.haewoon.cdr.util.RawFileComparator;
 
-
+@Deprecated
 public class ExtractTopNormalUsersCDR {
     TelephoneNumberFilter tnf;
     private static Logger logger = Logger.getLogger(ExtractTopNormalUsersCDR.class);
@@ -61,7 +61,7 @@ public class ExtractTopNormalUsersCDR {
         }
         
         List<File> files = CDRUtil.loadFiles(loadPath, Constants.RAW_DATA_FILE_PATTERN);
-        Collections.sort(files, new MonthDayComparator());
+        Collections.sort(files, new RawFileComparator());
         logger.debug(files.size());
         
         for (File file: files) {

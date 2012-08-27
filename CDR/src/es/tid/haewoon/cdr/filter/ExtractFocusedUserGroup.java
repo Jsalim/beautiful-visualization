@@ -6,7 +6,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.text.ParseException;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -16,14 +16,15 @@ import org.apache.log4j.Logger;
 import es.tid.haewoon.cdr.util.CDR;
 import es.tid.haewoon.cdr.util.CDRUtil;
 import es.tid.haewoon.cdr.util.Constants;
+import es.tid.haewoon.cdr.util.RawFileComparator;
 
-public class ExtractNormalUsers {
-    Logger logger = Logger.getLogger(ExtractNormalUsers.class);
-    CallerFilter cFilter;
+public class ExtractFocusedUserGroup {
+    Logger logger = Logger.getLogger(ExtractFocusedUserGroup.class);
+    CDRFilter cFilter;
     
-    public ExtractNormalUsers(int min, int max) throws IOException {
+    public ExtractFocusedUserGroup(int min, int max) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(
-                Constants.RESULT_PATH + File.separator + "1_count_basic_statistics" + File.separator + "all.caller"));
+                Constants.RESULT_PATH + File.separator + "1_3_count_basic_statistics_in_commuting_hours" + File.separator + "all.caller_ee"));
         String line;
         Set<String> s = new HashSet<String>();
         while ((line = br.readLine()) != null) {
@@ -35,20 +36,20 @@ public class ExtractNormalUsers {
                 s.add(number);
             }
         }
-        logger.debug("# of people who have 1 to 3 calls per day: " + s.size());
-        cFilter = new CallerFilter(s);
+        logger.debug("# of users in the focused group: " + s.size());
+        cFilter = new TelephoneNumberFilter(s);
     }
     
     public static void main(String[] args) throws IOException {
         int minimum = 1;
-        int maximum = 3;
-        ExtractNormalUsers enu = new ExtractNormalUsers(minimum, maximum);
+        int maximum = 10;
+        ExtractFocusedUserGroup enu = new ExtractFocusedUserGroup(minimum, maximum);
         enu.run(Constants.FILTERED_PATH + File.separator + "5_1_sorted_home_hours", 
-                Constants.FILTERED_PATH + File.separator + "6_1_normal_home_hours");
+                Constants.FILTERED_PATH + File.separator + "6_1_focused_home_hours");
         enu.run(Constants.FILTERED_PATH + File.separator + "5_2_sorted_work_hours", 
-                Constants.FILTERED_PATH + File.separator + "6_2_normal_work_hours");
+                Constants.FILTERED_PATH + File.separator + "6_2_focused_work_hours");
         enu.run(Constants.FILTERED_PATH + File.separator + "5_3_sorted_commuting_hours", 
-                Constants.FILTERED_PATH + File.separator + "6_3_normal_commuting_hours");
+                Constants.FILTERED_PATH + File.separator + "6_3_focused_commuting_hours");
     }
     
     private void run(String loadingPath, String targetDirectory) throws IOException {
@@ -58,19 +59,23 @@ public class ExtractNormalUsers {
         }
         
         List<File> files = CDRUtil.loadFiles(loadingPath, Constants.RAW_DATA_FILE_PATTERN);
+        Collections.sort(files, new RawFileComparator());
+        
         for (File file : files) {
             logger.debug("processing " + file);
             String line = "";
             BufferedReader br = new BufferedReader(new FileReader(file));
-            BufferedWriter bw = new BufferedWriter(new FileWriter(targetDirectory + File.separator + file.getName()));
-            
             while((line = br.readLine()) != null) {
                 CDR cdr;
                 try {
                     cdr = new CDR(line);
                     if (cFilter.filter(cdr)) {
+                        String movistarNum = cdr.getMovistarNum();
+                        BufferedWriter bw = new BufferedWriter(new FileWriter(
+                                targetDirectory + File.separator + movistarNum, true));
                         bw.write(line.trim());
-                        bw.newLine();
+                        bw.newLine();                        
+                        bw.close(); 
                     } 
                 } catch (Exception e) {
                     logger.error("wrong-format CDR [" + line + "]", e);
@@ -81,7 +86,6 @@ public class ExtractNormalUsers {
                 }
             }
             br.close();
-            bw.close();
         }
     }
 }

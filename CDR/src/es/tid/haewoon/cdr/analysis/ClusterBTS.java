@@ -25,7 +25,7 @@ public class ClusterBTS {
     private Map<BTS, Integer> bts2count = new HashMap<BTS, Integer>();
     
     private void run(String fileToReadPath, String targetPath, final int THRESHOLD) throws IOException {
-        List<File> files = CDRUtil.loadFiles(fileToReadPath, "^\\d+-\\d+-\\d+$");
+        List<File> files = CDRUtil.loadFiles(fileToReadPath, Constants.TELNUM_FILE_PATTERN);
         logger.debug(files.size());
         
         boolean success = (new File(targetPath + "_threshold_" + THRESHOLD + "m")).mkdir();
@@ -37,8 +37,13 @@ public class ClusterBTS {
         
         // the input data is already sorted
         // we use the linear-time clustering algorithm, Hartigan's leader algorithm        
+        int processed = 0;
         for (File aFile : files) {
-            logger.debug("processing " + aFile + "...");
+            processed++;
+            if (processed % 100 == 0) {
+                logger.debug("processing [" + processed + "] files");
+            }
+//            logger.debug("processing " + aFile + "...");
             BufferedReader br = new BufferedReader(new FileReader(aFile));
             
             // initialize two maps
@@ -49,9 +54,9 @@ public class ClusterBTS {
                 String[] tokens = line.split("\t");
                 
                 String num = tokens[0];
-                String cell = tokens[1];
-                String btsID = tokens[2];
-                int bts_count = Integer.valueOf(tokens[4]);
+//                String cell = tokens[1];
+                String btsID = tokens[1];
+                int bts_count = Integer.valueOf(tokens[2]);
                 
                 BTS bts = CDRUtil.getBTS(btsID);
                 
@@ -76,6 +81,7 @@ public class ClusterBTS {
             
             double sum = 0.0;
             for (BTS center : center2neighbors.keySet()) {
+                
                 int count = bts2count.get(center);
                 Set<BTS> neighbors = center2neighbors.get(center);
                 for (BTS neighbor : neighbors) {
@@ -105,12 +111,12 @@ public class ClusterBTS {
     
     public static void main(String[] args) throws IOException {
         (new ClusterBTS()).run(
-                Constants.RESULT_PATH + File.separator + "3_1_sorted_home_hour_events",
-                Constants.RESULT_PATH + File.separator + "4_1_clustered_home_hour_events", 1000);
+                Constants.RESULT_PATH + File.separator + "2_1_count_home_hour_events",
+                Constants.RESULT_PATH + File.separator + "3_1_clustered_home_hour_events", 1000);
         
         (new ClusterBTS()).run(
-                Constants.RESULT_PATH + File.separator + "3_2_sorted_work_hour_events",
-                Constants.RESULT_PATH + File.separator + "4_2_clustered_work_hour_events", 1000);
+                Constants.RESULT_PATH + File.separator + "2_2_count_work_hour_events",
+                Constants.RESULT_PATH + File.separator + "3_2_clustered_work_hour_events", 1000);
 
 //        (new ClusterBTS()).run(
 //                Constants.RESULT_PATH + File.separator + "15_1_sorted_home_hour_events",
