@@ -14,7 +14,7 @@ import org.apache.log4j.Logger;
 import es.tid.haewoon.cdr.util.CDR;
 import es.tid.haewoon.cdr.util.CDRUtil;
 import es.tid.haewoon.cdr.util.Constants;
-import es.tid.haewoon.cdr.util.MonthDayComparator;
+import es.tid.haewoon.cdr.util.RawFileComparator;
 import es.tid.haewoon.cdr.util.Province;
 
 
@@ -42,7 +42,7 @@ public class ExtractBarcelonaOneTime {
         }
         
         List<File> files = CDRUtil.loadFiles(loadPath, Constants.RAW_DATA_FILE_PATTERN);
-        Collections.sort(files, new MonthDayComparator());
+        Collections.sort(files, new RawFileComparator());
         String line;
         
         

@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,15 +16,22 @@ import es.tid.haewoon.cdr.util.CDR;
 import es.tid.haewoon.cdr.util.CDRUtil;
 import es.tid.haewoon.cdr.util.Constants;
 import es.tid.haewoon.cdr.util.Operator;
+import es.tid.haewoon.cdr.util.RawFileComparator;
 
 public class CountBasicStatistics {
     private static Logger logger = Logger.getLogger(CountBasicStatistics.class); 
 
     public static void main(String[] args) throws IOException {
-        (new CountBasicStatistics()).run(Constants.RESULT_PATH + File.separator + "1_count_basic_statistics");
+        (new CountBasicStatistics()).run(CDRUtil.loadAllCDRFiles(), 
+                Constants.RESULT_PATH + File.separator + "1_count_basic_statistics");
+//        (new CountBasicStatistics()).run(CDRUtil.loadFiles("5_1_sorted_home_hours", Constants.RAW_DATA_FILE_PATTERN), 
+//                Constants.RESULT_PATH + File.separator + "1_1_count_basic_statistics_in_home_hours");
+        (new CountBasicStatistics()).run(
+                CDRUtil.loadFiles(Constants.FILTERED_PATH + File.separator + "5_3_sorted_commuting_hours", Constants.RAW_DATA_FILE_PATTERN), 
+                Constants.RESULT_PATH + File.separator + "1_3_count_basic_statistics_in_commuting_hours");
     }
     
-    private void run(String targetDirectory) throws IOException {
+    private void run(List<File> files, String targetDirectory) throws IOException {
         boolean success = (new File(targetDirectory)).mkdir();
         if (success) {
             logger.debug("[" + targetDirectory + "] is created...");
@@ -35,8 +43,8 @@ public class CountBasicStatistics {
         Map<String, Integer> duration2Count = new HashMap<String, Integer>();
         Map<String, Integer> number2Count = new HashMap<String, Integer>();
         
-        List<File> files = CDRUtil.loadAllCDRFiles();
         String line;
+        Collections.sort(files, new RawFileComparator());
 
         for (File file: files) {
             origin2Count.clear();

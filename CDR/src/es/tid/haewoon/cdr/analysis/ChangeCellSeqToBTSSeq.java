@@ -23,25 +23,25 @@ import es.tid.haewoon.cdr.util.Constants;
 import es.tid.haewoon.cdr.util.MarkovChainState;
 import es.tid.haewoon.cdr.util.RankComparator;
 
-public class ChangeSequencesToBTSLevel {
+public class ChangeCellSeqToBTSSeq {
     
-    private Logger logger = Logger.getLogger(ChangeSequencesToBTSLevel.class); 
+    private Logger logger = Logger.getLogger(ChangeCellSeqToBTSSeq.class); 
     Map<String, String> cell2bts = new HashMap<String, String>();
 
     public static void main(String[] args) throws IOException, ParseException {
-        (new ChangeSequencesToBTSLevel()).run(
-                Constants.RESULT_PATH + File.separator + "7_1_cell_sequences_in_home_hours_interval_less_than_" + FindSequences.THRESHOLD_MIN + "_min",
-                Constants.RESULT_PATH + File.separator + "8_1_BTS_sequences_in_home_hours_interval_less_than_" + FindSequences.THRESHOLD_MIN + "_min");
-        (new ChangeSequencesToBTSLevel()).run(
-                Constants.RESULT_PATH + File.separator + "7_2_cell_sequences_in_work_hours_interval_less_than_" + FindSequences.THRESHOLD_MIN + "_min",
-                Constants.RESULT_PATH + File.separator + "8_2_BTS_sequences_in_work_hours_interval_less_than_" + FindSequences.THRESHOLD_MIN + "_min");
-        (new ChangeSequencesToBTSLevel()).run(
-                Constants.RESULT_PATH + File.separator + "7_3_cell_sequences_in_commuting_hours_interval_less_than_" + FindSequences.THRESHOLD_MIN + "_min",
-                Constants.RESULT_PATH + File.separator + "8_3_BTS_sequences_in_commuting_hours_interval_less_than_" + FindSequences.THRESHOLD_MIN + "_min");
+//        (new ChangeCellSeqToBTSSeq()).run(
+//                Constants.RESULT_PATH + File.separator + "7_1_cell_sequences_in_home_hours_interval_less_than_" + FindSequences.THRESHOLD_MIN + "_min",
+//                Constants.RESULT_PATH + File.separator + "8_1_BTS_sequences_in_home_hours_interval_less_than_" + FindSequences.THRESHOLD_MIN + "_min");
+//        (new ChangeCellSeqToBTSSeq()).run(
+//                Constants.RESULT_PATH + File.separator + "7_2_cell_sequences_in_work_hours_interval_less_than_" + FindSequences.THRESHOLD_MIN + "_min",
+//                Constants.RESULT_PATH + File.separator + "8_2_BTS_sequences_in_work_hours_interval_less_than_" + FindSequences.THRESHOLD_MIN + "_min");
+        (new ChangeCellSeqToBTSSeq()).run(
+                Constants.RESULT_PATH + File.separator + "5_3_cell_sequences_in_commuting_hours_interval_less_than_" + FindSequences.THRESHOLD_MIN + "_min",
+                Constants.RESULT_PATH + File.separator + "6_3_BTS_sequences_in_commuting_hours_interval_less_than_" + FindSequences.THRESHOLD_MIN + "_min");
 
     }
     
-    public ChangeSequencesToBTSLevel() throws IOException, ParseException {
+    public ChangeCellSeqToBTSSeq() throws IOException, ParseException {
         String line = "";
         BufferedReader br = new BufferedReader(new FileReader(Constants.BARCELONA_CELL_INFO_PATH));
         while((line = br.readLine()) != null) {
@@ -55,7 +55,7 @@ public class ChangeSequencesToBTSLevel {
     }
 
     public void run(String loadPath, String targetDirectory) throws IOException, ParseException {
-        List<File> files = CDRUtil.loadFiles(loadPath, "^.*-.*$");
+        List<File> files = CDRUtil.loadFiles(loadPath, Constants.TELNUM_FILE_PATTERN);
         Collections.sort(files, new RankComparator());
        
         boolean success = (new File(targetDirectory)).mkdir();
@@ -64,8 +64,12 @@ public class ChangeSequencesToBTSLevel {
         }
 
         String line;
+        int processed = 0;
         for (File file: files) {
-            logger.debug("processing " + file);
+            processed ++;
+            if (processed % 100 == 0) {
+                logger.debug("processing [" + processed + "] files");
+            }
             BufferedReader br = new BufferedReader(new FileReader(file));
             BufferedWriter bw = new BufferedWriter(new FileWriter(targetDirectory + File.separator + file.getName()));
             

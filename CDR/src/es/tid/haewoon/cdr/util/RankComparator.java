@@ -3,6 +3,7 @@ package es.tid.haewoon.cdr.util;
 import java.io.File;
 import java.util.Comparator;
 
+@Deprecated
 public class RankComparator implements Comparator<File> {
 
     @Override

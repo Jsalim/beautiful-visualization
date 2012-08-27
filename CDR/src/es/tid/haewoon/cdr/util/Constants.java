@@ -10,11 +10,14 @@ public class Constants {
     private Constants() { throw new AssertionError(); }
     
     public static final String RAW_DATA_FILE_PATTERN = "^F1_GASSET_VOZ_.*2009$";
+    public static final String TELNUM_FILE_PATTERN = "^\\d+$";
     
     public static final String BASE_PATH = "/workspace/CDR";
     public static final String RAW_DATA_PATH = BASE_PATH + File.separator + "raw";
     public static final String RESULT_PATH = BASE_PATH + File.separator + "result";
     public static final String FILTERED_PATH = BASE_PATH + File.separator + "filtered";
+    
+    public static final Province PROVINCE = Province.BARCELONA;
     
     static {
         DAYS = CDRUtil.loadAllCDRFiles().size()/3;  // 3 is the number of hour types (home / work / commuting hours)
@@ -45,5 +48,5 @@ public class Constants {
 //    public static final String BARCELONA_CELL_INFO_PATH = BASE_PATH + File.separator + "GASSET_CELULA_BCN_haewoon.TXT";
     public static final String BARCELONA_CELL_INFO_PATH = BASE_PATH + File.separator + "GASSET_CELULA_BCN_Box_haewoon.TXT";
     
-    public static final double[][] BARCELONA_BOX = {{2.05513, 41.452505}, {2.261124, 41.336607}};
+    public static final double[][] BARCELONA_BOX = {{41.452505, 2.05513}, {41.336607, 2.261124}};
 }

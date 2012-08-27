@@ -35,28 +35,34 @@ public class FindSequences {
      * @throws IOException 
      */
     public static void main(String[] args) throws IOException {
+//        new FindSequences().run(
+//                Constants.FILTERED_PATH + File.separator + "6_1_focused_home_hours",
+//                Constants.RESULT_PATH + File.separator + "7_1_cell_sequences_in_home_hours_interval_less_than_" + THRESHOLD_MIN + "_min");
+//        new FindSequences().run(
+//                Constants.FILTERED_PATH + File.separator + "6_2_focused_work_hours",
+//                Constants.RESULT_PATH + File.separator + "7_2_cell_sequences_in_work_hours_interval_less_than_" + THRESHOLD_MIN + "_min");
+        
+        // only focus on the sequences during commuting hours
         new FindSequences().run(
-                Constants.FILTERED_PATH + File.separator + "7_1_top_10000_nusers_home_hours",
-                Constants.RESULT_PATH + File.separator + "7_1_cell_sequences_in_home_hours_interval_less_than_" + THRESHOLD_MIN + "_min");
-        new FindSequences().run(
-                Constants.FILTERED_PATH + File.separator + "7_2_top_10000_nusers_work_hours",
-                Constants.RESULT_PATH + File.separator + "7_2_cell_sequences_in_work_hours_interval_less_than_" + THRESHOLD_MIN + "_min");
-        new FindSequences().run(
-                Constants.FILTERED_PATH + File.separator + "7_3_top_10000_nusers_commuting_hours",
-                Constants.RESULT_PATH + File.separator + "7_3_cell_sequences_in_commuting_hours_interval_less_than_" + THRESHOLD_MIN + "_min");
+                Constants.FILTERED_PATH + File.separator + "6_3_focused_commuting_hours",
+                Constants.RESULT_PATH + File.separator + "5_3_cell_sequences_in_commuting_hours_interval_less_than_" + THRESHOLD_MIN + "_min");
     }
     
     private void run(String loadingPath, String targetDirectory) throws IOException {
-        List<File> files = CDRUtil.loadFiles(loadingPath, "^.*-.*$");    
-        Collections.sort(files, new RankComparator());
-
+        List<File> files = CDRUtil.loadFiles(loadingPath, Constants.TELNUM_FILE_PATTERN);    
         boolean success = (new File(targetDirectory)).mkdir();
         if (success) {
             logger.debug("A directory [" + targetDirectory + "] is created");
         }
         
+        int processed = 0;
         for (File file: files) {
-            logger.debug("processing " + file);
+            processed ++;
+            
+            if (processed % 100 == 0) {
+                logger.debug("processing [" + processed + "] files");
+            }
+//            logger.debug("processing " + file);
             BufferedWriter bw = new BufferedWriter(new FileWriter(targetDirectory + File.separator + file.getName()));
             String line = "";
             BufferedReader br = new BufferedReader(new FileReader(file));
@@ -116,9 +122,7 @@ public class FindSequences {
                 logger.fatal("something wrong / all CDRs here must have at least one Movistar number", e);
                 System.exit(0);
             }
-           
             bw.close();
-            
         }
     }
 }

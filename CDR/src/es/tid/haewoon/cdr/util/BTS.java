@@ -51,6 +51,18 @@ public class BTS {
         return CDRUtil.getDistance(this.latitude, this.longitude, lat, lon) < threshold_meter;
     }
     
+    public boolean isIn(double[][] boundingBox) {
+        
+        double leftTopLat = boundingBox[0][0];
+        double leftTopLong = boundingBox[0][1];
+        
+        double rightBottomLat = boundingBox[1][0];
+        double rightBottomLong = boundingBox[1][1];
+        
+        // FIXME: we are not considering 180 to -180, but (at least) no problem with Spain data 
+        return (longitude > leftTopLong) && (longitude < rightBottomLong) && (latitude < leftTopLat) && (latitude > rightBottomLat);
+    }
+    
     public String toString() {
         return btsID;
     }

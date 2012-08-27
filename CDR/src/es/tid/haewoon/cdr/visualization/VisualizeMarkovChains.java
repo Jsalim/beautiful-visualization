@@ -5,7 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
@@ -23,10 +23,8 @@ import de.fhpotsdam.unfolding.Map;
 import de.fhpotsdam.unfolding.geo.Location;
 import de.fhpotsdam.unfolding.providers.Google;
 import de.fhpotsdam.unfolding.utils.MapUtils;
-import es.tid.haewoon.cdr.util.CDRUtil;
 import es.tid.haewoon.cdr.util.Cell;
 import es.tid.haewoon.cdr.util.Constants;
-import es.tid.haewoon.cdr.util.RankComparator;
 import es.tid.haewoon.cdr.util.Transition;
 
 public class VisualizeMarkovChains extends PApplet {
@@ -34,11 +32,8 @@ public class VisualizeMarkovChains extends PApplet {
 
     private static final long serialVersionUID = -4085039003253887831L;
     java.util.Map<String, Location> BTS2Location = new HashMap<String, Location>();
-    int fileIndex = 0;
-    
-    List<File> hFiles;
-    List<File> wFiles;
-    List<File> cFiles;
+    int chainIndex = 0;
+    List<String> numbers;
     
     PFont font;
     int from = 0xFFd91901;
@@ -51,22 +46,18 @@ public class VisualizeMarkovChains extends PApplet {
     boolean normalize = false;
     Random random = new Random(0);
 
-    boolean saveFile = false;
     boolean showAgg = false;
     boolean showHome = false;
     boolean showLabel = false;
-    boolean showSeq = false;
     boolean showMarkov = false;
     boolean showVoronoi = false;
     boolean showGoogle = false;
+    boolean showBox = false;
     
     String targetPath;
 
     java.util.Map<String, String> num2home = new HashMap<String, String>();
     java.util.Map<String, String> num2work = new HashMap<String, String>();
-    
-    java.util.Map<Transition, Double> hTran2wt = new HashMap<Transition, Double>(); // for home
-    java.util.Map<Transition, Double> wTran2wt = new HashMap<Transition, Double>(); // for work
     java.util.Map<Transition, Double> cTran2wt = new HashMap<Transition, Double>(); // for commuting
 
     Voronoi voronoi;
@@ -93,6 +84,9 @@ public class VisualizeMarkovChains extends PApplet {
         text("Press H to toggle the home/work location", 15, yLoc);
         yLoc += 20;
         text("Press G to toggle the driving route between home/work by Google");
+        yLoc += 20;
+        text("Press B to toggle BTSs in the home-work bounding box");
+        yLoc += 20;
         text("Press A to show the aggregated Markov chain", 15, yLoc);
         yLoc += 20;
         text("Press Z to toggle the normalization of the chain", 15, yLoc);
@@ -103,15 +97,6 @@ public class VisualizeMarkovChains extends PApplet {
             showVoronoi();
         }
 
-//        if (saveFile) {
-//            Location center = map.getLocationFromScreenPosition(width / 2,
-//                    height / 2);
-//            save(targetPath + File.separator + files.get(fileIndex).getName()
-//                    + "_level" + map.getZoomLevel() + "_" + +center.x + "_"
-//                    + center.y + ".png");
-//            saveFile = false;
-//        }
-
         if (showMarkov) {
             showMarkov();
             pushStyle();
@@ -121,7 +106,7 @@ public class VisualizeMarkovChains extends PApplet {
             if (showAgg) {
                 text("The aggregated Markov chain", width, 30);
             } else {
-                text("[" + hFiles.get(fileIndex).getName() + "]", width, 30);
+                text("[" + numbers.get(chainIndex) + "]", width, 30);
             }
             popStyle();
         }
@@ -134,16 +119,16 @@ public class VisualizeMarkovChains extends PApplet {
             showGoogleRoute();
         }
         
+        if (showBox) {
+            showBoundingBox();
+        }
+        
     }
 
     public void keyPressed() {
         switch (key) {
         case 'v':
             showVoronoi = !showVoronoi;
-            break;
-
-        case 's':
-            saveFile = true;
             break;
 
         case 'm':
@@ -154,25 +139,28 @@ public class VisualizeMarkovChains extends PApplet {
             showGoogle = !showGoogle;
             break;
             
+        case 'b':
+            showBox = !showBox;
+            break;
+            
         case 'h':
             showHome = !showHome;
             break;
 
         case 'n':
-            fileIndex++;
+            chainIndex++;
             loadIndividualMarkov();
             showAgg = false;
             break;
 
         case 'p':
-            fileIndex = Math.max(fileIndex - 1, 0);
+            chainIndex = Math.max(chainIndex - 1, 0);
             loadIndividualMarkov();
             showAgg = false;
             break;
 
         case 'a':
             loadEntireBCN();
-            //            showSeq = !showSeq;
             showAgg = true;
             break;
 
@@ -191,61 +179,31 @@ public class VisualizeMarkovChains extends PApplet {
 
     }
     public void loadEntireBCN() {
-        max_weight = -1;
-//        load(Constants.RESULT_PATH + File.separator + "12_1_one_big_markov_chain_of_BTS_in_home_hours" + File.separator + "3_normalized_big_chain", 
-//             new File(Constants.RESULT_PATH + File.separator + "12_1_one_big_markov_chain_of_BTS_in_home_hours" + File.separator + "2_pruned_big_chain"), 
-//             hTran2wt);
-//        load(Constants.RESULT_PATH + File.separator + "12_2_one_big_markov_chain_of_BTS_in_work_hours" + File.separator + "3_normalized_big_chain", 
-//                new File(Constants.RESULT_PATH + File.separator + "12_2_one_big_markov_chain_of_BTS_in_work_hours" + File.separator + "2_pruned_big_chain"), 
-//                wTran2wt);
-        load(Constants.RESULT_PATH + File.separator + "12_3_one_big_markov_chain_of_BTS_in_commuting_hours" + File.separator + "3_normalized_big_chain", 
-                new File(Constants.RESULT_PATH + File.separator + "12_3_one_big_markov_chain_of_BTS_in_commuting_hours" + File.separator + "2_pruned_big_chain"), 
-                cTran2wt);
+        load(Constants.RESULT_PATH + File.separator + "10_3_one_big_markov_chain_of_BTS_in_commuting_hours" + File.separator + "3_normalized_big_chain", 
+             Constants.RESULT_PATH + File.separator + "10_3_one_big_markov_chain_of_BTS_in_commuting_hours" + File.separator + "2_pruned_big_chain");
     }
 
 
     public void loadIndividualMarkov() {
-        // home
-        max_weight = -1;
-
-        while (true) {
-            if (new File(Constants.RESULT_PATH + File.separator + "9_1_markov_chain_of_BTS_in_home_hours" + File.separator + hFiles.get(fileIndex).getName()).exists() && 
-                new File(Constants.RESULT_PATH + File.separator + "9_2_markov_chain_of_BTS_in_work_hours" + File.separator + hFiles.get(fileIndex).getName()).exists() && 
-                new File(Constants.RESULT_PATH + File.separator + "9_3_markov_chain_of_BTS_in_commuting_hours" + File.separator + hFiles.get(fileIndex).getName()).exists() &&
-                num2home.get(hFiles.get(fileIndex).getName().split("-")[1]) != null) {
-                logger.debug((new File(Constants.RESULT_PATH + File.separator + "9_1_markov_chain_of_BTS_in_home_hours" + File.separator + hFiles.get(fileIndex).getName()).exists()));
-                load(Constants.RESULT_PATH + File.separator + "11_1_normalized_markov_chain_of_BTS_in_home_hours" + File.separator + hFiles.get(fileIndex).getName(),
-                     new File(Constants.RESULT_PATH + File.separator + "9_1_markov_chain_of_BTS_in_home_hours" + File.separator + hFiles.get(fileIndex).getName()), 
-                     hTran2wt);
-                load(Constants.RESULT_PATH + File.separator + "11_2_normalized_markov_chain_of_BTS_in_work_hours" + File.separator + hFiles.get(fileIndex).getName(),
-                        new File(Constants.RESULT_PATH + File.separator + "9_2_markov_chain_of_BTS_in_work_hours" + File.separator + hFiles.get(fileIndex).getName()), 
-                        wTran2wt);
-                load(Constants.RESULT_PATH + File.separator + "11_3_normalized_markov_chain_of_BTS_in_commuting_hours" + File.separator + hFiles.get(fileIndex).getName(),
-                        new File(Constants.RESULT_PATH + File.separator + "9_3_markov_chain_of_BTS_in_commuting_hours" + File.separator + hFiles.get(fileIndex).getName()), 
-                        cTran2wt);
-                break;
-            } 
-            
-            fileIndex++;
-        }
-
+        String number = numbers.get(chainIndex);
+        load(Constants.RESULT_PATH + File.separator + "9_3_normalized_markov_chain_of_BTS_in_commuting_hours" + File.separator + number,
+             Constants.RESULT_PATH + File.separator + "8_3_pruned_markov_chain_of_BTS_in_commuting_hours" + File.separator + number);
     }
 
-    private void load(String normalizedFilePath, File file, java.util.Map<Transition, Double> tran2wt) {
-        logger.debug(file.getName());
-        
+    private void load(String normalizedFilePath, String filePath) {
+        max_weight = -1;
+
         BufferedReader br;
         try {
             if (normalize) {
                 br = new BufferedReader(new FileReader(normalizedFilePath));
             } else {
-                br = new BufferedReader(new FileReader(file));
+                br = new BufferedReader(new FileReader(filePath));
             }
-            tran2wt.clear();
+            cTran2wt.clear();
 
             String line = "";
             while ((line = br.readLine()) != null) {
-                
                 String[] tokens = line.split("\t");
                 //                    if (tokens[0].equals(tokens[1])) {
                 //                        continue;
@@ -254,11 +212,11 @@ public class VisualizeMarkovChains extends PApplet {
                     max_weight = Double.valueOf(tokens[2]);
                 }
                 Transition t = new Transition(tokens[0], tokens[1]);
-                tran2wt.put(t, Double.valueOf(tokens[2]));
+                cTran2wt.put(t, Double.valueOf(tokens[2]));
             }
             br.close();
             
-            logger.debug("size(): " + tran2wt.size());
+            logger.debug("size(): " + cTran2wt.size());
             logger.debug("max_weight: " + max_weight);
         } catch (IOException e) {
             logger.error("not happened", e);
@@ -271,23 +229,26 @@ public class VisualizeMarkovChains extends PApplet {
         gfx = new ToxiclibsSupport(this);
         font = createFont("Arial", 30);
         textFont(font);
+        String line;
+        numbers = new ArrayList<String>();
 
-        hFiles = CDRUtil.loadFiles(Constants.RESULT_PATH + File.separator + "9_1_markov_chain_of_BTS_in_home_hours", "^.*-.*$");
-        Collections.sort(hFiles, new RankComparator());
-        
-        wFiles = CDRUtil.loadFiles(Constants.RESULT_PATH + File.separator + "9_2_markov_chain_of_BTS_in_work_hours", "^.*-.*$");
-        Collections.sort(wFiles, new RankComparator());
-        
-        cFiles = CDRUtil.loadFiles(Constants.RESULT_PATH + File.separator + "9_3_markov_chain_of_BTS_in_commuting_hours", "^.*-.*$");
-        Collections.sort(cFiles, new RankComparator());
-        
-        // this is for the screenshots, but can't work due to the problem of libraries.
-        //        targetPath = Constants.RESULT_PATH + File.separator
-        //                + "13_visiualize_BTS_sequence";
-        //        boolean success = (new File(targetPath)).mkdir();
-        //        if (success) {
-        //            logger.debug("A directory [" + targetPath + "] is created");
-        //        }
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(
+                    Constants.RESULT_PATH + File.separator + "11_home_work_lat_long" + File.separator + "home_2_work"));
+            while ((line = br.readLine()) != null) {
+                String[] tokens = line.split("\t");
+                String number = tokens[0];
+                numbers.add(number);
+                
+                String home = tokens[1];
+                num2home.put(number, home);
+                String work = tokens[2];
+                num2work.put(number, work);
+            }
+        } catch (Exception e) {
+            logger.error("not happend", e);
+        }
+
 
         map = new Map(this, new Google.GoogleMapProvider());
         // map = new Map(this, new Microsoft.RoadProvider());
@@ -296,7 +257,6 @@ public class VisualizeMarkovChains extends PApplet {
         map.zoomAndPanTo(new Location(41.387628f, 2.1698f), 13); // lat-long
         MapUtils.createDefaultEventDispatcher(this, map);
 
-        String line = "";
         try {
             BufferedReader br = new BufferedReader(new FileReader(
                     Constants.BARCELONA_CELL_INFO_PATH));
@@ -313,44 +273,15 @@ public class VisualizeMarkovChains extends PApplet {
         } catch (ParseException e) {
             logger.error(e);
         }
-
-        try {
-            BufferedReader br = new BufferedReader(new FileReader(
-                    Constants.RESULT_PATH + File.separator + "5_1_home_BTS" + File.separator + "telnumber_homeBTS_threshold_1000m"));
-            while ((line = br.readLine()) != null) {
-                String[] tokens = line.split("\t");
-                String moviNum = tokens[0];
-                String bts = tokens[1];
-                num2home.put(moviNum, bts);
-            }
-            br.close();
-
-            br = new BufferedReader(new FileReader(
-                    Constants.RESULT_PATH + File.separator + "5_2_work_BTS" + File.separator + "telnumber_workBTS_threshold_1000m"));
-            while ((line = br.readLine()) != null) {
-                String[] tokens = line.split("\t");
-                String moviNum = tokens[0];
-                String bts = tokens[1];
-                num2work.put(moviNum, bts);
-            }
-            br.close();
-        } catch (IOException ioe) {
-            logger.error(ioe);
-        }
-        
         loadIndividualMarkov();
-
-
     }
 
     public void showMarkov() {
 //        drawMarkov(hTran2wt, 0xFFe12a33, 0xFF50f766);   // home     // blue
 //        drawMarkov(wTran2wt, 0xFF03b73b, 0xFFe17302);   // work     // green
-        drawMarkov(cTran2wt, 0xFF331de8, 0xFF5185ea);   // commuting    // red
-    }
-    
-    public void drawMarkov(java.util.Map<Transition, Double> tran2wt, int btsColor, int transitionColor) {
-        for (Transition t: tran2wt.keySet()) {
+        int btsColor = 0xFF331de8;
+        int transitionColor = 0xFF5185ea;
+        for (Transition t: cTran2wt.keySet()) {
             Location ll = BTS2Location.get(t.cur);
             Location cl = BTS2Location.get(t.next);
 
@@ -358,11 +289,11 @@ public class VisualizeMarkovChains extends PApplet {
             float cxy[] = this.map.getScreenPositionFromLocation(cl);
 
             double weight = 0;
-            if (tran2wt.get(t) == null) {
+            if (cTran2wt.get(t) == null) {
                 weight = 0; 
                 logger.debug("실제로 그 일이 일어났습니다");
             } else {
-                weight = tran2wt.get(t);
+                weight = cTran2wt.get(t);
             }
 
             pushStyle();
@@ -386,7 +317,6 @@ public class VisualizeMarkovChains extends PApplet {
 
             if (showLabel && !ll.equals(cl)) {
                 if (weight != 0) {
-                    pushMatrix();
                     textSize(20);
                     fill(100, alpha);
 
@@ -409,7 +339,6 @@ public class VisualizeMarkovChains extends PApplet {
                                 (lxy[0] + cxy[0]) / 2, (lxy[1] + cxy[1])
                                 / 2 + yPos_adjustment);
                     }
-                    popMatrix();
                 }
             }
 
@@ -420,40 +349,30 @@ public class VisualizeMarkovChains extends PApplet {
 
     public void showHomeAndWork() {
         pushStyle();
-        textAlign(CENTER);
+        textAlign(CENTER, CENTER);
         textSize(25);
-        String moviNum = hFiles.get(fileIndex).getName().split("-")[1];
+        String moviNum = numbers.get(chainIndex);
         String home = num2home.get(moviNum);
         String work = num2work.get(moviNum);
 
-        if (home != null) {
-            Location h = BTS2Location.get(home);
-            float[] hxy = this.map.getScreenPositionFromLocation(h);
-            fill(0xFF331de8);
-            ellipse(hxy[0], hxy[1], 20, 20);
-            fill(0xFFfb4b1d);
-            text("H", hxy[0], hxy[1]);
-            
-        }
-        
+        Location h = new Location(Float.valueOf(home.split(",")[0]), Float.valueOf(home.split(",")[1]));
+        float[] hxy = this.map.getScreenPositionFromLocation(h);
+        Location w = new Location(Float.valueOf(work.split(",")[0]), Float.valueOf(work.split(",")[1]));
+        float[] wxy = this.map.getScreenPositionFromLocation(w);
 
-        if (work != null) {
-            Location w = BTS2Location.get(work);
-            float[] wxy = this.map.getScreenPositionFromLocation(w);
-            fill(0xFF331de8);
-            ellipse(wxy[0], wxy[1], 20, 20);
-            fill(0xFFfb4b1d);
-            text("W", wxy[0], wxy[1]);
-        }
-        
-//        logger.debug("home[" + home + "], work[" + work + "]");
+        fill(0xFF195e7e);
+        ellipse(hxy[0], hxy[1], 25, 25);
+        ellipse(wxy[0], wxy[1], 25, 25);
+        fill(0xFFffffff);
+        text("H", hxy[0], hxy[1]);
+        text("W", wxy[0], wxy[1]);
 
         popStyle();
     }
     
     public void showGoogleRoute() {
-        drawGoogleRoute(hFiles.get(fileIndex).getName().split("-")[1], "hw");
-        drawGoogleRoute(hFiles.get(fileIndex).getName().split("-")[1], "wh");
+        drawGoogleRoute(numbers.get(chainIndex), "hw");
+        drawGoogleRoute(numbers.get(chainIndex), "wh");
     }
     
     private void drawGoogleRoute(String number, String identifier) {
@@ -483,7 +402,7 @@ public class VisualizeMarkovChains extends PApplet {
             }
             br.close();
             
-            // matched BTS
+            // near BTS
             br = new BufferedReader(new FileReader(Constants.RESULT_PATH + File.separator + 
                     "16_BTS_near_google_routes" + File.separator + number));
             while ((line = br.readLine()) != null) {
@@ -503,13 +422,34 @@ public class VisualizeMarkovChains extends PApplet {
 //            drawMatchedSequence(Constants.RESULT_PATH + File.separator +
 //                    "17_2_matched_sequences_with_google_in_work_hours" + File.separator + number, 0xFF0cf40f);
             drawMatchedSequence(Constants.RESULT_PATH + File.separator +
-                    "17_3_matched_sequences_with_google_in_commuting_hours" + File.separator + number, 0xFFee0eed);
+                    "16_3_matched_sequences_with_google_in_commuting_hours" + File.separator + number, 0xFFee0eed);
             
         } catch (IOException ioe) {
             logger.error("probably filenotfound", ioe);
         }
         
         popStyle();
+    }
+    
+    private void showBoundingBox() {
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(Constants.RESULT_PATH + File.separator + 
+                    "17_BTS_near_work_home_bounding_box" + File.separator + numbers.get(chainIndex)));
+            String line;
+
+            while ((line = br.readLine()) != null) {
+                String[] tokens = line.split("\t");
+                float lat = Float.valueOf(tokens[1]);
+                float lng = Float.valueOf(tokens[2]);
+                float[] xy = this.map.getScreenPositionFromLocation(new Location(lat,lng));
+                stroke(0xFF5ffb32);
+                fill(0xFF5ffb32);
+                ellipse (xy[0], xy[1], 5, 5);
+            }
+            br.close();
+        } catch (IOException ioe) {
+            logger.error("not happened", ioe);
+        }
     }
 
     private void drawMatchedSequence(String filename, int color) {

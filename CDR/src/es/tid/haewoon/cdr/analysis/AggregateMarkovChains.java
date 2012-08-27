@@ -38,24 +38,24 @@ public class AggregateMarkovChains<T> {
 //                new StringStateBuilder(),
 //                new NumericComparator());
         
-        (new AggregateMarkovChains<Transition>()).
-        run(Constants.RESULT_PATH + File.separator + "9_1_markov_chain_of_BTS_in_home_hours", 
-                "^.*-.*$", 
-                Constants.RESULT_PATH + File.separator + "12_1_one_big_markov_chain_of_BTS_in_home_hours",
-                new StringStateBuilder(),
-                new NumericComparator());
- 
-        (new AggregateMarkovChains<Transition>()).
-        run(Constants.RESULT_PATH + File.separator + "9_2_markov_chain_of_BTS_in_work_hours", 
-                "^.*-.*$", 
-                Constants.RESULT_PATH + File.separator + "12_2_one_big_markov_chain_of_BTS_in_work_hours",
-                new StringStateBuilder(),
-                new NumericComparator());
+//        (new AggregateMarkovChains<Transition>()).
+//        run(Constants.RESULT_PATH + File.separator + "9_1_markov_chain_of_BTS_in_home_hours", 
+//                "^.*-.*$", 
+//                Constants.RESULT_PATH + File.separator + "12_1_one_big_markov_chain_of_BTS_in_home_hours",
+//                new StringStateBuilder(),
+//                new NumericComparator());
+// 
+//        (new AggregateMarkovChains<Transition>()).
+//        run(Constants.RESULT_PATH + File.separator + "9_2_markov_chain_of_BTS_in_work_hours", 
+//                "^.*-.*$", 
+//                Constants.RESULT_PATH + File.separator + "12_2_one_big_markov_chain_of_BTS_in_work_hours",
+//                new StringStateBuilder(),
+//                new NumericComparator());
         
         (new AggregateMarkovChains<Transition>()).
-        run(Constants.RESULT_PATH + File.separator + "9_3_markov_chain_of_BTS_in_commuting_hours", 
-                "^.*-.*$", 
-                Constants.RESULT_PATH + File.separator + "12_3_one_big_markov_chain_of_BTS_in_commuting_hours",
+        run(Constants.RESULT_PATH + File.separator + "7_3_markov_chain_of_BTS_in_commuting_hours", 
+                Constants.TELNUM_FILE_PATTERN, 
+                Constants.RESULT_PATH + File.separator + "10_3_one_big_markov_chain_of_BTS_in_commuting_hours",
                 new StringStateBuilder(),
                 new NumericComparator());
         
@@ -116,8 +116,12 @@ public class AggregateMarkovChains<T> {
         // TODO Auto-generated method stub
         List<File> files = CDRUtil.loadFiles(inputPath, pattern);
         logger.debug(files.size() + " files loaded...");
+        int processed = 0;
         for (File file: files) {
-            logger.debug("processing " + file);
+            processed++;
+            if (processed % 100 == 0) {
+                logger.debug("processing [" + processed + "] files");
+            }
             String line = "";
             BufferedReader br = new BufferedReader(new FileReader(file));
             while((line = br.readLine()) != null) {

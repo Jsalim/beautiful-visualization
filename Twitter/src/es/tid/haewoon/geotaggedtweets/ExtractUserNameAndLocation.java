@@ -41,7 +41,7 @@ public class ExtractUserNameAndLocation {
                     bw.newLine();
                 }
             } catch (TwitterException e) {
-                e.printStackTrace();
+//                e.printStackTrace();
                 System.out.println("unexpected json string: " + line);
                 continue;
             }
@@ -76,7 +76,10 @@ public class ExtractUserNameAndLocation {
             File[] files = targetPath.listFiles();
             for (File file : files) {
                 String filename = file.getName();
-                if (filename.matches("^.*(UK|london)\\d$") && !(new File(file.getPath() + ".done").exists())) {
+                if (filename.endsWith(".done") || filename.endsWith(".users")) {
+                    continue;
+                }
+                if (filename.matches("^(UK|london).*$") && !(new File(file.getPath() + ".done").exists())) {
                     filtered.add(file);
                 }
             }
