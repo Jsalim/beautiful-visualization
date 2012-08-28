@@ -1,4 +1,4 @@
-package es.tid.haewoon.cdr.analysis;
+package es.tid.haewoon.cdr.learning;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

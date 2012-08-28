@@ -31,7 +31,7 @@ public class FindBTSnearGoogleRoute {
             logger.info("A directory[" + targetDirectory + "] is created");
         }
         BufferedReader br = new BufferedReader(new FileReader(
-                Constants.RESULT_PATH + File.separator + "13_home_work_lat_long" + File.separator + "home_2_work"));
+                Constants.RESULT_PATH + File.separator + "11_home_work_lat_long" + File.separator + "home_2_work"));
         String line;
         while ((line = br.readLine()) != null) {
             logger.debug(line);
