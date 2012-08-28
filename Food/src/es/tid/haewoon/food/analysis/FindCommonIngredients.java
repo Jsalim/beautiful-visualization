@@ -31,7 +31,7 @@ public class FindCommonIngredients {
     int NEIGHBOR_THRESHOLD = 500;
     int FLAVOR_THRESHOLD = 30;    	
     
-    
+   
     public static void main(String[] args) throws IOException {
         (new FindCommonIngredients(Constants.RESULT_PATH + File.separator + "8_common_ingredients")).run();
     }

@@ -17,6 +17,7 @@ public class QualifierRemover extends Stemmer {
                 replaceAll("ground ", "").
                 replaceAll("toasted ", "").
                 replaceAll("peeled", "").
+                replaceAll("peel of", "").
                 replaceAll("shavings", "").
                 replaceAll("blanched", "").
                 replaceAll("drained canned", "").

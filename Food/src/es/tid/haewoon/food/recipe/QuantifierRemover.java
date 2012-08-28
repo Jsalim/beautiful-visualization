@@ -2,7 +2,7 @@ package es.tid.haewoon.food.recipe;
 
 public class QuantifierRemover extends Stemmer {
     String unitsPattern = ".*(cups|tbsps|tsps|pints)\\s";
-    String unitPattern = ".*(cup|tbsp|oz|tsp|pint|Ib|lb|diameter)\\s";
+    String unitPattern = ".*(cup|tbsp|oz|tsp|pint|Ib|lb|diameter|cl)\\s";
     
     public QuantifierRemover(Stemmer next) {
         super(next);
