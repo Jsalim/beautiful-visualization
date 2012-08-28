@@ -31,6 +31,16 @@ public class CDRUtil {
         return null;
     }
     
+    public static String join(Iterable c, String separator) {
+        String delim = "";
+        StringBuffer sb = new StringBuffer();
+        for (Object o : c) {
+            sb.append(delim + o);
+            delim = separator;
+        }
+        return sb.toString();
+    }
+    
     public static Set<Cell> getCells(Province p) {
         Set<Cell> s = new HashSet<Cell>();
         if (p == Province.BARCELONA) {

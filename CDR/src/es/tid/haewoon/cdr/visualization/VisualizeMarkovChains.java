@@ -148,13 +148,13 @@ public class VisualizeMarkovChains extends PApplet {
             break;
 
         case 'n':
-            chainIndex++;
+            chainIndex = (chainIndex+1) % numbers.size();
             loadIndividualMarkov();
             showAgg = false;
             break;
 
         case 'p':
-            chainIndex = Math.max(chainIndex - 1, 0);
+            chainIndex = (chainIndex == 0) ?numbers.size()-1 :chainIndex-1;
             loadIndividualMarkov();
             showAgg = false;
             break;
@@ -187,7 +187,7 @@ public class VisualizeMarkovChains extends PApplet {
     public void loadIndividualMarkov() {
         String number = numbers.get(chainIndex);
         load(Constants.RESULT_PATH + File.separator + "9_3_normalized_markov_chain_of_BTS_in_commuting_hours" + File.separator + number,
-             Constants.RESULT_PATH + File.separator + "8_3_pruned_markov_chain_of_BTS_in_commuting_hours" + File.separator + number);
+             Constants.RESULT_PATH + File.separator + "7_3_markov_chain_of_BTS_in_commuting_hours" + File.separator + number);
     }
 
     private void load(String normalizedFilePath, String filePath) {
@@ -313,7 +313,7 @@ public class VisualizeMarkovChains extends PApplet {
             stroke(transitionColor, alpha);
             strokeWeight(thickness);
 
-            line(lxy[0], lxy[1], cxy[0], cxy[1]);
+//            line(lxy[0], lxy[1], cxy[0], cxy[1]);
 
             if (showLabel && !ll.equals(cl)) {
                 if (weight != 0) {
@@ -378,9 +378,10 @@ public class VisualizeMarkovChains extends PApplet {
     private void drawGoogleRoute(String number, String identifier) {
         pushStyle();
         fill(0xFF040a37);
+        stroke(0xFF040a37);
         try {
             BufferedReader br = new BufferedReader(new FileReader(Constants.RESULT_PATH + File.separator + 
-                    "15_parsed_routes_by_google" + File.separator + number + "-" + identifier));
+                    "13_parsed_routes_by_google" + File.separator + number + "-" + identifier));
             String line;
             boolean isFirst = true;
             float[] lxy = {0.0f, 0.0f};
@@ -404,7 +405,7 @@ public class VisualizeMarkovChains extends PApplet {
             
             // near BTS
             br = new BufferedReader(new FileReader(Constants.RESULT_PATH + File.separator + 
-                    "16_BTS_near_google_routes" + File.separator + number));
+                    "14_BTS_near_google_routes" + File.separator + number));
             while ((line = br.readLine()) != null) {
                 String[] tokens = line.split("\t");
                 float lat = Float.valueOf(tokens[1]);
@@ -421,8 +422,8 @@ public class VisualizeMarkovChains extends PApplet {
 //                    "17_1_matched_sequences_with_google_in_home_hours" + File.separator + number, 0xFF2bc6fe);
 //            drawMatchedSequence(Constants.RESULT_PATH + File.separator +
 //                    "17_2_matched_sequences_with_google_in_work_hours" + File.separator + number, 0xFF0cf40f);
-            drawMatchedSequence(Constants.RESULT_PATH + File.separator +
-                    "16_3_matched_sequences_with_google_in_commuting_hours" + File.separator + number, 0xFFee0eed);
+//            drawMatchedSequence(Constants.RESULT_PATH + File.separator +
+//                    "16_3_matched_sequences_with_google_in_commuting_hours" + File.separator + number, 0xFFee0eed);
             
         } catch (IOException ioe) {
             logger.error("probably filenotfound", ioe);
@@ -466,7 +467,7 @@ public class VisualizeMarkovChains extends PApplet {
                 String cbts = tokens[1];
                 float[] lp = this.map.getScreenPositionFromLocation(BTS2Location.get(lbts));
                 float[] cp = this.map.getScreenPositionFromLocation(BTS2Location.get(cbts));
-                line(lp[0], lp[1], cp[0], cp[1]);
+//                line(lp[0], lp[1], cp[0], cp[1]);
             } 
             br.close();
         } catch (Exception e) {
