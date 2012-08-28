@@ -19,11 +19,11 @@ public class UtensilRemover extends Stemmer {
                 replaceAll("\\bcup\\b", "").
                 replaceAll("in an icing bag$", "").
                 replaceAll("in a shaker$", "").
-                replaceAll(".*mould", "").
+                replaceAll(".*\\b(mould|moulds)\\b.*", "").
                 replaceAll("Cocktail\\s*Master", "").
                 replaceAll("N.{1,5}cartridge$", "").       // N20 Catridge
-                replaceAll("ISI.*", "").
-                replaceAll(".*spoons$", "");         // ISI 1 pint soda siphon
+                replaceAll(".*ISI.*", "").                  // ISI 1 pint soda siphon
+                replaceAll(".*(spoons|spoon).*$", "");         
 
     }
 

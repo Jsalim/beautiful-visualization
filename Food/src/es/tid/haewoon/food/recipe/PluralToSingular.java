@@ -50,6 +50,7 @@ public class PluralToSingular extends Stemmer {
                 replaceAll("leaves", "leaf").
                 replaceAll("leeks", "leek").
                 replaceAll("lemons", "lemon").
+                replaceAll("limes", "lime").
                 replaceAll("lychees", "lychee").
                 replaceAll("marrowbones", "marrowbone").
                 replaceAll("mushrooms", "mushroom").

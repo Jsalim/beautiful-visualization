@@ -22,6 +22,7 @@ public class IrregularRemover extends Stemmer {
                 replaceAll("nb during the green almond season", "").
                 replaceAll("nb these ingredients are subject to seasonal availability", "").    // three consecutive rows
                 replaceAll("nb the flower can be replaced by", "").
+                replaceAll("bfor the almond milkb", "").
                 replaceAll("^year$", "").
                 replaceAll("seasonably available", "").
                 replaceAll("st georges mushroom large and", "St. george's mushroom").

@@ -1,6 +1,10 @@
 package es.tid.haewoon.food.recipe;
 
 public class SpecialCharRemover extends Stemmer {
+    public SpecialCharRemover() {
+        super();
+    }
+    
     public SpecialCharRemover(Stemmer next) {
         super(next);
     }
