@@ -25,7 +25,7 @@ public class ExtractIngredientsFromRecipes {
         List<File> recipes = FoodUtil.loadFiles(root, pattern);
         logger.debug(recipes.size() + " files loaded...");
         BufferedWriter bw = new BufferedWriter(new FileWriter(targetPath + File.separator + "CD2_and_3", append));
-       
+        BufferedWriter bw2 = new BufferedWriter(new FileWriter(targetPath + File.separator + "concise_CD2_and_3.txt", append));
         for (File file : recipes) {
             logger.debug(file + " is processing...");
             try {
@@ -37,12 +37,16 @@ public class ExtractIngredientsFromRecipes {
                 
                 bw.write(recipe.toString());
                 bw.newLine();
+                
+                bw2.write(recipe.toConciseString());
+                bw2.newLine();
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 logger.error(e);
             }
         }
         bw.close();
+        bw2.close();
     }
     
     public static void main(String[] args) throws IOException {

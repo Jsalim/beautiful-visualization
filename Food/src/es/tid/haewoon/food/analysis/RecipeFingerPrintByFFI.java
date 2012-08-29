@@ -17,6 +17,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 import es.tid.haewoon.food.util.Constants;
+import es.tid.haewoon.food.util.FoodUtil;
 
 /* 
  * working 
@@ -54,10 +55,42 @@ public class RecipeFingerPrintByFFI {
         }
         br.close();
         
+        br = new BufferedReader(new FileReader(
+                Constants.RESULT_PATH + File.separator + "1_extract_ingredients" + File.separator + "CD2_and_3"));
+        
+        Map<String, String> recipe2year = new HashMap<String, String>();
+        Map<String, String> recipe2cat = new HashMap<String, String>();
+        Map<String, String> recipe2temp = new HashMap<String, String>();
+        Map<String, String> recipe2months = new HashMap<String, String>();
+        while ((line = br.readLine()) != null) {
+            String[] tokens = line.split("\t");
+            String recipe = tokens[0];
+            String year = tokens[2];
+            String category = tokens[3];
+            String temperature = tokens[4];
+            String months = tokens[5];
+            
+            recipe2year.put(recipe, year);
+            recipe2cat.put(recipe, category);
+            recipe2temp.put(recipe, temperature);
+            recipe2months.put(recipe, months);
+        }
+        br.close();
+        
         List<String> recipes = new ArrayList<String>(recipe2ffs.keySet());
         Collections.sort(recipes);
         
-        BufferedWriter bw = new BufferedWriter(new FileWriter(targetDirectory + File.separator + "recipe_similarity_based_on_ffi"));
+        BufferedWriter bw = new BufferedWriter(new FileWriter(targetDirectory + File.separator + "recipe_fingerprint.txt"));
+        for (String recipe : recipes) {
+            Set<String> ff = recipe2ffs.get(recipe);
+            List<String> ff_l = new ArrayList<String>(ff);
+            Collections.sort(ff_l);
+            bw.write(recipe + "\t" + recipe2year.get(recipe) + "\t" + recipe2cat.get(recipe) + "\t" + FoodUtil.join(ff_l, "|"));
+            bw.newLine();
+        }
+        bw.close();
+        
+        bw = new BufferedWriter(new FileWriter(targetDirectory + File.separator + "recipe_similarity_based_on_ffi"));
         
         for (String recipe1 : recipes) {
             Set<String> ff1 = recipe2ffs.get(recipe1);

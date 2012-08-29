@@ -54,6 +54,18 @@ public class FoodUtil {
     private static final Logger logger = Logger.getLogger(FoodUtil.class);
     private static final Comparator<File> nc = new NumericComparator();
     
+
+    public static String join(Iterable c, String separator) {
+        String delim = "";
+        StringBuffer sb = new StringBuffer();
+        for (Object o : c) {
+            sb.append(delim + o);
+            delim = separator;
+        }
+        return sb.toString();
+    }
+    
+    
     public static List<File> loadFiles(String root, String pattern) {
         List<File> filtered = new ArrayList<File>();
         File targetPath = new File(root);

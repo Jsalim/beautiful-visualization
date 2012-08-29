@@ -134,4 +134,9 @@ public class ElBulliRecipe {
 
         return sb.toString();
     }
+    
+    public String toConciseString() {
+        return this.ID + "\t" + this.title + "\t" + this.year + "\t" + this.category + "\t" + this.temperature + "\t" + 
+                this.months + "\t" + FoodUtil.join(this.ingredients, "|");
+    }
 }
