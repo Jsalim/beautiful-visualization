@@ -92,7 +92,7 @@ public class FindCommonIngredients {
         while ((line = br.readLine()) != null) {
             String[] tokens = line.split("\t");
             String recipe = tokens[0];
-            String ingredient = tokens[5];
+            String ingredient = tokens[6];
             int old_count = (ingredient2recipe.get(ingredient) != null) ?ingredient2recipe.get(ingredient) :0;
             ingredient2recipe.put(ingredient, old_count+1);
         }
