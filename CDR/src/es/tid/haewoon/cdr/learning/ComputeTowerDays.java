@@ -109,7 +109,7 @@ public class ComputeTowerDays {
         try {
             br = new BufferedReader(new FileReader(path + File.separator + number));
         } catch (FileNotFoundException fnfe) {
-            logger.error("File Not Found [" + number + "]");
+            logger.error("File Not Found [" + path + File.separator + number + "]");
             return;
         }
         while((line = br.readLine()) != null) {

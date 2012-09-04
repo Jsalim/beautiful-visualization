@@ -24,26 +24,34 @@ public class ExtractFocusedUserGroup {
     
     public ExtractFocusedUserGroup(int min, int max) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(
-                Constants.RESULT_PATH + File.separator + "1_3_count_basic_statistics_in_commuting_hours" + File.separator + "all.caller_ee"));
+                Constants.RESULT_PATH + File.separator + "1_4_count_basic_statistics_in_weekdays" + File.separator + "all.caller_ee"));
         String line;
         Set<String> s = new HashSet<String>();
+        
+        (new File(Constants.FILTERED_PATH + File.separator + "6_0_focused_user_group")).mkdir();
+        BufferedWriter bw = new BufferedWriter(new FileWriter(
+                Constants.FILTERED_PATH + File.separator + "6_0_focused_user_group" + File.separator + "all_numbers.txt"));
+        
         while ((line = br.readLine()) != null) {
             String[] tokens = line.split("\t");
             String number = tokens[0];
             int calls = Integer.valueOf(tokens[1]);
             
-            if (calls >= min * Constants.DAYS && calls <= max * Constants.DAYS) {
+            if (calls >= min * Constants.NUMBER_OF_WEEKDAYS_IN_BARCELONA && calls <= max * Constants.NUMBER_OF_WEEKDAYS_IN_BARCELONA) {
                 s.add(number);
+                bw.write(number);
+                bw.newLine();
             }
         }
+        bw.close();
         logger.debug("# of users in the focused group: " + s.size());
         cFilter = new TelephoneNumberFilter(s);
     }
     
     public static void main(String[] args) throws IOException {
-        int minimum = 1;
-        int maximum = 10;
-        ExtractFocusedUserGroup enu = new ExtractFocusedUserGroup(minimum, maximum);
+//        ExtractFocusedUserGroup enu = new ExtractFocusedUserGroup(1, 10);
+        ExtractFocusedUserGroup enu = new ExtractFocusedUserGroup(5, 50);
+        
         enu.run(Constants.FILTERED_PATH + File.separator + "5_1_sorted_home_hours", 
                 Constants.FILTERED_PATH + File.separator + "6_1_focused_home_hours");
         enu.run(Constants.FILTERED_PATH + File.separator + "5_2_sorted_work_hours", 
