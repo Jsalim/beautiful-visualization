@@ -377,17 +377,11 @@ public class CDRUtil {
         List<String> numbers = new ArrayList<String>();
         try {
             BufferedReader br = new BufferedReader(new FileReader(
-                    Constants.RESULT_PATH + File.separator + "1_3_count_basic_statistics_in_commuting_hours" + File.separator + "all.caller_ee"));
+                    Constants.FILTERED_PATH + File.separator + "6_0_focused_user_group" + File.separator + "all_numbers.txt"));
             String line;
 
             while ((line = br.readLine()) != null) {
-                String[] tokens = line.split("\t");
-                String number = tokens[0];
-                int calls = Integer.valueOf(tokens[1]);
-
-                if (calls >= 1 * Constants.DAYS && calls <= 10 * Constants.DAYS) {
-                    numbers.add(number);
-                }
+                numbers.add(line.trim());
             }
         } catch (Exception e) {
             logger.error(e);

@@ -43,7 +43,7 @@ public class ExtractTopNormalUsersCDR {
             String[] tokens = line.split("\t");
             String number = tokens[0].trim();
             int count = Integer.valueOf(tokens[1]);
-            if (count <= Constants.DAYS * 3) {
+            if (count <= Constants.NUMBER_OF_DAYS * 3) {
                 s.add(number);
                 num2Rank.put(number, s.size());
                 num2Count.put(number, count);

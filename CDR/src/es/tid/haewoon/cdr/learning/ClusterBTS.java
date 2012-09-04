@@ -123,7 +123,7 @@ public class ClusterBTS {
                         delim = "|";
                     }
 
-                    bw.write(center.getID() + "\t" + bts2cnt.get(center) + "\t" + ((double)bts2cnt.get(center)/(double)Constants.DAYS) + 
+                    bw.write(center.getID() + "\t" + bts2cnt.get(center) + "\t" + ((double)bts2cnt.get(center)/(double)Constants.NUMBER_OF_DAYS) + 
                             "\t" + bts2duration.get(center) + "\t" + neighbors.size() + "\t" + sb.toString());
                     bw.newLine();
                 }

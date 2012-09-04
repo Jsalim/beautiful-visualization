@@ -1,6 +1,17 @@
 package es.tid.haewoon.cdr.util;
 
+import static java.util.Calendar.DAY_OF_WEEK;
+import static java.util.Calendar.FRIDAY;
+import static java.util.Calendar.MONDAY;
+import static java.util.Calendar.THURSDAY;
+import static java.util.Calendar.TUESDAY;
+import static java.util.Calendar.WEDNESDAY;
+
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -19,15 +30,32 @@ public class Constants {
     
     public static final Province PROVINCE = Province.BARCELONA;
     
-    static {
-        DAYS = CDRUtil.loadAllCDRFiles().size()/3;  // 3 is the number of hour types (home / work / commuting hours)
+    
+    public static void main(String[] args) throws Exception {
+        logger.debug(CDRUtil.loadAllCDRFiles().size()/3);
+        
+        List<File> files = CDRUtil.loadFiles(Constants.RESULT_PATH + File.separator + "1_count_basic_statistics", 
+                            "^F1.*caller$");
+        SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy");
+        Calendar calendar = Calendar.getInstance();
+
+        int count = 0;
+        for (File file: files) {
+            Date date = sdf.parse(file.getName().split("\\.")[0].split("_")[3]);
+            calendar.setTime(date);
+            int day_of_week = calendar.get(DAY_OF_WEEK);
+            
+            if (!(day_of_week == MONDAY || day_of_week == TUESDAY || day_of_week == WEDNESDAY || 
+                    day_of_week == THURSDAY || day_of_week == FRIDAY)) {
+                continue;
+            }
+            count++;
+        }
+        logger.info("weekday count: " + count);
     }
     
-    public static void main(String[] args) {
-        logger.debug(DAYS);
-    }
-    
-    public static final int DAYS;
+    public static final int NUMBER_OF_DAYS = 55;
+    public static final int NUMBER_OF_WEEKDAYS_IN_BARCELONA = 38;
     
     @Deprecated
     public static final String BARCELONA_PATH = FILTERED_PATH + File.separator + "1_barcelona";
