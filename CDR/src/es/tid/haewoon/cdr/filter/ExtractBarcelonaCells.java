@@ -13,19 +13,20 @@ import org.apache.log4j.Logger;
 import es.tid.haewoon.cdr.util.Cell;
 import es.tid.haewoon.cdr.util.Constants;
 
+@Deprecated
 public class ExtractBarcelonaCells {
     private static final Logger logger = Logger.getLogger(ExtractBarcelonaCells.class);
     public static void main(String[] args) throws IOException {
         String line = "";
         
         BufferedWriter bw = new BufferedWriter(new FileWriter(Constants.BASE_PATH + File.separator + 
-                "GASSET_CELULA_BCN_Box_haewoon.TXT"));
-        BufferedReader br = new BufferedReader(new FileReader(Constants.BASE_PATH + File.separator + "GASSET_CELULA_BCN_haewoon.TXT"));
+                "GASSET_CELULA_BCN_CITY.TXT"));
+        BufferedReader br = new BufferedReader(new FileReader(Constants.BASE_PATH + File.separator + "GASSET_CELULA.TXT"));
         while((line = br.readLine()) != null) {
             if (line.startsWith("cell") || line.startsWith("CELL")) continue;  // skip the first line of column description
             try {
                 Cell cell = new Cell(line);
-                if(cell.isIn(Constants.BARCELONA_BOX)) {
+                if(cell.getCity().equals("BARCELONA")) {
                     bw.write(line.trim());
                     bw.newLine();
                 }     

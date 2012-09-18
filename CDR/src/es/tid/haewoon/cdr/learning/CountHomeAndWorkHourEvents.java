@@ -57,6 +57,7 @@ public class CountHomeAndWorkHourEvents {
                 try {
                     handlingCount(bts2cnt, cdr);
                 } catch (Exception e) {
+                    logger.debug(file.getAbsolutePath());
                     logger.error(line, e);
                 }
             }

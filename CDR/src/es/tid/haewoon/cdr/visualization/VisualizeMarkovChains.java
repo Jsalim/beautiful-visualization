@@ -83,9 +83,9 @@ public class VisualizeMarkovChains extends PApplet {
         yLoc += 20;
         text("Press H to toggle the home/work location", 15, yLoc);
         yLoc += 20;
-        text("Press G to toggle the driving route between home/work by Google");
+        text("Press G to toggle the driving route between home/work by Google", 15, yLoc);
         yLoc += 20;
-        text("Press B to toggle BTSs in the home-work bounding box");
+        text("Press B to toggle BTSs in the home-work bounding box", 15, yLoc);
         yLoc += 20;
         text("Press A to show the aggregated Markov chain", 15, yLoc);
         yLoc += 20;

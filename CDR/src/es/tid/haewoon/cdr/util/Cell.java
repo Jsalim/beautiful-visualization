@@ -7,6 +7,7 @@ public class Cell {
     double latitude;
     String cellID;
     String btsID;
+    String city;
     
     float x;
     float y;
@@ -15,6 +16,7 @@ public class Cell {
         String[] tokens = line.split("\\|");
         this.cellID = tokens[0];
         this.btsID = tokens[1];
+        this.city = tokens[2];
         this.longitude = Double.valueOf(tokens[6]);
         this.latitude = Double.valueOf(tokens[7]);
     }
@@ -52,6 +54,10 @@ public class Cell {
 
     public double getLatitude() {
         return latitude;
+    }
+    
+    public String getCity() {
+        return city;
     }
 
     @Deprecated

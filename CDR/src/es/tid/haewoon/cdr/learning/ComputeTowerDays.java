@@ -138,7 +138,7 @@ public class ComputeTowerDays {
                     }
                     bts2days.put(finPoint, old);
                 }
-            } catch (ParseException e) {
+            } catch (Exception e) {
                 // TODO Auto-generated catch block
                 logger.error("Happens at [" + line + "]", e);
             }

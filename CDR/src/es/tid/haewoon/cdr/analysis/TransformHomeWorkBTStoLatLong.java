@@ -21,6 +21,8 @@ import es.tid.haewoon.cdr.util.CDRUtil;
 import es.tid.haewoon.cdr.util.Constants;
 import es.tid.haewoon.cdr.util.RankComparator;
 
+// no need to run this any more
+@ Deprecated
 public class TransformHomeWorkBTStoLatLong {
     Logger logger = Logger.getLogger(TransformHomeWorkBTStoLatLong.class);
     

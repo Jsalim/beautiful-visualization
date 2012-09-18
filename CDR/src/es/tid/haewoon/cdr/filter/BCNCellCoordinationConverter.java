@@ -18,14 +18,14 @@ public class BCNCellCoordinationConverter {
         CoordinationConverter cc = new CoordinationConverter();
         String line = "";
         
-        BufferedWriter bw = new BufferedWriter(new FileWriter(Constants.BASE_PATH + File.separator + "GASSET_CELULA_BCN_haewoon.TXT")); 
-        BufferedWriter be = new BufferedWriter(new FileWriter(Constants.FILTERED_PATH + File.separator + "error_GASSET_CELULA_BCN_haewoon.TXT"));
+        BufferedWriter bw = new BufferedWriter(new FileWriter(Constants.BASE_PATH + File.separator + "GASSET_CELULA_BCN_CITY.TXT")); 
+        BufferedWriter be = new BufferedWriter(new FileWriter(Constants.BASE_PATH + File.separator + "error_GASSET_CELULA_BCN_haewoon.TXT"));
         
         BufferedReader br = new BufferedReader(new FileReader(Constants.BASE_PATH + File.separator + "GASSET_CELULA.TXT"));
         while((line = br.readLine()) != null) {
             String[] tokens = line.split("\\|");
             
-            if (tokens[3].equals("Barcelona")) {
+            if (tokens[2].equals("BARCELONA")) {
                 try {
                 String easting = tokens[4];
                 String northing = tokens[5];
