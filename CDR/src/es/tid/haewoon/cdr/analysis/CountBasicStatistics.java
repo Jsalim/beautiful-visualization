@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -26,9 +25,9 @@ public class CountBasicStatistics {
                 Constants.RESULT_PATH + File.separator + "1_count_basic_statistics");
 //        (new CountBasicStatistics()).run(CDRUtil.loadFiles("5_1_sorted_home_hours", Constants.RAW_DATA_FILE_PATTERN), 
 //                Constants.RESULT_PATH + File.separator + "1_1_count_basic_statistics_in_home_hours");
-        (new CountBasicStatistics()).run(
-                CDRUtil.loadFiles(Constants.FILTERED_PATH + File.separator + "5_3_sorted_commuting_hours", Constants.RAW_DATA_FILE_PATTERN), 
-                Constants.RESULT_PATH + File.separator + "1_3_count_basic_statistics_in_commuting_hours");
+//        (new CountBasicStatistics()).run(
+//                CDRUtil.loadFiles(Constants.FILTERED_PATH + File.separator + "5_3_sorted_commuting_hours", Constants.RAW_DATA_FILE_PATTERN), 
+//                Constants.RESULT_PATH + File.separator + "1_3_count_basic_statistics_in_commuting_hours");
     }
     
     private void run(List<File> files, String targetDirectory) throws IOException {

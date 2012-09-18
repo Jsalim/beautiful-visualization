@@ -32,7 +32,7 @@ public class MakeFeatureTable {
         }
         
         String line ="";
-        BufferedWriter bbw = new BufferedWriter(new FileWriter(targetDirectory + File.separator + "5682_GT_Extracted_Cluster_Features.  txt"));
+        BufferedWriter bbw = new BufferedWriter(new FileWriter(targetDirectory + File.separator + "5682_GT_Extracted_Cluster_Features.txt"));
         for (String number : CDRUtil.getOrderedNumbers()) {
 
             Map<String, String> center2cluster = new HashMap<String, String>();

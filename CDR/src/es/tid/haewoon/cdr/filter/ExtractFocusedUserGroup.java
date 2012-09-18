@@ -6,9 +6,12 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -50,7 +53,7 @@ public class ExtractFocusedUserGroup {
     
     public static void main(String[] args) throws IOException {
 //        ExtractFocusedUserGroup enu = new ExtractFocusedUserGroup(1, 10);
-        ExtractFocusedUserGroup enu = new ExtractFocusedUserGroup(5, 50);
+        ExtractFocusedUserGroup enu = new ExtractFocusedUserGroup(2, 50);
         
         enu.run(Constants.FILTERED_PATH + File.separator + "5_1_sorted_home_hours", 
                 Constants.FILTERED_PATH + File.separator + "6_1_focused_home_hours");
@@ -69,6 +72,7 @@ public class ExtractFocusedUserGroup {
         List<File> files = CDRUtil.loadFiles(loadingPath, Constants.RAW_DATA_FILE_PATTERN);
         Collections.sort(files, new RawFileComparator());
         
+        Map<String, List<String>> number2records = new HashMap<String, List<String>>();
         for (File file : files) {
             logger.debug("processing " + file);
             String line = "";
@@ -79,11 +83,9 @@ public class ExtractFocusedUserGroup {
                     cdr = new CDR(line);
                     if (cFilter.filter(cdr)) {
                         String movistarNum = cdr.getMovistarNum();
-                        BufferedWriter bw = new BufferedWriter(new FileWriter(
-                                targetDirectory + File.separator + movistarNum, true));
-                        bw.write(line.trim());
-                        bw.newLine();                        
-                        bw.close(); 
+                        List<String> old = (number2records.get(movistarNum) != null) ?number2records.get(movistarNum) :new ArrayList<String>();
+                        old.add(line.trim());
+                        number2records.put(movistarNum, old);
                     } 
                 } catch (Exception e) {
                     logger.error("wrong-format CDR [" + line + "]", e);
@@ -95,5 +97,15 @@ public class ExtractFocusedUserGroup {
             }
             br.close();
         }
+        
+        for (String number : number2records.keySet()) {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(targetDirectory + File.separator + number));
+            for (String lineToWrite : number2records.get(number)) {
+                bw.write(lineToWrite);
+                bw.newLine();                        
+            }
+            bw.close();
+        }
+        
     }
 }

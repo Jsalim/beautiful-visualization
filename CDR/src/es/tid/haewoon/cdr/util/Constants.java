@@ -74,7 +74,8 @@ public class Constants {
 //    public static final String CELL_INFO_FILE_NAME = "GASSET_CELULA.TXT";
 //    public static final String CELL_INFO_FILE_NAME = "cells_spain.txt";
 //    public static final String BARCELONA_CELL_INFO_PATH = BASE_PATH + File.separator + "GASSET_CELULA_BCN_haewoon.TXT";
-    public static final String BARCELONA_CELL_INFO_PATH = BASE_PATH + File.separator + "GASSET_CELULA_BCN_Box_haewoon.TXT";
+    public static final String BARCELONA_CELL_INFO_PATH = BASE_PATH + File.separator + "GASSET_CELULA_BCN_CITY.TXT";
     
+    @Deprecated
     public static final double[][] BARCELONA_BOX = {{41.452505, 2.05513}, {41.336607, 2.261124}};
 }
